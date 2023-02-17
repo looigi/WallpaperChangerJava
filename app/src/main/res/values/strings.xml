@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">newLooPlayer</string>
+    <string name="toast_crash_report">Errore in looWebPlayer</string>
+</resources>

@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/laySettaggi"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="5dp"
+        android:visibility="gone"
+        android:background="@drawable/bordo_arrotondato_bianco_sfumato_trasp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:textSize="22sp"
+            android:gravity="center_horizontal"
+            android:textColor="#000099"
+            android:text="Impostazioni"
+            android:padding="3dp"
+            android:background="@drawable/bordo_arrotondato_bianco_non_sfumato_trasp"
+            android:layout_height="wrap_content">
+
+        </TextView>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Switch
+                    android:id="@+id/switchOrologio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0000CC"
+                    android:text="Mostra orologio" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <Switch
+                    android:id="@+id/switchCambioImmagini"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0000CC"
+                    android:text="Cambio Immagini" />
+
+                <LinearLayout
+                    android:id="@+id/layCambioImmagine"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="6">
+
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:textColor="#0000CC"
+                        android:text="Secondi al cambio"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/edtSecondiAlCambio"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#0000CC"
+                        android:layout_weight="2"
+                        android:ems="10"
+                        android:inputType="number" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <Switch
+                    android:id="@+id/switchOpacitaBottoni"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0000CC"
+                    android:text="Opacità bottoni" />
+
+                <LinearLayout
+                    android:id="@+id/layOpacitaBottoni"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="6">
+
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:textColor="#0000CC"
+                        android:text="Opacità bottoni"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/edtOpacitaBottoni"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#0000CC"
+                        android:layout_weight="2"
+                        android:ems="10"
+                        android:inputType="number" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <Switch
+                    android:id="@+id/switchScaricaBrano"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0000CC"
+                    android:text="Scarica Brano" />
+
+                <Switch
+                    android:id="@+id/switchInformazioni"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0000CC"
+                    android:text="Visualizza Info" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <Switch
+                    android:id="@+id/switchDebug"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0000CC"
+                    android:text="Debug" />
+
+                <Switch
+                    android:id="@+id/switchEliminaDebug"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0000CC"
+                    android:text="Elimina all'avvio" />
+
+                <LinearLayout
+                    android:id="@+id/layDebug"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="6">
+
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:textColor="#0000CC"
+                        android:text="Elimina file debug"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <Button
+                        android:id="@+id/btnDebug"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#0000CC"
+                        android:layout_weight="2"
+                        android:ems="10" />
+
+                </LinearLayout>
+
+                <!-- <Switch
+                    android:id="@+id/switchEliminaDebug"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0000CC"
+                    android:text="Elimina all'avvio" /> -->
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <Switch
+                    android:id="@+id/switchEliminaBrani"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#0000CC"
+                    android:text="Limite brani su disco" />
+
+                <LinearLayout
+                    android:id="@+id/layEliminaBrani"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="6">
+
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:textColor="#0000CC"
+                        android:text="Limite in Mb"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <EditText
+                        android:id="@+id/edtMegaOccupati"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#0000CC"
+                        android:layout_weight="2"
+                        android:ems="10"
+                        android:inputType="number" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="6">
+
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:textColor="#0000CC"
+                        android:text="Elimina Liste"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <Button
+                        android:id="@+id/btnListe"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#0000CC"
+                        android:layout_weight="2"
+                        android:ems="10" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <LinearLayout
+                    android:gravity="right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/imgAnnullaSettaggi"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/elimina_quadrato" />
+
+                    <ImageView
+                        android:id="@+id/imgEsce"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/shutdown" />
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

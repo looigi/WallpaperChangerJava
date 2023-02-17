@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#000000">
+
+    <ImageView
+        android:id="@+id/imgCopertina"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/logo" />
+
+    <LinearLayout
+        android:id="@+id/layBarraNotifica"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/bordo_arrotondato_bianco_sfumato_trasp"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/txtTitoloBrano"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:padding="2dp"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:tag="tabCaption"
+            android:text="@string/app_name"
+            android:textColor="@color/colorPrimary"
+            android:shadowColor="#ff000000"
+            android:textStyle="bold"
+            android:shadowDy="2"
+            android:shadowDx="2"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/txtArtista"
+            android:layout_width="match_parent"
+            android:padding="2dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:tag="tabCaption"
+            android:text="Artista"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:shadowColor="#ff000000"
+            android:shadowDy="2"
+            android:shadowDx="2"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/txtAlbum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="2dp"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:gravity="center"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:tag="tabCaption"
+            android:text="Album"
+            android:textColor="@color/colorPrimary"
+            android:shadowColor="#ff000000"
+            android:textStyle="bold"
+            android:shadowDy="2"
+            android:shadowDx="2"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:baselineAligned="false"
+        android:layout_marginTop="62dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:weightSum="3" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/imgIndietro"
+                android:layout_width="match_parent"
+                android:scaleType="fitCenter"
+                android:layout_height="40dp"
+                android:src="@drawable/indietro" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/ImgPlay"
+                android:layout_width="match_parent"
+                android:scaleType="fitCenter"
+                android:layout_height="40dp"
+                android:src="@drawable/icona_suona" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/imgAvanti"
+                android:layout_width="match_parent"
+                android:scaleType="fitCenter"
+                android:layout_height="40dp"
+                android:src="@drawable/avanti" />
+        </LinearLayout>
+
+        <!-- <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/imgCasa"
+                android:layout_width="match_parent"
+                android:scaleType="fitCenter"
+                android:layout_height="40dp"
+                android:src="@drawable/logo" />
+        </LinearLayout> -->
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgDownload"
+        android:layout_width="40dp"
+        android:layout_alignParentRight="true"
+        android:layout_height="40dp"
+        android:src="@drawable/download" />
+</RelativeLayout>
