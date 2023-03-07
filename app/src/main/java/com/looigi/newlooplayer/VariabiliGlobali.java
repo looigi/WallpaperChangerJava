@@ -128,12 +128,58 @@ public class VariabiliGlobali {
     private boolean modificheTags = false;
     private String ControllatoUpdate = "";
 
+    private boolean Date = false;
+    private boolean DataSuperiore = false;
+    private String txtDataSuperiore = "";
+    private boolean DataInferiore = false;
+    private String txtDataInferiore = "";
+
     public Context getContext() {
         return context;
     }
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public boolean isDate() {
+        return Date;
+    }
+
+    public void setDate(boolean date) {
+        Date = date;
+    }
+
+    public boolean isDataInferiore() {
+        return DataInferiore;
+    }
+
+    public void setDataInferiore(boolean dataInferiore) {
+        DataInferiore = dataInferiore;
+    }
+
+    public String getTxtDataInferiore() {
+        return txtDataInferiore;
+    }
+
+    public void setTxtDataInferiore(String txtDataInferiore) {
+        this.txtDataInferiore = txtDataInferiore;
+    }
+
+    public String getTxtDataSuperiore() {
+        return txtDataSuperiore;
+    }
+
+    public void setTxtDataSuperiore(String txtDataSuperiore) {
+        this.txtDataSuperiore = txtDataSuperiore;
+    }
+
+    public boolean isDataSuperiore() {
+        return DataSuperiore;
+    }
+
+    public void setDataSuperiore(boolean dataSuperiore) {
+        DataSuperiore = dataSuperiore;
     }
 
     public String isControllatoUpdate() {

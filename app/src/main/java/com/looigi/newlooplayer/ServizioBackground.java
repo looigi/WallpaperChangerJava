@@ -12,20 +12,10 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.DigitalClock;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.SeekBar;
-import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -96,7 +86,7 @@ public class ServizioBackground extends Service {
         };
         handlerAgg.postDelayed(rAgg, 1000);
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void ProsegueInizio() {
@@ -436,6 +426,242 @@ public class ServizioBackground extends Service {
                 } else {
                     OggettiAVideo.getInstance().getLayRicerche().setVisibility(LinearLayout.VISIBLE);
                 }
+            }
+        });
+
+        boolean dataSuperiore = VariabiliGlobali.getInstance().isDataSuperiore();
+        OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(dataSuperiore);
+        if (dataSuperiore) {
+            OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.VISIBLE);
+        } else {
+            OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
+        }
+        OggettiAVideo.getInstance().getSwitchDataSuperiore().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                VariabiliGlobali.getInstance().setDataSuperiore(isChecked);
+
+                if (!VariabiliGlobali.getInstance().isDate()) {
+                    OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
+                    OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(false);
+                    VariabiliGlobali.getInstance().setDataInferiore(false);
+                    OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
+                    OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(false);
+                    VariabiliGlobali.getInstance().setDataSuperiore(false);
+                } else {
+                    if (isChecked) {
+                        OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.VISIBLE);
+
+                        OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
+                        OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(false);
+                        VariabiliGlobali.getInstance().setDataInferiore(false);
+                    } else {
+                        OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
+
+                        OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.VISIBLE);
+                        OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(true);
+                        VariabiliGlobali.getInstance().setDataInferiore(true);
+                    }
+                }
+
+                db_dati db = new db_dati();
+                db.ScriveImpostazioni();
+            }
+        });
+        OggettiAVideo.getInstance().getEdtDataSuperiore().setText(VariabiliGlobali.getInstance().getTxtDataSuperiore());
+        OggettiAVideo.getInstance().getEdtDataSuperiore().addTextChangedListener(new TextWatcher(){
+            public void afterTextChanged(Editable s) {
+                String dataora = OggettiAVideo.getInstance().getEdtDataSuperiore().getText().toString();
+                // if (dataora.length() == 10) {
+                    if (!dataora.contains("/")) {
+                        // Controllo formale sulle barre
+                    } else {
+                        String c[] = dataora.split("/");
+                        if (c.length < 3) {
+                            // Controllo sul numero delle barre
+                        } else {
+                            try {
+                                int giorno = Integer.parseInt(c[0]);
+                                int mese = Integer.parseInt(c[1]);
+                                String anno = c[2];
+
+                                if (giorno < 1 || giorno > 31) {
+                                    // Controllo formale sul giorno
+                                } else {
+                                    if (giorno > 30 && (mese == 2 || mese == 4 || mese == 6 || mese == 9 || mese == 11)) {
+                                        // Controllo sul giorno maggiore di 30 per i mesi di 30
+                                    } else {
+                                        if (mese < 1 || mese > 12) {
+                                            // Controllo formale sul mese
+                                        } else {
+                                            if (anno.length() != 4) {
+                                                // Controllo lunghezza anno
+                                            } else {
+                                                String g = Integer.toString(giorno);
+                                                String m = Integer.toString(mese);
+                                                if (g.length() == 1) {
+                                                    g = "0" + g;
+                                                }
+                                                if (m.length() == 1) {
+                                                    m = "0" + m;
+                                                }
+
+                                                dataora = g + "/" + m + "/" + anno;
+                                                VariabiliGlobali.getInstance().setTxtDataSuperiore(dataora);
+
+                                                db_dati db = new db_dati();
+                                                db.ScriveImpostazioni();
+                                            }
+                                        }
+                                    }
+                                }
+                            } catch (Exception ignored) {
+
+                            }
+                        }
+                    }
+                // }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+        });
+
+        boolean dataInferiore = VariabiliGlobali.getInstance().isDataInferiore();
+        OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(dataInferiore);
+        if (dataInferiore) {
+            OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.VISIBLE);
+        } else {
+            OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
+        }
+        OggettiAVideo.getInstance().getSwitchDataInferiore().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                VariabiliGlobali.getInstance().setDataInferiore(isChecked);
+
+                if (!VariabiliGlobali.getInstance().isDate()) {
+                    OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
+                    OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(false);
+                    VariabiliGlobali.getInstance().setDataInferiore(false);
+                    OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
+                    OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(false);
+                    VariabiliGlobali.getInstance().setDataSuperiore(false);
+                } else {
+                    if (isChecked) {
+                        OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.VISIBLE);
+
+                        OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
+                        OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(false);
+                        VariabiliGlobali.getInstance().setDataSuperiore(false);
+                    } else {
+                        OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
+
+                        OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.VISIBLE);
+                        OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(true);
+                        VariabiliGlobali.getInstance().setDataSuperiore(true);
+                    }
+                }
+
+                db_dati db = new db_dati();
+                db.ScriveImpostazioni();
+            }
+        });
+        OggettiAVideo.getInstance().getEdtDataInferiore().setText(VariabiliGlobali.getInstance().getTxtDataInferiore());
+        OggettiAVideo.getInstance().getEdtDataInferiore().addTextChangedListener(new TextWatcher(){
+            public void afterTextChanged(Editable s) {
+                String dataora = OggettiAVideo.getInstance().getEdtDataInferiore().getText().toString();
+                // if (dataora.length() == 10) {
+                if (!dataora.contains("/")) {
+                    // Controllo formale sulle barre
+                } else {
+                    String c[] = dataora.split("/");
+                    if (c.length < 3) {
+                        // Controllo sul numero delle barre
+                    } else {
+                        try {
+                            int giorno = Integer.parseInt(c[0]);
+                            int mese = Integer.parseInt(c[1]);
+                            String anno = c[2];
+
+                            if (giorno < 1 || giorno > 31) {
+                                // Controllo formale sul giorno
+                            } else {
+                                if (giorno > 30 && (mese == 2 || mese == 4 || mese == 6 || mese == 9 || mese == 11)) {
+                                    // Controllo sul giorno maggiore di 30 per i mesi di 30
+                                } else {
+                                    if (mese < 1 || mese > 12) {
+                                        // Controllo formale sul mese
+                                    } else {
+                                        if (anno.length() != 4) {
+                                            // Controllo lunghezza anno
+                                        } else {
+                                            String g = Integer.toString(giorno);
+                                            String m = Integer.toString(mese);
+                                            if (g.length() == 1) {
+                                                g = "0" + g;
+                                            }
+                                            if (m.length() == 1) {
+                                                m = "0" + m;
+                                            }
+
+                                            dataora = g + "/" + m + "/" + anno;
+                                            VariabiliGlobali.getInstance().setTxtDataInferiore(dataora);
+
+                                            db_dati db = new db_dati();
+                                            db.ScriveImpostazioni();
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (Exception ignored) {
+
+                        }
+                    }
+                }
+                // }
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+        });
+
+        boolean date = VariabiliGlobali.getInstance().isDate();
+        OggettiAVideo.getInstance().getSwitchDate().setChecked(date);
+        if (date) {
+            OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(false);
+            OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(false);
+
+            // OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
+            // OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
+
+            VariabiliGlobali.getInstance().setDataSuperiore(false);
+            VariabiliGlobali.getInstance().setDataInferiore(false);
+
+            db_dati db = new db_dati();
+            db.ScriveImpostazioni();
+        }
+        OggettiAVideo.getInstance().getSwitchDate().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                VariabiliGlobali.getInstance().setDate(isChecked);
+
+                if (!isChecked) {
+                    OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(false);
+                    OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(false);
+
+                    OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
+                    OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
+
+                    VariabiliGlobali.getInstance().setDataSuperiore(false);
+                    VariabiliGlobali.getInstance().setDataInferiore(false);
+                } else {
+                    OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(true);
+                    OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(false);
+
+                    OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.VISIBLE);
+                    OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
+
+                    VariabiliGlobali.getInstance().setDataSuperiore(true);
+                    VariabiliGlobali.getInstance().setDataInferiore(false);
+                }
+
+                db_dati db = new db_dati();
+                db.ScriveImpostazioni();
             }
         });
 

@@ -119,6 +119,51 @@ public class OggettiAVideo {
     private ListView lstTagsBrano;
     private ListView lstTagsTutti;
     private LinearLayout laySplash;
+    private Switch switchDataSuperiore;
+    private EditText edtDataSuperiore;
+    private Switch switchDataInferiore;
+    private EditText edtDataInferiore;
+    private Switch switchDate;
+
+    public Switch getSwitchDate() {
+        return switchDate;
+    }
+
+    public void setSwitchDate(Switch switchDate) {
+        this.switchDate = switchDate;
+    }
+
+    public Switch getSwitchDataInferiore() {
+        return switchDataInferiore;
+    }
+
+    public void setSwitchDataInferiore(Switch switchDataInferiore) {
+        this.switchDataInferiore = switchDataInferiore;
+    }
+
+    public EditText getEdtDataInferiore() {
+        return edtDataInferiore;
+    }
+
+    public void setEdtDataInferiore(EditText edtDataInferiore) {
+        this.edtDataInferiore = edtDataInferiore;
+    }
+
+    public Switch getSwitchDataSuperiore() {
+        return switchDataSuperiore;
+    }
+
+    public void setSwitchDataSuperiore(Switch switchDataSuperiore) {
+        this.switchDataSuperiore = switchDataSuperiore;
+    }
+
+    public EditText getEdtDataSuperiore() {
+        return edtDataSuperiore;
+    }
+
+    public void setEdtDataSuperiore(EditText edtDataSuperiore) {
+        this.edtDataSuperiore = edtDataSuperiore;
+    }
 
     public LinearLayout getLaySplash() {
         return laySplash;

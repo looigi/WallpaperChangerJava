@@ -412,7 +412,9 @@ public class Utility {
 
                     if (SecondiPassati == 7) {
                         ChiamateWs ws = new ChiamateWs();
-                        ws.AggiornaImmagini(VariabiliGlobali.getInstance().getStrutturaDelBrano().getArtista());
+                        if (VariabiliGlobali.getInstance().getStrutturaDelBrano() != null) {
+                            ws.AggiornaImmagini(VariabiliGlobali.getInstance().getStrutturaDelBrano().getArtista());
+                        }
                     }
 
                     if (!VariabiliGlobali.getInstance().isStaLeggendoProssimoBrano()) {
@@ -439,6 +441,8 @@ public class Utility {
         },1000);
     }
 
+    int vecchiaQualitaRete = -999;
+
     public int ControllaRete() {
         int qualitaRete = -1;
         ConnectionQuality cq = new ConnectionQuality();
@@ -448,7 +452,9 @@ public class Utility {
                 String[] c = Connessione.split(";");
                 qualitaRete = Integer.parseInt(c[0]);
                 if (qualitaRete == -1) {
-                    Log.getInstance().ScriveLog("Rete Sconosciuta");
+                    if (vecchiaQualitaRete != qualitaRete) {
+                        Log.getInstance().ScriveLog("Rete Sconosciuta");
+                    }
                 } else {
                     String Tipologia = c[1];
                     VariabiliGlobali.getInstance().setTipologiaRete(Tipologia);
@@ -517,6 +523,8 @@ public class Utility {
                         // }
                     }
                 }
+
+                vecchiaQualitaRete = qualitaRete;
             }
         }
 

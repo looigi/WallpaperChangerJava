@@ -50,8 +50,13 @@ public class DownloadBrano extends AsyncTask<String, String, String> {
         if (occupato > Limite) {
             VariabiliGlobali.getInstance().setBloccaDownload(true);
 
-            OggettiAVideo.getInstance().getImgDownloadBrano().setVisibility(LinearLayout.GONE);
-            OggettiAVideo.getInstance().getLayDownload().setVisibility(LinearLayout.GONE);
+            VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    OggettiAVideo.getInstance().getImgDownloadBrano().setVisibility(LinearLayout.GONE);
+                    OggettiAVideo.getInstance().getLayDownload().setVisibility(LinearLayout.GONE);
+                }
+            });
 
             Log.getInstance().ScriveLog("Download brano annullato. Spazio occupato maggiore del limite impostato: " + occupato + "/" + Limite);
             return null;
@@ -172,9 +177,14 @@ public class DownloadBrano extends AsyncTask<String, String, String> {
                         Utility.getInstance().EliminaFileUnico(sb.getPathBrano());
                     }
 
-                    OggettiAVideo.getInstance().getImgDownloadBrano().setVisibility(LinearLayout.GONE);
+                    VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            OggettiAVideo.getInstance().getImgDownloadBrano().setVisibility(LinearLayout.GONE);
+                            OggettiAVideo.getInstance().getLayDownload().setVisibility(LinearLayout.GONE);
+                        }
+                    });
 
-                    OggettiAVideo.getInstance().getLayDownload().setVisibility(LinearLayout.GONE);
                     // OggettiAVideo.getInstance().getProgressDownload().setVisibility(LinearLayout.GONE);
                 }
             }, 100);

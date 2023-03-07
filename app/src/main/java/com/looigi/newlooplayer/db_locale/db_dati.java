@@ -8,11 +8,9 @@ import com.looigi.newlooplayer.Log;
 import com.looigi.newlooplayer.Utility;
 import com.looigi.newlooplayer.VariabiliGlobali;
 import com.looigi.newlooplayer.strutture.StrutturaBrano;
-import com.looigi.newlooplayer.strutture.StrutturaBranoDB;
 import com.looigi.newlooplayer.strutture.StrutturaImmagini;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,7 +75,8 @@ public class db_dati {
                         "TestoDaEscludere VARCHAR, StelleDaRicercare VARCHAR, TagsDaRicercare VARCHAR, " +
                         "Random VARCHAR, CambioImmagine VARCHAR, VisuaInfo VARCHAR, SecondiCambioImmagine VARCHAR, " +
                         "branoSuDisco VARCHAR, RicercaPreferiti VARCHAR, Debug VARCHAR, Opacita VARCHAR, SecondiOpacita VARCHAR, " +
-                        "MostraOrologio VARCHAR, EliminaBrani VARCHAR, LimiteInMb VARCHAR);";
+                        "MostraOrologio VARCHAR, EliminaBrani VARCHAR, LimiteInMb VARCHAR, DataSuperiore VARCHAR, EdtDataSuperiore VARCHAR, " +
+                        "DataInferiore VARCHAR, EdtDataInferiore VARCHAR, Date VARCHAR);";
                 myDB.execSQL(sql);
             }
         } catch (Exception ignored) {
@@ -506,7 +505,8 @@ public class db_dati {
                         + "TestoDaEscludere, StelleDaRicercare, TagsDaRicercare, "
                         + "Random, CambioImmagine, VisuaInfo, SecondiCambioImmagine, "
                         + "branoSuDisco, RicercaPreferiti, Debug, Opacita, SecondiOpacita, "
-                        + "MostraOrologio, EliminaBrani, LimiteInMb)"
+                        + "MostraOrologio, EliminaBrani, LimiteInMb, DataSuperiore, EdtDataSuperiore, "
+                        + "DataInferiore, EdtDataInferiore, Date)"
                         + " VALUES ("
                         + "'" + (VariabiliGlobali.getInstance().isRicercaTesto() ? "S" : "N") + "', "
                         + "'" + (VariabiliGlobali.getInstance().isRicercaEsclusione() ? "S" : "N") + "', "
@@ -528,11 +528,20 @@ public class db_dati {
                         + "'" + VariabiliGlobali.getInstance().getSecondiOpacitaBottoni() + "', "
                         + "'" + (VariabiliGlobali.getInstance().isMostraOrologio() ? "S" : "N") + "', "
                         + "'" + (VariabiliGlobali.getInstance().isEliminaBrani() ? "S" : "N") + "', "
-                        + "'" + VariabiliGlobali.getInstance().getLimiteInMb() + "' "
+                        + "'" + VariabiliGlobali.getInstance().getLimiteInMb() + "', "
+                        + "'" + (VariabiliGlobali.getInstance().isDataSuperiore() ? "S" : "N") + "', "
+                        + "'" + VariabiliGlobali.getInstance().getTxtDataSuperiore() + "', "
+                        + "'" + (VariabiliGlobali.getInstance().isDataInferiore() ? "S" : "N") + "', "
+                        + "'" + VariabiliGlobali.getInstance().getTxtDataInferiore() + "', "
+                        + "'" + (VariabiliGlobali.getInstance().isDate() ? "S" : "N") + "' "
                         + ") ";
                 myDB.execSQL(sql);
             } catch (SQLException e) {
                 Log.getInstance().ScriveLog("ERRORE Su scrittura impostazioni: " + Utility.getInstance().PrendeErroreDaException(e));
+                Log.getInstance().ScriveLog("Pulizia tabelle");
+                PulisceDati();
+                Log.getInstance().ScriveLog("Creazione tabelle");
+                CreazioneTabelle();
 
                 return false;
             }
@@ -569,6 +578,11 @@ public class db_dati {
                     VariabiliGlobali.getInstance().setMostraOrologio(c.getString(18).equals("S"));
                     VariabiliGlobali.getInstance().setEliminaBrani(c.getString(19).equals("S"));
                     VariabiliGlobali.getInstance().setLimiteInMb(Integer.parseInt(c.getString(20)));
+                    VariabiliGlobali.getInstance().setDataSuperiore(c.getString(21).equals("S"));
+                    VariabiliGlobali.getInstance().setTxtDataSuperiore(c.getString(22));
+                    VariabiliGlobali.getInstance().setDataInferiore(c.getString(23).equals("S"));
+                    VariabiliGlobali.getInstance().setTxtDataInferiore(c.getString(24));
+                    VariabiliGlobali.getInstance().setDate(c.getString(25).equals("S"));
 
                     VariabiliGlobali.getInstance().setBranosSuSDOriginale(VariabiliGlobali.getInstance().isBranoSuSD());
                 } else {

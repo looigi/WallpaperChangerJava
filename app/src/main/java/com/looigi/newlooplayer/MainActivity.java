@@ -285,7 +285,17 @@ public class MainActivity extends AppCompatActivity {
         EditText edtLimiteMB = (EditText) findViewById(R.id.edtMegaOccupati);
         ImageView imgAnnullaRicerche = (ImageView) findViewById(R.id.imgAnnullaRicerche);
         ImageView imgAnnullaSettaggi = (ImageView) findViewById(R.id.imgAnnullaSettaggi);
+        Switch switchDataSuperiore = (Switch) findViewById(R.id.switchDataSuperiore);
+        EditText edtDataSuperiore = (EditText) findViewById(R.id.editDataSuperiore);
+        Switch switchDataInferiore = (Switch) findViewById(R.id.switchDataInferiore);
+        EditText edtDataInferiore = (EditText) findViewById(R.id.editDataInferiore);
+        Switch switchDate = (Switch) findViewById(R.id.switchDate);
 
+        OggettiAVideo.getInstance().setSwitchDate(switchDate);
+        OggettiAVideo.getInstance().setSwitchDataSuperiore(switchDataSuperiore);
+        OggettiAVideo.getInstance().setEdtDataSuperiore(edtDataSuperiore);
+        OggettiAVideo.getInstance().setSwitchDataInferiore(switchDataInferiore);
+        OggettiAVideo.getInstance().setEdtDataInferiore(edtDataInferiore);
         OggettiAVideo.getInstance().setLayListaTags(layListaTags);
         OggettiAVideo.getInstance().setLayRicerche(layRicerche);
         OggettiAVideo.getInstance().setImgRicerche(imgRicerche);

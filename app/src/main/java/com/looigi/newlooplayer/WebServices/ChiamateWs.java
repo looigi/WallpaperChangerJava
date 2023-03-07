@@ -11,7 +11,6 @@ import com.looigi.newlooplayer.Log;
 import com.looigi.newlooplayer.OggettiAVideo;
 import com.looigi.newlooplayer.Utility;
 import com.looigi.newlooplayer.adapters.AdapterListenerTags;
-import com.looigi.newlooplayer.db_locale.db_dati;
 import com.looigi.newlooplayer.download.DownloadBrano;
 import com.looigi.newlooplayer.download.DownloadImage;
 import com.looigi.newlooplayer.strutture.StrutturaArtisti;
@@ -23,7 +22,6 @@ import com.looigi.newlooplayer.strutture.StrutturaListaBrani;
 import com.looigi.newlooplayer.strutture.StrutturaTags;
 import com.looigi.newlooplayer.treeview.AlberoBrani;
 
-import java.time.temporal.ValueRange;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -258,6 +256,23 @@ public class ChiamateWs implements TaskDelegate {
             TagsElimina = "";
         }
 
+        String DataSuperiore = "";
+        String DataInferiore = "";
+
+        if (VariabiliGlobali.getInstance().isDate()) {
+            if (VariabiliGlobali.getInstance().isDataSuperiore()) {
+                if (!VariabiliGlobali.getInstance().getTxtDataSuperiore().isEmpty()) {
+                    DataSuperiore = VariabiliGlobali.getInstance().getTxtDataSuperiore();
+                }
+            }
+
+            if (VariabiliGlobali.getInstance().isDataInferiore()) {
+                if (!VariabiliGlobali.getInstance().getTxtDataInferiore().isEmpty()) {
+                    DataInferiore = VariabiliGlobali.getInstance().getTxtDataInferiore();
+                }
+            }
+        }
+
         String Urletto="RitornaProssimoBranoMobile?";
         Urletto += "idUtente=" + VariabiliGlobali.getInstance().getIdUtente();
         Urletto += "&Random=" + (VariabiliGlobali.getInstance().isRandom() ? "S" : "N");
@@ -269,6 +284,8 @@ public class ChiamateWs implements TaskDelegate {
         Urletto += "&TagsElimina=" + TagsElimina;
         Urletto += "&PreferitiElimina=" + PreferitiElimina;
         Urletto += "&BranoEsatto=" + idBrano;
+        Urletto += "&DataSuperiore=" + DataSuperiore;
+        Urletto += "&DataInferiore=" + DataInferiore;
 
         TipoOperazione = "RitornaProssimoBranoMobile";
         Esegue(
@@ -301,7 +318,11 @@ public class ChiamateWs implements TaskDelegate {
 
     @Override
     public void TaskCompletionResult(String result) {
-        Log.getInstance().ScriveLog("Ritorno WS " + TipoOperazione + ". OK");
+        if (result.contains("ERROR:")) {
+            Log.getInstance().ScriveLog("Ritorno WS " + TipoOperazione + ". ERRORE...");
+        } else {
+            Log.getInstance().ScriveLog("Ritorno WS " + TipoOperazione + ". OK");
+        }
 
         switch (TipoOperazione) {
             case "ControllaAggiornamento":
@@ -522,28 +543,36 @@ public class ChiamateWs implements TaskDelegate {
     }
 
     public void RitornaListaTags22(String result) {
-        List<StrutturaTags> l = new ArrayList<>();
-        String[] Selzionati = result.split("§");
+        Log.getInstance().ScriveLog("Tags ritornati: " + result);
 
-        for (int i = 0; i < Selzionati.length; i++) {
-            if (!Selzionati[i].isEmpty() && !Selzionati[i].equals("\n")) {
-                String[] Campi = Selzionati[i].split(";");
-                StrutturaTags s = new StrutturaTags();
-                s.setId(Campi[0]);
-                s.setTag(Campi[1]);
+        if (result.contains("§")) {
+            List<StrutturaTags> l = new ArrayList<>();
+            String[] Selezionati = result.split("§");
 
-                l.add(s);
+            for (int i = 0; i < Selezionati.length; i++) {
+                if (!Selezionati[i].isEmpty() && !Selezionati[i].equals("\n")) {
+                    try {
+                        String[] Campi = Selezionati[i].split(";");
+                        StrutturaTags s = new StrutturaTags();
+                        s.setId(Campi[0]);
+                        s.setTag(Campi[1]);
+
+                        l.add(s);
+                    } catch (Exception ignored) {
+                        Log.getInstance().ScriveLog("Errore nel caricamento dei tags: " + Utility.getInstance().PrendeErroreDaException(ignored));
+                    }
+                }
             }
+            VariabiliGlobali.getInstance().setListaTags(l);
+
+            AdapterListenerTags customAdapterTags = new AdapterListenerTags(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                    VariabiliGlobali.getInstance().getListaTags());
+            OggettiAVideo.getInstance().getLstTags().setAdapter(customAdapterTags);
+
+            OggettiAVideo.getInstance().getBtnListaTags().setVisibility(LinearLayout.VISIBLE);
+
+            Log.getInstance().ScriveLog("Tags caricati: " + Integer.toString(l.size() - 1));
         }
-        VariabiliGlobali.getInstance().setListaTags(l);
-
-        AdapterListenerTags customAdapterTags = new AdapterListenerTags(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
-                VariabiliGlobali.getInstance().getListaTags());
-        OggettiAVideo.getInstance().getLstTags().setAdapter(customAdapterTags);
-
-        OggettiAVideo.getInstance().getBtnListaTags().setVisibility(LinearLayout.VISIBLE);
-
-        Log.getInstance().ScriveLog("Tags caricati: " + Integer.toString(l.size() - 1));
     }
 
     /* private void RitornaListaBrani(String result) {
@@ -614,6 +643,8 @@ public class ChiamateWs implements TaskDelegate {
         a.GeneraAlbero();
     }
 
+    boolean ErroreCaricaBrano = false;
+
     private void CaricaBrano(String result) {
         // OggettiAVideo.getInstance().getImgIndietro().setVisibility(LinearLayout.VISIBLE);
         // OggettiAVideo.getInstance().getImgAvanti().setVisibility(LinearLayout.VISIBLE);
@@ -621,6 +652,41 @@ public class ChiamateWs implements TaskDelegate {
         OggettiAVideo.getInstance().getImgCambiaPregresso().setVisibility(LinearLayout.VISIBLE);
 
         // Log.getInstance().ScriveLog("Dati brano: " + result);
+        if (result.contains("ERROR:")) {
+            if (result.contains("JAVA.NET.UNKNOWNHOSTEXCEPTION")) {
+                VariabiliGlobali.getInstance().setRetePresente(false);
+                OggettiAVideo.getInstance().getImgNoNet().setVisibility(LinearLayout.VISIBLE);
+                VariabiliGlobali.getInstance().setBranoSuSD(true);
+                OggettiAVideo.getInstance().getSwitchPresenteSuDisco().setChecked(true);
+                OggettiAVideo.getInstance().getSwitchPresenteSuDisco().setEnabled(false);
+                ErroreCaricaBrano = true;
+
+                OggettiAVideo.getInstance().ScriveInformazioni();
+
+                Log.getInstance().ScriveLog("Carica brano: Imposto rete non presente");
+            }
+
+            Log.getInstance().ScriveLog("Carica brano: Esco per result non valido");
+
+            return;
+        } else {
+            if (ErroreCaricaBrano) {
+                VariabiliGlobali.getInstance().setRetePresente(true);
+                OggettiAVideo.getInstance().getImgNoNet().setVisibility(LinearLayout.GONE);
+                OggettiAVideo.getInstance().getSwitchPresenteSuDisco().setEnabled(true);
+                if (!VariabiliGlobali.getInstance().isBranosSuSDOriginale()) {
+                    VariabiliGlobali.getInstance().setBranoSuSD(false);
+                    OggettiAVideo.getInstance().getSwitchPresenteSuDisco().setChecked(false);
+                    // Log.getInstance().ScriveLog("Imposto Flag brani su SD: " + VariabiliGlobali.getInstance().isBranoSuSD());
+                }
+                ErroreCaricaBrano = false;
+
+                OggettiAVideo.getInstance().ScriveInformazioni();
+
+                Log.getInstance().ScriveLog("Carica brano: Imposto rete presente dopo averla disabilitata");
+            }
+        }
+
         String[] Globale = result.split("\\|");
         String[] DatiBrano = Globale[0].split(";");
         String[] Immagini = Globale[1].split("§");
