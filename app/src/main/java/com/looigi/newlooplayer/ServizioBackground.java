@@ -1,5 +1,6 @@
 package com.looigi.newlooplayer;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.ComponentName;
@@ -10,10 +11,13 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.service.controls.Control;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.CalendarView;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
@@ -26,6 +30,8 @@ import com.looigi.newlooplayer.chiamate.PhoneUnlockedReceiver;
 import com.looigi.newlooplayer.cuffie.GestioneTastoCuffie;
 import com.looigi.newlooplayer.db_locale.db_dati;
 import com.looigi.newlooplayer.notifiche.Notifica;
+
+import java.util.Calendar;
 
 public class ServizioBackground extends Service {
     private GestioneTastoCuffie myReceiver = new GestioneTastoCuffie();
@@ -433,8 +439,10 @@ public class ServizioBackground extends Service {
         OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(dataSuperiore);
         if (dataSuperiore) {
             OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.VISIBLE);
+            OggettiAVideo.getInstance().getBtnDataSuperiore().setVisibility(LinearLayout.VISIBLE);
         } else {
             OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
+            OggettiAVideo.getInstance().getBtnDataSuperiore().setVisibility(LinearLayout.GONE);
         }
         OggettiAVideo.getInstance().getSwitchDataSuperiore().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -447,19 +455,26 @@ public class ServizioBackground extends Service {
                     OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
                     OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(false);
                     VariabiliGlobali.getInstance().setDataSuperiore(false);
+                    OggettiAVideo.getInstance().getBtnDataSuperiore().setVisibility(LinearLayout.GONE);
                 } else {
                     if (isChecked) {
                         OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.VISIBLE);
 
                         OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
+                        OggettiAVideo.getInstance().getBtnDataInferiore().setVisibility(LinearLayout.GONE);
                         OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(false);
                         VariabiliGlobali.getInstance().setDataInferiore(false);
+
+                        OggettiAVideo.getInstance().getBtnDataSuperiore().setVisibility(LinearLayout.VISIBLE);
                     } else {
                         OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
 
                         OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.VISIBLE);
+                        OggettiAVideo.getInstance().getBtnDataInferiore().setVisibility(LinearLayout.VISIBLE);
                         OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(true);
                         VariabiliGlobali.getInstance().setDataInferiore(true);
+
+                        OggettiAVideo.getInstance().getBtnDataSuperiore().setVisibility(LinearLayout.GONE);
                     }
                 }
 
@@ -468,69 +483,65 @@ public class ServizioBackground extends Service {
             }
         });
         OggettiAVideo.getInstance().getEdtDataSuperiore().setText(VariabiliGlobali.getInstance().getTxtDataSuperiore());
-        OggettiAVideo.getInstance().getEdtDataSuperiore().addTextChangedListener(new TextWatcher(){
+        /* OggettiAVideo.getInstance().getEdtDataSuperiore().addTextChangedListener(new TextWatcher(){
             public void afterTextChanged(Editable s) {
-                String dataora = OggettiAVideo.getInstance().getEdtDataSuperiore().getText().toString();
-                // if (dataora.length() == 10) {
-                    if (!dataora.contains("/")) {
-                        // Controllo formale sulle barre
-                    } else {
-                        String c[] = dataora.split("/");
-                        if (c.length < 3) {
-                            // Controllo sul numero delle barre
-                        } else {
-                            try {
-                                int giorno = Integer.parseInt(c[0]);
-                                int mese = Integer.parseInt(c[1]);
-                                String anno = c[2];
+                String ControlloData = Utility.getInstance().ControllaData(OggettiAVideo.getInstance().getEdtDataSuperiore().getText().toString());
+                if (!ControlloData.isEmpty()) {
+                    VariabiliGlobali.getInstance().setTxtDataSuperiore(ControlloData);
 
-                                if (giorno < 1 || giorno > 31) {
-                                    // Controllo formale sul giorno
-                                } else {
-                                    if (giorno > 30 && (mese == 2 || mese == 4 || mese == 6 || mese == 9 || mese == 11)) {
-                                        // Controllo sul giorno maggiore di 30 per i mesi di 30
-                                    } else {
-                                        if (mese < 1 || mese > 12) {
-                                            // Controllo formale sul mese
-                                        } else {
-                                            if (anno.length() != 4) {
-                                                // Controllo lunghezza anno
-                                            } else {
-                                                String g = Integer.toString(giorno);
-                                                String m = Integer.toString(mese);
-                                                if (g.length() == 1) {
-                                                    g = "0" + g;
-                                                }
-                                                if (m.length() == 1) {
-                                                    m = "0" + m;
-                                                }
-
-                                                dataora = g + "/" + m + "/" + anno;
-                                                VariabiliGlobali.getInstance().setTxtDataSuperiore(dataora);
-
-                                                db_dati db = new db_dati();
-                                                db.ScriveImpostazioni();
-                                            }
-                                        }
-                                    }
-                                }
-                            } catch (Exception ignored) {
-
-                            }
-                        }
-                    }
-                // }
+                    db_dati db = new db_dati();
+                    db.ScriveImpostazioni();
+                }
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){}
+        }); */
+        OggettiAVideo.getInstance().getBtnDataSuperiore().setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String dataAttuale = OggettiAVideo.getInstance().getEdtDataSuperiore().getText().toString();
+
+                int mYear, mMonth, mDay;
+                if (dataAttuale.isEmpty()) {
+                    Calendar c = Calendar.getInstance();
+                    mYear = c.get(Calendar.YEAR);
+                    mMonth = c.get(Calendar.MONTH);
+                    mDay = c.get(Calendar.DAY_OF_MONTH);
+                } else {
+                    String[] d = dataAttuale.split("/");
+                    mYear = Integer.parseInt(d[2]);
+                    mMonth = Integer.parseInt(d[1]) - 1;
+                    mDay = Integer.parseInt(d[0]);
+                }
+                DatePickerDialog datePickerDialog = new DatePickerDialog(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                String d = Integer.toString(dayOfMonth).trim();
+                                String m = Integer.toString(monthOfYear + 1).trim();
+                                if (d.length() == 1) { d = "0" + d; }
+                                if (m.length() == 1) { m = "0" + m; }
+                                String data = d + "/" + m + "/" + year;
+
+                                OggettiAVideo.getInstance().getEdtDataSuperiore().setText(data);
+                                VariabiliGlobali.getInstance().setTxtDataSuperiore(data);
+
+                                db_dati db = new db_dati();
+                                db.ScriveImpostazioni();
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
         });
 
         boolean dataInferiore = VariabiliGlobali.getInstance().isDataInferiore();
         OggettiAVideo.getInstance().getSwitchDataInferiore().setChecked(dataInferiore);
         if (dataInferiore) {
             OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.VISIBLE);
+            OggettiAVideo.getInstance().getBtnDataInferiore().setVisibility(LinearLayout.VISIBLE);
         } else {
             OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
+            OggettiAVideo.getInstance().getBtnDataInferiore().setVisibility(LinearLayout.GONE);
         }
         OggettiAVideo.getInstance().getSwitchDataInferiore().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -543,19 +554,26 @@ public class ServizioBackground extends Service {
                     OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
                     OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(false);
                     VariabiliGlobali.getInstance().setDataSuperiore(false);
+                    OggettiAVideo.getInstance().getBtnDataInferiore().setVisibility(LinearLayout.GONE);
                 } else {
                     if (isChecked) {
                         OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.VISIBLE);
 
                         OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.GONE);
+                        OggettiAVideo.getInstance().getBtnDataSuperiore().setVisibility(LinearLayout.GONE);
                         OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(false);
                         VariabiliGlobali.getInstance().setDataSuperiore(false);
+
+                        OggettiAVideo.getInstance().getBtnDataInferiore().setVisibility(LinearLayout.VISIBLE);
                     } else {
                         OggettiAVideo.getInstance().getEdtDataInferiore().setVisibility(LinearLayout.GONE);
 
                         OggettiAVideo.getInstance().getEdtDataSuperiore().setVisibility(LinearLayout.VISIBLE);
+                        OggettiAVideo.getInstance().getBtnDataSuperiore().setVisibility(LinearLayout.VISIBLE);
                         OggettiAVideo.getInstance().getSwitchDataSuperiore().setChecked(true);
                         VariabiliGlobali.getInstance().setDataSuperiore(true);
+
+                        OggettiAVideo.getInstance().getBtnDataInferiore().setVisibility(LinearLayout.GONE);
                     }
                 }
 
@@ -564,62 +582,80 @@ public class ServizioBackground extends Service {
             }
         });
         OggettiAVideo.getInstance().getEdtDataInferiore().setText(VariabiliGlobali.getInstance().getTxtDataInferiore());
-        OggettiAVideo.getInstance().getEdtDataInferiore().addTextChangedListener(new TextWatcher(){
+        /* OggettiAVideo.getInstance().getEdtDataInferiore().addTextChangedListener(new TextWatcher(){
             public void afterTextChanged(Editable s) {
-                String dataora = OggettiAVideo.getInstance().getEdtDataInferiore().getText().toString();
-                // if (dataora.length() == 10) {
-                if (!dataora.contains("/")) {
-                    // Controllo formale sulle barre
-                } else {
-                    String c[] = dataora.split("/");
-                    if (c.length < 3) {
-                        // Controllo sul numero delle barre
-                    } else {
-                        try {
-                            int giorno = Integer.parseInt(c[0]);
-                            int mese = Integer.parseInt(c[1]);
-                            String anno = c[2];
+                String ControlloData = Utility.getInstance().ControllaData(OggettiAVideo.getInstance().getEdtDataInferiore().getText().toString());
+                if (!ControlloData.isEmpty()) {
+                    VariabiliGlobali.getInstance().setTxtDataInferiore(ControlloData);
 
-                            if (giorno < 1 || giorno > 31) {
-                                // Controllo formale sul giorno
-                            } else {
-                                if (giorno > 30 && (mese == 2 || mese == 4 || mese == 6 || mese == 9 || mese == 11)) {
-                                    // Controllo sul giorno maggiore di 30 per i mesi di 30
-                                } else {
-                                    if (mese < 1 || mese > 12) {
-                                        // Controllo formale sul mese
-                                    } else {
-                                        if (anno.length() != 4) {
-                                            // Controllo lunghezza anno
-                                        } else {
-                                            String g = Integer.toString(giorno);
-                                            String m = Integer.toString(mese);
-                                            if (g.length() == 1) {
-                                                g = "0" + g;
-                                            }
-                                            if (m.length() == 1) {
-                                                m = "0" + m;
-                                            }
+                    db_dati db = new db_dati();
+                    db.ScriveImpostazioni();
 
-                                            dataora = g + "/" + m + "/" + anno;
-                                            VariabiliGlobali.getInstance().setTxtDataInferiore(dataora);
-
-                                            db_dati db = new db_dati();
-                                            db.ScriveImpostazioni();
-                                        }
-                                    }
-                                }
-                            }
-                        } catch (Exception ignored) {
-
-                        }
-                    }
                 }
                 // }
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){}
+        }); */
+        OggettiAVideo.getInstance().getBtnDataInferiore().setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String dataAttuale = OggettiAVideo.getInstance().getEdtDataSuperiore().getText().toString();
+
+                int mYear, mMonth, mDay;
+                if (dataAttuale.isEmpty()) {
+                    Calendar c = Calendar.getInstance();
+                    mYear = c.get(Calendar.YEAR);
+                    mMonth = c.get(Calendar.MONTH);
+                    mDay = c.get(Calendar.DAY_OF_MONTH);
+                } else {
+                    String[] d = dataAttuale.split("/");
+                    mYear = Integer.parseInt(d[2]);
+                    mMonth = Integer.parseInt(d[1]) - 1;
+                    mDay = Integer.parseInt(d[0]);
+                }
+                DatePickerDialog datePickerDialog = new DatePickerDialog(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+                                // txtDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                                String d = Integer.toString(dayOfMonth).trim();
+                                String m = Integer.toString(monthOfYear + 1).trim();
+                                if (d.length() == 1) { d = "0" + d; }
+                                if (m.length() == 1) { m = "0" + m; }
+                                String data = d + "/" + m + "/" + year;
+
+                                OggettiAVideo.getInstance().getEdtDataInferiore().setText(data);
+                                VariabiliGlobali.getInstance().setTxtDataInferiore(data);
+
+                                db_dati db = new db_dati();
+                                db.ScriveImpostazioni();
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.show();
+            }
         });
+        /* OggettiAVideo.getInstance().getLayDatePicker().setVisibility(LinearLayout.GONE);
+
+        OggettiAVideo.getInstance().getDatePicker().setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(CalendarView view, int year, int month, int dayOfMonth) {
+                String data = Utility.getInstance().getCurrentDate(OggettiAVideo.getInstance().getDatePicker());
+
+                if (VariabiliGlobali.getInstance().getQualeData().equals("INFERIORE")) {
+                    OggettiAVideo.getInstance().getEdtDataInferiore().setText(data);
+                } else {
+                    OggettiAVideo.getInstance().getEdtDataSuperiore().setText(data);
+                }
+                VariabiliGlobali.getInstance().setQualeData("");
+
+                db_dati db = new db_dati();
+                db.ScriveImpostazioni();
+
+                OggettiAVideo.getInstance().getLayDatePicker().setVisibility(LinearLayout.GONE);
+            }
+        }); */
 
         boolean date = VariabiliGlobali.getInstance().isDate();
         OggettiAVideo.getInstance().getSwitchDate().setChecked(date);
@@ -1110,6 +1146,10 @@ public class ServizioBackground extends Service {
                 OggettiAVideo.getInstance().getLaySettaggi().setVisibility(LinearLayout.GONE);
             }
         });
+
+        if (!VariabiliGlobali.getInstance().isAmministratore()) {
+            OggettiAVideo.getInstance().getImgTags().setVisibility(LinearLayout.GONE);
+        }
 
         VariabiliGlobali.getInstance().ContaPreferiti();
         VariabiliGlobali.getInstance().ContaTags();

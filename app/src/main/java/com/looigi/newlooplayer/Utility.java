@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.textclassifier.TextClassifierEvent;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
@@ -1144,5 +1145,70 @@ public class Utility {
                     });
             alertDialog.show();
         }
+    }
+
+    public String ControllaData(String DataOraPassata) {
+        String dataora = DataOraPassata;
+        // if (dataora.length() == 10) {
+        if (!dataora.contains("/")) {
+            // Controllo formale sulle barre
+            return "";
+        } else {
+            String c[] = dataora.split("/");
+            if (c.length < 3) {
+                // Controllo sul numero delle barre
+                return "";
+            } else {
+                try {
+                    int giorno = Integer.parseInt(c[0]);
+                    int mese = Integer.parseInt(c[1]);
+                    String anno = c[2];
+
+                    if (giorno < 1 || giorno > 31) {
+                        // Controllo formale sul giorno
+                        return "";
+                    } else {
+                        if (giorno > 30 && (mese == 2 || mese == 4 || mese == 6 || mese == 9 || mese == 11)) {
+                            // Controllo sul giorno maggiore di 30 per i mesi di 30
+                            return "";
+                        } else {
+                            if (mese < 1 || mese > 12) {
+                                // Controllo formale sul mese
+                                return "";
+                            } else {
+                                if (anno.length() != 4) {
+                                    // Controllo lunghezza anno
+                                    return "";
+                                } else {
+                                    String g = Integer.toString(giorno);
+                                    String m = Integer.toString(mese);
+                                    if (g.length() == 1) {
+                                        g = "0" + g;
+                                    }
+                                    if (m.length() == 1) {
+                                        m = "0" + m;
+                                    }
+
+                                    dataora = g + "/" + m + "/" + anno;
+
+                                    return dataora;
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception ignored) {
+                    return "";
+                }
+            }
+        }
+    }
+
+    public String getCurrentDate(DatePicker picker){
+        StringBuilder builder=new StringBuilder();;
+        builder.append(picker.getDayOfMonth()+"/");
+        builder.append((picker.getMonth() + 1)+"/");//month is 0 based
+        builder.append(picker.getYear());
+
+        return builder.toString();
     }
 }

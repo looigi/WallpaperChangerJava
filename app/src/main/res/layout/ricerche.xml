@@ -235,21 +235,39 @@
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="5"
+                        android:layout_weight="2"
                         android:textColor="#0000CC"
-                        android:text="Data (GG/MM/AAAA)"
+                        android:text="Data"
                         android:layout_height="wrap_content">
 
                     </TextView>
 
-                    <EditText
-                        android:id="@+id/editDataSuperiore"
+                    <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:ems="10"
-                        android:textColor="#0000CC"
-                        android:inputType="date" />
+                        android:layout_weight="5"
+                        android:weightSum="5"
+                        android:orientation="horizontal"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/editDataSuperiore"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:textColor="#0000CC"
+                            android:inputType="text" />
+
+                        <Button
+                            android:id="@+id/btnDataSuperiore"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="..."
+                            android:layout_weight="2">
+
+                        </Button>
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -268,21 +286,39 @@
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="5"
+                        android:layout_weight="2"
                         android:textColor="#0000CC"
-                        android:text="Data (GG/MM/AAAA)"
+                        android:text="Data"
                         android:layout_height="wrap_content">
 
                     </TextView>
 
-                    <EditText
-                        android:id="@+id/editDataInferiore"
+                    <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:ems="10"
-                        android:textColor="#0000CC"
-                        android:inputType="date" />
+                        android:layout_weight="5"
+                        android:weightSum="5"
+                        android:orientation="horizontal"
+                        android:layout_height="wrap_content">
+
+                        <EditText
+                            android:id="@+id/editDataInferiore"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="3"
+                            android:ems="10"
+                            android:enabled="false"
+                            android:textColor="#0000CC"
+                            android:inputType="text" />
+
+                        <Button
+                            android:id="@+id/btnDataInferiore"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="..."
+                            android:layout_weight="2">
+
+                        </Button>
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -316,5 +352,21 @@
         </ScrollView>
 
     </LinearLayout>
+
+    <!-- <RelativeLayout
+        android:id="@+id/laySceltaData"
+        android:visibility="gone"
+        android:background="@color/black"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <DatePicker
+            android:id="@+id/datePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true" />
+
+    </RelativeLayout> -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

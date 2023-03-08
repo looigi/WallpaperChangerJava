@@ -23,12 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.DigitalClock;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -290,7 +292,11 @@ public class MainActivity extends AppCompatActivity {
         Switch switchDataInferiore = (Switch) findViewById(R.id.switchDataInferiore);
         EditText edtDataInferiore = (EditText) findViewById(R.id.editDataInferiore);
         Switch switchDate = (Switch) findViewById(R.id.switchDate);
+        Button btnDataSuperiore = (Button) findViewById(R.id.btnDataSuperiore);
+        Button btnDataInferiore = (Button) findViewById(R.id.btnDataInferiore);
 
+        OggettiAVideo.getInstance().setBtnDataSuperiore(btnDataSuperiore);
+        OggettiAVideo.getInstance().setBtnDataInferiore(btnDataInferiore);
         OggettiAVideo.getInstance().setSwitchDate(switchDate);
         OggettiAVideo.getInstance().setSwitchDataSuperiore(switchDataSuperiore);
         OggettiAVideo.getInstance().setEdtDataSuperiore(edtDataSuperiore);
@@ -452,6 +458,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ImageView imgTagsBrano = (ImageView) findViewById(R.id.imgTagsBrano);
+        OggettiAVideo.getInstance().setImgTags(imgTagsBrano);
+
         LinearLayout layTagsBrano = (LinearLayout) findViewById(R.id.layTagsbrano);
         layTagsBrano.setVisibility(LinearLayout.GONE);
         ImageView imgChiudeTagsBrano = (ImageView) findViewById(R.id.imgChiudeTagsBrano);

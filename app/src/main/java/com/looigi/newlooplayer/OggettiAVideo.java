@@ -1,12 +1,14 @@
 package com.looigi.newlooplayer;
 
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.DigitalClock;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Switch;
@@ -124,6 +126,33 @@ public class OggettiAVideo {
     private Switch switchDataInferiore;
     private EditText edtDataInferiore;
     private Switch switchDate;
+    private Button btnDataSuperiore;
+    private Button btnDataInferiore;
+    private ImageView imgTags;
+
+    public ImageView getImgTags() {
+        return imgTags;
+    }
+
+    public void setImgTags(ImageView imgTags) {
+        this.imgTags = imgTags;
+    }
+
+    public Button getBtnDataSuperiore() {
+        return btnDataSuperiore;
+    }
+
+    public void setBtnDataSuperiore(Button btnDataSuperiore) {
+        this.btnDataSuperiore = btnDataSuperiore;
+    }
+
+    public Button getBtnDataInferiore() {
+        return btnDataInferiore;
+    }
+
+    public void setBtnDataInferiore(Button btnDataInferiore) {
+        this.btnDataInferiore = btnDataInferiore;
+    }
 
     public Switch getSwitchDate() {
         return switchDate;
