@@ -83,7 +83,7 @@ public class GestioneTastoCuffie extends BroadcastReceiver {
 
             Log.getInstance().ScriveLog("CUFFIE: ONReceive cuffie. Evento: " + Integer.toString(event.getKeyCode()));
 
-            if (event.getKeyCode() == 88) {
+            if (event.getKeyCode() == 88 || event.getKeyCode() == 126) {
                 // Calendar c = Calendar.getInstance();
                 // int seconds = c.get(Calendar.SECOND);
                 // int diffe=PlayerOne.SecondoUltimoCambio-seconds;

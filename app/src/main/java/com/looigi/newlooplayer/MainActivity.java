@@ -14,6 +14,7 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.telephony.AccessNetworkConstants;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -97,6 +98,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
+
         if (Utility.getInstance().EsisteFile(VariabiliGlobali.getInstance().getPercorsoDIR() + "/" + "EliminaDebug.txt")) {
             Log.getInstance().EliminaFileLog();
         }
@@ -153,7 +157,9 @@ public class MainActivity extends AppCompatActivity {
             startService(new Intent(MainActivity.this, ServizioBackground.class));
         } */
 
-        startService(new Intent(MainActivity.this, ServizioBackground.class));
+        ChiamateWs c = new ChiamateWs();
+        c.RitornaVersioneApplicazione();
+        // startService(new Intent(MainActivity.this, ServizioBackground.class));
     }
 
     private void ImpostaOggettiAVideo() {

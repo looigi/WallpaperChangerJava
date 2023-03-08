@@ -26,6 +26,7 @@ public class Permessi {
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.GET_ACCOUNTS,
                 Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.REQUEST_INSTALL_PACKAGES,
                 // Manifest.permission.WAKE_LOCK,
                 // Manifest.permission.DISABLE_KEYGUARD,
                 // Manifest.permission.READ_PHONE_STATE,

@@ -1,16 +1,23 @@
 package com.looigi.newlooplayer.WebServices;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 
+import com.looigi.newlooplayer.BuildConfig;
+import com.looigi.newlooplayer.MainActivity;
 import com.looigi.newlooplayer.R;
+import com.looigi.newlooplayer.ServizioBackground;
 import com.looigi.newlooplayer.adapters.AdapterListenerArtisti;
 import com.looigi.newlooplayer.Log;
 import com.looigi.newlooplayer.OggettiAVideo;
 import com.looigi.newlooplayer.Utility;
 import com.looigi.newlooplayer.adapters.AdapterListenerTags;
+import com.looigi.newlooplayer.download.DownloadAPK;
 import com.looigi.newlooplayer.download.DownloadBrano;
 import com.looigi.newlooplayer.download.DownloadImage;
 import com.looigi.newlooplayer.strutture.StrutturaArtisti;
@@ -22,6 +29,7 @@ import com.looigi.newlooplayer.strutture.StrutturaListaBrani;
 import com.looigi.newlooplayer.strutture.StrutturaTags;
 import com.looigi.newlooplayer.treeview.AlberoBrani;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +74,21 @@ public class ChiamateWs implements TaskDelegate {
                     false);
         }
     } */
+
+    public void RitornaVersioneApplicazione() {
+        Log.getInstance().ScriveLog("Ritorna versione applicazione");
+
+        String Urletto="RitornaVersioneApplicazione";
+
+        TipoOperazione = "RitornaVersioneApplicazione";
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                10000,
+                false);
+    }
 
     public void RitornaListaAlbum(String Artista) {
         Log.getInstance().ScriveLog("Ritorna lista Album");
@@ -358,6 +381,43 @@ public class ChiamateWs implements TaskDelegate {
             case "RitornaListaBraniAlbumArtista":
                 RitornaListaAlbumArtistaBrani(result);
                 break;
+            case "RitornaVersioneApplicazione":
+                RitornaVersione(result);
+                break;
+        }
+    }
+
+    private void RitornaVersione(String result) {
+        if (!result.contains("ERROR:")) {
+            String versionName = BuildConfig.VERSION_NAME;
+            Log.getInstance().ScriveLog("Versione attuale: " + versionName);
+            String[] r = result.split(";");
+            String versioneNuova = r[0];
+            Log.getInstance().ScriveLog("Ritornata versione: " + versioneNuova);
+            if (!versionName.equals(versioneNuova)) {
+                String pathNuovo = r[1];
+                Log.getInstance().ScriveLog("Ritornata versione path: " + pathNuovo);
+
+                String PATH_TO_APK = RadiceWS + pathNuovo;
+                String PATH_DEST = VariabiliGlobali.getInstance().getPercorsoDIR() + "/" + pathNuovo;
+                Log.getInstance().ScriveLog("Aggiorno Versione: Effettuo download: " + PATH_TO_APK);
+                Log.getInstance().ScriveLog("Aggiorno Versione: Destinazione: " + PATH_DEST);
+
+                DownloadAPK d = new DownloadAPK(VariabiliGlobali.getInstance().getPercorsoDIR() + "/Versioni", PATH_TO_APK, PATH_DEST);
+                d.execute(PATH_TO_APK);
+            } else {
+                Log.getInstance().ScriveLog("Versione uguale");
+
+                VariabiliGlobali.getInstance().getFragmentActivityPrincipale().startService(new Intent(
+                        VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        ServizioBackground.class));
+            }
+        } else {
+            Log.getInstance().ScriveLog("Ritornato errore su ritorno versione: " + result);
+
+            VariabiliGlobali.getInstance().getFragmentActivityPrincipale().startService(new Intent(
+                    VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                    ServizioBackground.class));
         }
     }
 
