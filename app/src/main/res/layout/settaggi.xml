@@ -187,6 +187,32 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/layShareDebug"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="6">
+
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:textColor="#0000CC"
+                        android:text="Condividi file debug"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <Button
+                        android:id="@+id/btnShareDebug"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#0000CC"
+                        android:layout_weight="2"
+                        android:ems="10" />
+
+                </LinearLayout>
+
                 <!-- <Switch
                     android:id="@+id/switchEliminaDebug"
                     android:layout_width="match_parent"
@@ -257,6 +283,39 @@
 
                     <Button
                         android:id="@+id/btnListe"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#0000CC"
+                        android:layout_weight="2"
+                        android:ems="10" />
+
+                </LinearLayout>
+
+                <View
+                    android:id="@+id/viewAmministrazione"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <LinearLayout
+                    android:id="@+id/layAmministrazione"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="6">
+
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:textColor="#0000CC"
+                        android:text="Amministrazione"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <Button
+                        android:id="@+id/btnAmministrazione"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:textColor="#0000CC"

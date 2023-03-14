@@ -10,6 +10,7 @@ import android.os.Environment;
 import com.looigi.newlooplayer.strutture.StrutturaArtisti;
 import com.looigi.newlooplayer.strutture.StrutturaBrano;
 import com.looigi.newlooplayer.strutture.StrutturaImmagini;
+import com.looigi.newlooplayer.strutture.StrutturaImmaginiDaCambiare;
 import com.looigi.newlooplayer.strutture.StrutturaListaAlbum;
 import com.looigi.newlooplayer.strutture.StrutturaListaBrani;
 import com.looigi.newlooplayer.strutture.StrutturaTags;
@@ -112,7 +113,7 @@ public class VariabiliGlobali {
     private boolean OpacitaBottoni = true;
     private Integer SecondiOpacitaBottoni = 10;
 
-    private boolean MostraOrologio = true;
+    private boolean MostraOrologio = false;
     private boolean Minimizzato = false;
 
     private int SpazioOccupatoSuDisco = 0;
@@ -133,6 +134,11 @@ public class VariabiliGlobali {
     private String txtDataSuperiore = "";
     private boolean DataInferiore = false;
     private String txtDataInferiore = "";
+    private List<StrutturaImmaginiDaCambiare> ImmaginiAlbumDaCambiare = new ArrayList<>();
+    private Integer quanteImmaginiDaScaricareGA = 10;
+
+    private int dimeSchermoX;
+    private int dimeSchermoY;
 
     public Context getContext() {
         return context;
@@ -140,6 +146,38 @@ public class VariabiliGlobali {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public Integer getQuanteImmaginiDaScaricareGA() {
+        return quanteImmaginiDaScaricareGA;
+    }
+
+    public void setQuanteImmaginiDaScaricareGA(Integer quanteImmaginiDaScaricareGA) {
+        this.quanteImmaginiDaScaricareGA = quanteImmaginiDaScaricareGA;
+    }
+
+    public List<StrutturaImmaginiDaCambiare> getImmaginiAlbumDaCambiare() {
+        return ImmaginiAlbumDaCambiare;
+    }
+
+    public void setImmaginiAlbumDaCambiare(List<StrutturaImmaginiDaCambiare> immaginiAlbumDaCambiare) {
+        ImmaginiAlbumDaCambiare = immaginiAlbumDaCambiare;
+    }
+
+    public int getDimeSchermoX() {
+        return dimeSchermoX;
+    }
+
+    public void setDimeSchermoX(int dimeSchermoX) {
+        this.dimeSchermoX = dimeSchermoX;
+    }
+
+    public int getDimeSchermoY() {
+        return dimeSchermoY;
+    }
+
+    public void setDimeSchermoY(int dimeSchermoY) {
+        this.dimeSchermoY = dimeSchermoY;
     }
 
     public boolean isDate() {

@@ -2,18 +2,14 @@ package com.looigi.newlooplayer.treeview;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Path;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.looigi.newlooplayer.Log;
 import com.looigi.newlooplayer.OggettiAVideo;
@@ -21,15 +17,12 @@ import com.looigi.newlooplayer.R;
 import com.looigi.newlooplayer.Utility;
 import com.looigi.newlooplayer.VariabiliGlobali;
 import com.looigi.newlooplayer.WebServices.ChiamateWs;
+import com.looigi.newlooplayer.WebServices.ChiamateWsAmministrazione;
 import com.looigi.newlooplayer.download.DownloadImage;
-import com.looigi.newlooplayer.notifiche.Notifica;
 import com.looigi.newlooplayer.strutture.StrutturaArtisti;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import me.texy.treeview.TreeNode;
-import me.texy.treeview.TreeView;
 
 public class AlberoBrani {
     int posY = 0;
@@ -132,6 +125,45 @@ public class AlberoBrani {
                                 "/ImmaginiMusica/" + Padri.get(i) + "/" + Figli.get(k) + "/Cover_" + Padri.get(i) + ".jpg";
                         new DownloadImage(imgFiglio, UrlImmagine).execute(UrlImmagine);
                     }
+                    String Alb = Figli.get(k);
+                    String Anno = "";
+                    if (Alb.contains("-")) {
+                        String[] A = Alb.split("-");
+                        Alb = "";
+                        for (int iii = 1; iii < A.length; iii++) {
+                            Alb += A[iii] + "-";
+                        }
+                        if (Alb.length() > 0) {
+                            Alb = Alb.substring(0, Alb.length() - 1);
+                        }
+                        Anno = A[0];
+                    }
+                    String Album = Padri.get(i) + ";" + Anno + ";" + Alb;
+                    imgFiglio.setOnClickListener(new View.OnClickListener() {
+                        public void onClick(View v) {
+                            if (VariabiliGlobali.getInstance().isAmministratore()) {
+                                String[] AlbInterno = Album.split(";");
+                                String Artista = AlbInterno[0];
+                                String Album = AlbInterno[2];
+                                String Anno = AlbInterno[1];
+                                TextView txtAlbum = (TextView) VariabiliGlobali.getInstance().getFragmentActivityPrincipale().findViewById(R.id.txtNomeAlbumGA);
+                                txtAlbum.setText(Album + " (" + Artista + "). Anno " + Anno);
+                                Bitmap bitmap = BitmapFactory.decodeFile(PathImmagineF);
+                                OggettiAVideo.getInstance().getImgAlbumGA().setImageBitmap(bitmap);
+                                OggettiAVideo.getInstance().getImgCambiaAlbumGA().setOnClickListener(new View.OnClickListener() {
+                                    public void onClick(View v) {
+                                        ChiamateWsAmministrazione ws = new ChiamateWsAmministrazione();
+                                        ws.ScaricaImmagineAlbum(Artista, Album, Anno);
+                                    }
+                                });
+                                OggettiAVideo.getInstance().getLayCambioImmagineGA().setVisibility(LinearLayout.GONE);
+                                OggettiAVideo.getInstance().getLayGestioneAlbum().setVisibility(LinearLayout.VISIBLE);
+
+                                // Toast.makeText(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                                //         "Premuto album: " + Album, Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    });
                     layFiglio.addView(imgFiglio);
 
                     LinearLayout.LayoutParams paramsI = new LinearLayout.LayoutParams(

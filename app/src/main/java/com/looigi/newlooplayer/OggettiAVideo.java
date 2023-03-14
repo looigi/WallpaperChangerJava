@@ -1,15 +1,11 @@
 package com.looigi.newlooplayer;
 
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.DigitalClock;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -85,6 +81,8 @@ public class OggettiAVideo {
     private Switch switchEliminaDebug;
     private LinearLayout layDebug;
     private Button btnDebug;
+    private LinearLayout layShareDebug;
+    private Button btnShareDebug;
     private Button btnListe;
     private Switch switchOrologio;
     private DigitalClock clock;
@@ -129,6 +127,112 @@ public class OggettiAVideo {
     private Button btnDataSuperiore;
     private Button btnDataInferiore;
     private ImageView imgTags;
+    private ImageView imgSuoneria;
+    private LinearLayout layGestioneAlbum;
+    private LinearLayout layCambioImmagineGA;
+    private ImageView imgCambiaAlbumGA;
+    private ImageView imgSceltaGA;
+    private ImageView imgIndietroGA;
+    private ImageView imgAvantiGA;
+    private TextView txtInfoGA;
+    private ImageView imgAlbumGA;
+    private EditText edtQuanteImmaginiGA;
+
+    public EditText getEdtQuanteImmaginiGA() {
+        return edtQuanteImmaginiGA;
+    }
+
+    public void setEdtQuanteImmaginiGA(EditText edtQuanteImmaginiGA) {
+        this.edtQuanteImmaginiGA = edtQuanteImmaginiGA;
+    }
+
+    public ImageView getImgAlbumGA() {
+        return imgAlbumGA;
+    }
+
+    public void setImgAlbumGA(ImageView imgAlbumGA) {
+        this.imgAlbumGA = imgAlbumGA;
+    }
+
+    public TextView getTxtInfoGA() {
+        return txtInfoGA;
+    }
+
+    public void setTxtInfoGA(TextView txtInfoGA) {
+        this.txtInfoGA = txtInfoGA;
+    }
+
+    public ImageView getImgIndietroGA() {
+        return imgIndietroGA;
+    }
+
+    public void setImgIndietroGA(ImageView imgIndietroGA) {
+        this.imgIndietroGA = imgIndietroGA;
+    }
+
+    public ImageView getImgAvantiGA() {
+        return imgAvantiGA;
+    }
+
+    public void setImgAvantiGA(ImageView imgAvantiGA) {
+        this.imgAvantiGA = imgAvantiGA;
+    }
+
+    public ImageView getImgSceltaGA() {
+        return imgSceltaGA;
+    }
+
+    public void setImgSceltaGA(ImageView imgSceltaGA) {
+        this.imgSceltaGA = imgSceltaGA;
+    }
+
+    public LinearLayout getLayCambioImmagineGA() {
+        return layCambioImmagineGA;
+    }
+
+    public void setLayCambioImmagineGA(LinearLayout layCambioImmagineGA) {
+        this.layCambioImmagineGA = layCambioImmagineGA;
+    }
+
+    public ImageView getImgCambiaAlbumGA() {
+        return imgCambiaAlbumGA;
+    }
+
+    public void setImgCambiaAlbumGA(ImageView imgCambiaAlbumGA) {
+        this.imgCambiaAlbumGA = imgCambiaAlbumGA;
+    }
+
+    public LinearLayout getLayGestioneAlbum() {
+        return layGestioneAlbum;
+    }
+
+    public void setLayGestioneAlbum(LinearLayout layGestioneAlbum) {
+        this.layGestioneAlbum = layGestioneAlbum;
+    }
+
+    public LinearLayout getLayShareDebug() {
+        return layShareDebug;
+    }
+
+    public void setLayShareDebug(LinearLayout layShareDebug) {
+        this.layShareDebug = layShareDebug;
+    }
+
+    public Button getBtnShareDebug() {
+        return btnShareDebug;
+    }
+
+    public void setBtnShareDebug(Button btnShareDebug) {
+        this.btnShareDebug = btnShareDebug;
+    }
+
+    public ImageView getImgSuoneria() {
+        return imgSuoneria;
+    }
+
+    public void setImgSuoneria(ImageView imgSuoneria) {
+        this.imgSuoneria = imgSuoneria;
+    }
 
     public ImageView getImgTags() {
         return imgTags;
@@ -973,10 +1077,15 @@ public class OggettiAVideo {
     public void ScriveInformazioni() {
         String Informazioni = "";
         // Informazioni += "Qualità Rete: " + Integer.toString(VariabiliGlobali.getInstance().getQualitaRete()) + "\n";
-        Informazioni += "Rete presente: " + (VariabiliGlobali.getInstance().isRetePresente() ? "Sì" : "No") +
-                "\n     " + VariabiliGlobali.getInstance().getUltimoStatoReteStringa() + " " + VariabiliGlobali.getInstance().getTipoRete() + " (" +
-                VariabiliGlobali.getInstance().getTipologiaRete() + ")";
-
+        if (VariabiliGlobali.getInstance().isRetePresente()) {
+            if (VariabiliGlobali.getInstance().getTipologiaRete().equals("WIFI")) {
+                Informazioni += "WiFi presente: " + VariabiliGlobali.getInstance().getUltimoStatoReteStringa() + " " + VariabiliGlobali.getInstance().getTipoRete();
+            } else {
+                Informazioni += "Mobile presente: " + VariabiliGlobali.getInstance().getUltimoStatoReteStringa() + " " + VariabiliGlobali.getInstance().getTipoRete();
+            }
+        } else {
+            Informazioni += "Rete assente";
+        }
         if (VariabiliGlobali.getInstance().getBraniTotali() != null && VariabiliGlobali.getInstance().getBraniTotali() > -1) {
             Informazioni += "\nBrani filtrati: " + Integer.toString(VariabiliGlobali.getInstance().getBraniTotali());
         }
@@ -1021,12 +1130,13 @@ public class OggettiAVideo {
             OggettiAVideo.getInstance().getTxtTesto().setText(VariabiliGlobali.getInstance().getStrutturaDelBrano().getTesto());
             OggettiAVideo.getInstance().getTxtNomeBrano().setText(VariabiliGlobali.getInstance().getStrutturaDelBrano().getBrano());
         }
+        Informazioni += "\nVersione APK: " + BuildConfig.VERSION_NAME;
 
         this.txtInformazioni.setText(Informazioni);
 
         int Stelle = VariabiliGlobali.getInstance().getStelleBrano();
         boolean[] bStelle = {false, false, false, false, false, false, false, false, false, false};
-        for (int i = 0; i < Stelle; i++) {
+        for (int i = 0; i <= Stelle; i++) {
             bStelle[i] = true;
         }
         imgBellezzza0.setImageResource(bStelle[0] ? R.drawable.preferito : R.drawable.preferito_vuoto);

@@ -213,6 +213,7 @@ public class ScannaDiscoPerBraniLocali extends AsyncTask<String, Integer, String
 
                 String CartellaTesto = VariabiliGlobali.getInstance().getPercorsoDIR() +
                         "/Testi/" + Artista + "/" + Anno + "-" + Album;
+                // LETTURA TESTO
                 String NomeFile = Nome + ".txt";
                 String Testo = Utility.getInstance().LeggeFile(CartellaTesto, NomeFile);
                 if (!Testo.contains("ERROR:")) {
@@ -221,6 +222,8 @@ public class ScannaDiscoPerBraniLocali extends AsyncTask<String, Integer, String
                     sb.setTesto("");
                 }
                 sb.setTestoTradotto("");
+
+                // LETTURA BELLEZZA / ASCOLTATA
                 NomeFile = Nome + ".2.txt";
                 String Altro = Utility.getInstance().LeggeFile(CartellaTesto, NomeFile);
                 if (!Altro.contains("ERROR:")) {
@@ -230,6 +233,24 @@ public class ScannaDiscoPerBraniLocali extends AsyncTask<String, Integer, String
                 } else {
                     sb.setBellezza(0);
                     sb.setAscoltata(0);
+                }
+
+                // LETTURA TAGS
+                NomeFile = Nome + ".TAGS.txt";
+                String Tags = Utility.getInstance().LeggeFile(CartellaTesto, NomeFile);
+                if (!Tags.contains("ERROR:")) {
+                    sb.setTags(Tags);
+                } else {
+                    sb.setTags("");
+                }
+
+                // LETTURA DATE
+                NomeFile = Nome + ".DATA.txt";
+                String Data = Utility.getInstance().LeggeFile(CartellaTesto, NomeFile);
+                if (!Data.contains("ERROR:")) {
+                    sb.setData(Data);
+                } else {
+                    sb.setData("");
                 }
 
                 sb.setEsisteBranoSuDisco(true);

@@ -53,10 +53,10 @@ public class GestioneTastoCuffie extends BroadcastReceiver {
         } else {
             String intentAction = intent.getAction();
             Log.getInstance().ScriveLog("CUFFIE: " + intentAction.toString() + " happended");
-            if (!Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
+            /* if (!Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
                 Log.getInstance().ScriveLog("CUFFIE: no media button information");
                 return;
-            }
+            } */
             KeyEvent event1 = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             KeyEvent event2 = (KeyEvent) intent.getParcelableExtra(Intent.ACTION_MEDIA_BUTTON);
             KeyEvent event;

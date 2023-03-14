@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
 import android.service.controls.Control;
@@ -22,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 
 import com.looigi.newlooplayer.WebServices.ChiamateWs;
 import com.looigi.newlooplayer.adapters.AdapterListenerArtisti;
@@ -31,7 +33,12 @@ import com.looigi.newlooplayer.cuffie.GestioneTastoCuffie;
 import com.looigi.newlooplayer.db_locale.db_dati;
 import com.looigi.newlooplayer.notifiche.Notifica;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class ServizioBackground extends Service {
     private GestioneTastoCuffie myReceiver = new GestioneTastoCuffie();
@@ -158,8 +165,6 @@ public class ServizioBackground extends Service {
 
         AzionaControlloSchermo();
         AzionaCuffie();
-
-        ControllaAmministratore();
 
         // GestioneCPU.getInstance().ImpostaValori(this);
         // GestioneCPU.getInstance().AttivaCPU();
@@ -706,9 +711,11 @@ public class ServizioBackground extends Service {
         OggettiAVideo.getInstance().getSwitchDebug().setChecked(debug);
         if (debug) {
             OggettiAVideo.getInstance().getLayDebug().setVisibility(LinearLayout.VISIBLE);
+            OggettiAVideo.getInstance().getLayShareDebug().setVisibility(LinearLayout.VISIBLE);
             OggettiAVideo.getInstance().getSwitchEliminaDebug().setVisibility(LinearLayout.VISIBLE);
         } else {
             OggettiAVideo.getInstance().getLayDebug().setVisibility(LinearLayout.GONE);
+            OggettiAVideo.getInstance().getLayShareDebug().setVisibility(LinearLayout.GONE);
             OggettiAVideo.getInstance().getSwitchEliminaDebug().setVisibility(LinearLayout.GONE);
         }
         OggettiAVideo.getInstance().getSwitchDebug().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -719,9 +726,11 @@ public class ServizioBackground extends Service {
                 db.ScriveImpostazioni();
                 if (isChecked) {
                     OggettiAVideo.getInstance().getLayDebug().setVisibility(LinearLayout.VISIBLE);
+                    OggettiAVideo.getInstance().getLayShareDebug().setVisibility(LinearLayout.VISIBLE);
                     OggettiAVideo.getInstance().getSwitchEliminaDebug().setVisibility(LinearLayout.VISIBLE);
                 } else {
                     OggettiAVideo.getInstance().getLayDebug().setVisibility(LinearLayout.GONE);
+                    OggettiAVideo.getInstance().getLayShareDebug().setVisibility(LinearLayout.GONE);
                     OggettiAVideo.getInstance().getSwitchEliminaDebug().setVisibility(LinearLayout.GONE);
                 }
             }
@@ -764,6 +773,34 @@ public class ServizioBackground extends Service {
                             }
                         });
                 alertDialog.show();
+            }
+        });
+
+        OggettiAVideo.getInstance().getBtnShareDebug().setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String FileLog = VariabiliGlobali.getInstance().getPercorsoDIR() + "/Logs.txt";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+                String currentDateAndTime = sdf.format(new Date());
+                String FileLogDest = VariabiliGlobali.getInstance().getPercorsoDIR() + "/Versioni/looWebPlayer_Logs_" + currentDateAndTime + ".txt";
+                Utility.getInstance().EliminaFileUnico(FileLogDest);
+
+                try {
+                    Utility.getInstance().CopiaFile(FileLog, FileLogDest);
+
+                    File fileImagePath = new File(FileLogDest);
+                    Uri apkUri = FileProvider.getUriForFile(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                            BuildConfig.APPLICATION_ID + ".fileprovider", fileImagePath);
+
+                    Intent share = new Intent(Intent.ACTION_SEND);
+                    share.putExtra(Intent.EXTRA_STREAM, apkUri);
+                    share.setType("text/*");
+                    share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    VariabiliGlobali.getInstance().getFragmentActivityPrincipale().startActivity(Intent.createChooser(share, "Share log File"));
+                    // Utility.getInstance().EliminaFileUnico(FileLogDest);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 
@@ -1155,16 +1192,6 @@ public class ServizioBackground extends Service {
         VariabiliGlobali.getInstance().ContaTags();
 
         VariabiliGlobali.getInstance().setePartito(true);
-    }
-
-    private void ControllaAmministratore() {
-        String filetto = VariabiliGlobali.getInstance().getPercorsoDIR() + "/Amministratore.txt";
-        if (Utility.getInstance().EsisteFile(filetto)) {
-            VariabiliGlobali.getInstance().setAmministratore(true);
-        } else {
-            VariabiliGlobali.getInstance().setAmministratore(false);
-        }
-        Log.getInstance().ScriveLog("Controllo amministratore: " + VariabiliGlobali.getInstance().isAmministratore());
     }
 
     private void InstanziaNotifica() {

@@ -254,15 +254,44 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txtNomeBrano"
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:weightSum="7"
                     android:layout_width="match_parent"
-                    android:textColor="#00AA00"
-                    android:gravity="center"
-                    android:textSize="18sp"
                     android:layout_height="wrap_content">
 
-                </TextView>
+                    <TextView
+                        android:id="@+id/txtNomeBrano"
+                        android:layout_width="0dp"
+                        android:layout_weight="6"
+                        android:textColor="#00AA00"
+                        android:gravity="left"
+                        android:textSize="18sp"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:id="@+id/imgSuoneria"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/ringtone"
+                            tools:ignore="ContentDescription" />
+
+                        <ImageView
+                            android:id="@+id/imgCondividi"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/share"
+                            tools:ignore="ContentDescription" />
+                    </LinearLayout>
+                </LinearLayout>
 
                 <!-- Sezione barra avanzamento -->
                 <LinearLayout

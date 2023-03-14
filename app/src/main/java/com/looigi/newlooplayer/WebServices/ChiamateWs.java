@@ -3,6 +3,8 @@ package com.looigi.newlooplayer.WebServices;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
@@ -153,7 +155,7 @@ public class ChiamateWs implements TaskDelegate {
                 NS2,
                 SA2,
                 30000,
-                false);
+                true);
     }
 
     public void ScaricaNuovaImmagine(String Artista, String Album, String Brano) {
@@ -317,7 +319,7 @@ public class ChiamateWs implements TaskDelegate {
                 NS,
                 SA,
                 20000,
-                true);
+                false);
     }
 
     public void Esegue(String Urletto, String tOperazione,
@@ -408,6 +410,8 @@ public class ChiamateWs implements TaskDelegate {
             } else {
                 Log.getInstance().ScriveLog("Versione uguale");
 
+                // boolean r1 = checkSystemWritePermission();
+
                 VariabiliGlobali.getInstance().getFragmentActivityPrincipale().startService(new Intent(
                         VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
                         ServizioBackground.class));
@@ -415,11 +419,36 @@ public class ChiamateWs implements TaskDelegate {
         } else {
             Log.getInstance().ScriveLog("Ritornato errore su ritorno versione: " + result);
 
+            // boolean r2 = checkSystemWritePermission();
+
             VariabiliGlobali.getInstance().getFragmentActivityPrincipale().startService(new Intent(
                     VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
                     ServizioBackground.class));
         }
     }
+
+    /* private boolean checkSystemWritePermission() {
+        boolean retVal = true;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            retVal = Settings.System.canWrite(VariabiliGlobali.getInstance().getFragmentActivityPrincipale());
+            // Log.d("TAG", "Can Write Settings: " + retVal);
+            if (retVal){
+                // Permission granted by the user
+            } else{
+                // permission not granted navigate to permission screen
+                openAndroidPermissionsMenu();
+            }
+        }
+
+        return retVal;
+    }
+
+    private void openAndroidPermissionsMenu() {
+        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+        intent.setData(Uri.parse("package:" + VariabiliGlobali.getInstance().getFragmentActivityPrincipale().getPackageName()));
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        VariabiliGlobali.getInstance().getFragmentActivityPrincipale().startActivity(intent);
+    } */
 
     private void fControllaAggiornamento(String result) {
         Log.getInstance().ScriveLog("Ultimo aggiornato ritornato: " + result);
@@ -881,7 +910,7 @@ public class ChiamateWs implements TaskDelegate {
                 VariabiliGlobali.getInstance().setImmagineAttuale(ImmagineDaImpostare);
             }
         } else {
-            OggettiAVideo.getInstance().getImgSfondo().setImageResource(R.drawable.logo);
+            Utility.getInstance().ImpostaSfondoLogo();
         }
 
         s.setImmagini(ListaImmagini);
@@ -896,7 +925,10 @@ public class ChiamateWs implements TaskDelegate {
         } else {
             s.setBellezza(Integer.parseInt(TestoEAltro[1]));
         }
-        String Testo = TestoEAltro[2];
+        String Testo = "";
+        if (TestoEAltro.length > 2) {
+            Testo = TestoEAltro[2];
+        }
         if (!Testo.isEmpty()) {
             Testo = Testo.replace("§", "\n");
             Testo = Testo.replace("%20", " ");
@@ -909,6 +941,18 @@ public class ChiamateWs implements TaskDelegate {
             NomeFile =  Traccia + "-" + DatiBrano[5] + ".2.txt";
             if (!Utility.getInstance().EsisteFile(CartellaTesto +  NomeFile)) {
                 String Cosa = s.getBellezza() + ";" + s.getAscoltata();
+                Utility.getInstance().CreaCartelle(CartellaTesto);
+                Utility.getInstance().ScriveFile(CartellaTesto, NomeFile, Cosa);
+            }
+            NomeFile =  Traccia + "-" + DatiBrano[5] + ".TAGS.txt";
+            if (!Utility.getInstance().EsisteFile(CartellaTesto +  NomeFile)) {
+                String Cosa = s.getTags();
+                Utility.getInstance().CreaCartelle(CartellaTesto);
+                Utility.getInstance().ScriveFile(CartellaTesto, NomeFile, Cosa);
+            }
+            NomeFile =  Traccia + "-" + DatiBrano[5] + ".DATA.txt";
+            if (!Utility.getInstance().EsisteFile(CartellaTesto +  NomeFile)) {
+                String Cosa = s.getData();
                 Utility.getInstance().CreaCartelle(CartellaTesto);
                 Utility.getInstance().ScriveFile(CartellaTesto, NomeFile, Cosa);
             }

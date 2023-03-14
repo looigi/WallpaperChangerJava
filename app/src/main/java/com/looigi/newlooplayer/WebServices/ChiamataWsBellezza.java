@@ -2,6 +2,7 @@ package com.looigi.newlooplayer.WebServices;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.widget.Toast;
 
 import com.looigi.newlooplayer.Log;
 import com.looigi.newlooplayer.OggettiAVideo;
@@ -18,10 +19,13 @@ import java.util.List;
 public class ChiamataWsBellezza implements TaskDelegate {
     private LetturaWSAsincrona bckAsyncTask;
 
-    private String RadiceWS = "http://looigi.ddns.net:1021/";
-    private String ws = "wsLWP.asmx/";
-    private String NS="http://wsLWP2.org/";
-    private String SA="http://wsLWP2.org/";
+    private final String RadiceWS = "http://looigi.ddns.net:1021/";
+    private final String ws = "wsMobile.asmx/";
+    private final String ws2 = "wsLWP.asmx/";
+    private final String NS="http://wsMobile2.org/";
+    private final String SA="http://wsMobile2.org/";
+    private final String NS2="http://csaricanuovai.org/";
+    private final String SA2="http://csaricanuovai.org/";
     private String TipoOperazione = "";
     private int Stelle;
 
@@ -36,10 +40,10 @@ public class ChiamataWsBellezza implements TaskDelegate {
 
         TipoOperazione = "SettaStelle";
         Esegue(
-                RadiceWS + ws + Urletto,
+                RadiceWS + ws2 + Urletto,
                 TipoOperazione,
-                NS,
-                SA,
+                NS2,
+                SA2,
                 10000,
                 true);
     }
@@ -75,14 +79,15 @@ public class ChiamataWsBellezza implements TaskDelegate {
     }
 
     private void ImpostateStelle(String result) {
-        /* String CHIAVE = VariabiliGlobali.getInstance().getStrutturaDelBrano().getArtista().toUpperCase().trim() + "-" +
-                VariabiliGlobali.getInstance().getStrutturaDelBrano().getAnno() +
-                VariabiliGlobali.getInstance().getStrutturaDelBrano().getAlbum().toUpperCase().trim() + "-" +
-                VariabiliGlobali.getInstance().getStrutturaDelBrano().getBrano().toUpperCase().trim(); */
+        if (result.contains("ERROR:")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            Utility.getInstance().AggiornaStelleAscoltata(this.Stelle,
+                    VariabiliGlobali.getInstance().getStrutturaDelBrano().getAscoltata());
 
-        db_dati db = new db_dati();
-        db.aggiornaStelleBrano(Integer.toString(VariabiliGlobali.getInstance().getStrutturaDelBrano().getIdBrano()), this.Stelle,
-                VariabiliGlobali.getInstance().getStrutturaDelBrano().getAscoltata());
+            Toast.makeText(VariabiliGlobali.getInstance().getContext(), "Stelle brano impostate",
+                     Toast.LENGTH_LONG).show();
+        }
     }
 
     public void StoppaEsecuzione() {

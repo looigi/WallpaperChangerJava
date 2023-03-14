@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
@@ -13,6 +15,7 @@ import android.os.Looper;
 import android.view.textclassifier.TextClassifierEvent;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -28,13 +31,17 @@ import com.looigi.newlooplayer.strutture.StrutturaTags;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -59,7 +66,7 @@ public class Utility {
     private int SecondiPassatiCambioImmagine;
     private int secondiControlloRete;
     private int SecondiPerCaricamentoPregresso;
-    // private ProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
     // private boolean ultimoStatoRete; // int ultimoStatoRete = -999;
     private Runnable runTimerOpacita;
     private Handler handlerTimerOpacita;
@@ -80,6 +87,18 @@ public class Utility {
         Return=Return.replace("\n"," ");
 
         return Return;
+    }
+
+    public void CopiaFile(String srcF, String dstF) throws IOException {
+        File src = new File(srcF);
+        File dst = new File(dstF);
+        FileInputStream inStream = new FileInputStream(src);
+        FileOutputStream outStream = new FileOutputStream(dst);
+        FileChannel inChannel = inStream.getChannel();
+        FileChannel outChannel = outStream.getChannel();
+        inChannel.transferTo(0, inChannel.size(), outChannel);
+        inStream.close();
+        outStream.close();
     }
 
     public Integer ScriveFile(String Path, String fileName, String CosaScrivere) {
@@ -277,6 +296,24 @@ public class Utility {
         }
     }
 
+    public void PulisceTemporanei() {
+        File rootPrincipale = new File(VariabiliGlobali.getInstance().getPercorsoDIR() + "/Versioni");
+        if (!rootPrincipale.exists()) {
+            rootPrincipale.mkdir();
+        }
+        File[] list = rootPrincipale.listFiles();
+
+        for (File f : list) {
+            if (f.isDirectory()) {
+            } else {
+                String Filetto = f.getAbsoluteFile().getPath(); // Questo contiene tutto, sia il path che il nome del file
+                if (Filetto.toUpperCase().contains(".TXT") || Filetto.toUpperCase().contains(".MP3") || Filetto.toUpperCase().contains(".WMA")) {
+                    Utility.getInstance().EliminaFileUnico(Filetto);
+                }
+            }
+        }
+    }
+
     public void EsegueBranoInStreaming() {
         String DaDove = "Url";
         String url = VariabiliGlobali.getInstance().getStrutturaDelBrano().getUrlBrano();
@@ -328,6 +365,12 @@ public class Utility {
 
                 VariabiliGlobali.getInstance().getMediaPlayer().start();
             }
+
+            int Asc = VariabiliGlobali.getInstance().getStrutturaDelBrano().getAscoltata() + 1;
+            VariabiliGlobali.getInstance().getStrutturaDelBrano().setAscoltata(Asc);
+            Utility.getInstance().AggiornaStelleAscoltata(
+                    VariabiliGlobali.getInstance().getStrutturaDelBrano().getBellezza(),
+                    VariabiliGlobali.getInstance().getStrutturaDelBrano().getAscoltata());
 
             VariabiliGlobali.getInstance().getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
@@ -651,15 +694,22 @@ public class Utility {
             }
         } */
 
+        ImpostaSfondoLogo();
+
         if (VariabiliGlobali.getInstance().isRandom()) {
             int quantiBrani = db.ContaBraniFiltrati(); // VariabiliGlobali.getInstance().getQuantiBraniInLocale(); // ListaBrani.size();
-            int random = GeneraNumeroRandom(quantiBrani);
-            Log.getInstance().ScriveLog("Avanti brano in locale. Random: " + Integer.toString(random) + "/" + Integer.toString(quantiBrani));
-            try {
-                int idBrano = db.CercaBrano(random); //  VariabiliGlobali.getInstance().getBraniInLocale().get(random);
-                sb = db.RitornaBrano(Integer.toString(idBrano));
-            } catch (Exception e) {
-                sb = null;
+            if (quantiBrani < 1) {
+                int random = GeneraNumeroRandom(quantiBrani);
+                Log.getInstance().ScriveLog("Avanti brano in locale. Random: " + Integer.toString(random) + "/" + Integer.toString(quantiBrani));
+                try {
+                    int idBrano = db.CercaBrano(random); //  VariabiliGlobali.getInstance().getBraniInLocale().get(random);
+                    sb = db.RitornaBrano(Integer.toString(idBrano));
+                } catch (Exception e) {
+                    sb = null;
+                }
+            } else {
+                Toast.makeText(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        "Nessun brano rilevato con i filtri attuali", Toast.LENGTH_LONG).show();
             }
         } else {
             Log.getInstance().ScriveLog("Avanti brano in locale. Progressivo: " + Integer.toString(1));
@@ -682,12 +732,25 @@ public class Utility {
             if (sb.getImmagini().size() > 0) {
                 ImmagineDaImpostare = sb.getImmagini().get(0).getNomeImmagine();
                 StruttImmDaImpostare = sb.getImmagini().get(0);
-            }
-            Log.getInstance().ScriveLog("Avanti brano in locale. Immagine da impostare: " + ImmagineDaImpostare);
-            VariabiliGlobali.getInstance().setImmagineAttuale(ImmagineDaImpostare);
 
-            Bitmap bitmap = BitmapFactory.decodeFile(StruttImmDaImpostare.getPathImmagine());
-            OggettiAVideo.getInstance().getImgSfondo().setImageBitmap(bitmap);
+                Log.getInstance().ScriveLog("Avanti brano in locale. Immagine da impostare: " + ImmagineDaImpostare);
+                VariabiliGlobali.getInstance().setImmagineAttuale(ImmagineDaImpostare);
+
+                if (!EsisteFile(StruttImmDaImpostare.getPathImmagine())) {
+                    VariabiliGlobali.getInstance().setImmagineAttuale("");
+                    Utility.getInstance().ImpostaSfondoLogo();
+                    Log.getInstance().ScriveLog("Avanti brano in locale. Immagine logo in quanto non trovata");
+                    VariabiliGlobali.getInstance().setImmagineAttuale(ImmagineDaImpostare);
+                } else {
+                    Bitmap bitmap = BitmapFactory.decodeFile(StruttImmDaImpostare.getPathImmagine());
+                    OggettiAVideo.getInstance().getImgSfondo().setImageBitmap(bitmap);
+                }
+            } else {
+                VariabiliGlobali.getInstance().setImmagineAttuale("");
+                Utility.getInstance().ImpostaSfondoLogo();
+                Log.getInstance().ScriveLog("Avanti brano in locale. Immagine logo");
+                VariabiliGlobali.getInstance().setImmagineAttuale(ImmagineDaImpostare);
+            }
 
             Utility.getInstance().AzzeraSecondiCambioImmagine();
             Utility.getInstance().EsegueBranoInStreaming();
@@ -698,12 +761,13 @@ public class Utility {
 
             VariabiliGlobali.getInstance().setStaLeggendoProssimoBrano(false);
 
-            ImpostaDatiBranoSuccessivo(sb, false);
+            // ImpostaDatiBranoSuccessivo(sb, false);
         }
     }
 
     public void AvantiBrano() {
         VariabiliGlobali.getInstance().setImmaginiScaricate(0);
+        ImpostaSfondoLogo();
 
         if (VariabiliGlobali.getInstance().isCaricatoIlPregresso() & VariabiliGlobali.getInstance().getBranoPregresso() != null) {
             ImpostaDatiBranoSuccessivo(VariabiliGlobali.getInstance().getBranoPregresso(), true);
@@ -794,19 +858,36 @@ public class Utility {
                 if (NuovaImmagine > -1) {
                     StrutturaImmagini imm = VariabiliGlobali.getInstance().getStrutturaDelBrano().getImmagini().get(NuovaImmagine);
                     VariabiliGlobali.getInstance().setImmagineAttuale(imm.getUrlImmagine());
-                    if (!EsisteFile(imm.getPathImmagine())) {
-                        new DownloadImage(OggettiAVideo.getInstance().getImgSfondo(), imm.getUrlImmagine()).execute(VariabiliGlobali.getInstance().getImmagineAttuale());
+                    if (VariabiliGlobali.getInstance().getImmagineAttuale().isEmpty()) {
+                        Utility.getInstance().ImpostaSfondoLogo();
                     } else {
-                        Bitmap bitmap = BitmapFactory.decodeFile(imm.getPathImmagine());
-                        OggettiAVideo.getInstance().getImgSfondo().setImageBitmap(bitmap);
+                        if (!EsisteFile(imm.getPathImmagine())) {
+                            new DownloadImage(OggettiAVideo.getInstance().getImgSfondo(), imm.getUrlImmagine()).execute(VariabiliGlobali.getInstance().getImmagineAttuale());
+                        } else {
+                            Bitmap bitmap = BitmapFactory.decodeFile(imm.getPathImmagine());
+                            OggettiAVideo.getInstance().getImgSfondo().setImageBitmap(bitmap);
 
-                        Log.getInstance().ScriveLog("Immagine Impostata: " + imm.getPathImmagine());
-                        Notifica.getInstance().setImmagine(imm.getPathImmagine());
-                        Notifica.getInstance().AggiornaNotifica();
+                            Log.getInstance().ScriveLog("Immagine Impostata: " + imm.getPathImmagine());
+                            Notifica.getInstance().setImmagine(imm.getPathImmagine());
+                            Notifica.getInstance().AggiornaNotifica();
+                        }
                     }
                 }
             }
         }
+    }
+
+    public void VisualizzaErrore(String Errore) {
+        AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+        alertDialog.setTitle("Errore nella chiamata");
+        alertDialog.setMessage(Errore);
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 
     public void SettaBellezza(int Stelle) {
@@ -818,15 +899,16 @@ public class Utility {
 
     public void ChiudeDialog() {
         OggettiAVideo.getInstance().getImgRest().setVisibility(LinearLayout.GONE);
-        /* try {
+        try {
             progressDialog.dismiss();
         } catch (Exception ignored) {
-        } */
+        }
     }
 
     public void ApriDialog(boolean ApriDialog, String tOperazione) {
-        OggettiAVideo.getInstance().getImgRest().setVisibility(LinearLayout.VISIBLE);
-        /* if (ApriDialog) {
+        if (!ApriDialog) {
+            OggettiAVideo.getInstance().getImgRest().setVisibility(LinearLayout.VISIBLE);
+        } else {
             try {
                 progressDialog = new ProgressDialog(VariabiliGlobali.getInstance().getContext());
                 progressDialog.setMessage("Attendere Prego...\n\n" + tOperazione);
@@ -837,7 +919,7 @@ public class Utility {
             } catch (Exception ignored) {
 
             }
-        } */
+        }
     }
 
     public void ImpostaDatiBranoSuccessivo(StrutturaBrano s, boolean Pregresso) {
@@ -888,7 +970,7 @@ public class Utility {
                 OggettiAVideo.getInstance().getImgSfondo().setImageBitmap(bitmap);
             }
         } else {
-            OggettiAVideo.getInstance().getImgSfondo().setImageResource(R.drawable.logo);
+            Utility.getInstance().ImpostaSfondoLogo();
         }
 
         VariabiliGlobali.getInstance().AggiungeBranoAdAscoltati(s.getIdBrano());
@@ -1210,5 +1292,41 @@ public class Utility {
         builder.append(picker.getYear());
 
         return builder.toString();
+    }
+
+    public void ImpostaSfondoLogo() {
+        Drawable dr = VariabiliGlobali.getInstance().getFragmentActivityPrincipale().getResources().getDrawable(R.drawable.logo);
+        Bitmap bitmap2 = ((BitmapDrawable) dr).getBitmap();
+        Drawable d = new BitmapDrawable(VariabiliGlobali.getInstance().getFragmentActivityPrincipale().getResources(), Bitmap.createScaledBitmap(bitmap2,
+                250, 250, true));
+        OggettiAVideo.getInstance().getImgSfondo().setImageDrawable(d);
+        /* OggettiAVideo.getInstance().getImgSfondo().setImageResource(R.drawable.logo); */
+        Log.getInstance().ScriveLog("Impostata immagine logo");
+    }
+
+    public void AggiornaStelleAscoltata(int Stelle, int Ascoltata) {
+        VariabiliGlobali.getInstance().getStrutturaDelBrano().setBellezza(Stelle);
+        VariabiliGlobali.getInstance().setStelleBrano(Stelle);
+        VariabiliGlobali.getInstance().getStrutturaDelBrano().setAscoltata(Ascoltata);
+
+        db_dati db = new db_dati();
+        db.aggiornaStelleBrano(Integer.toString(VariabiliGlobali.getInstance().getStrutturaDelBrano().getIdBrano()),
+                VariabiliGlobali.getInstance().getStrutturaDelBrano().getBellezza(),
+                VariabiliGlobali.getInstance().getStrutturaDelBrano().getAscoltata());
+
+        String Artista = VariabiliGlobali.getInstance().getStrutturaDelBrano().getArtista();
+        String Album = VariabiliGlobali.getInstance().getStrutturaDelBrano().getAlbum();
+        String Brano = VariabiliGlobali.getInstance().getStrutturaDelBrano().getBrano();
+        String Path = VariabiliGlobali.getInstance().getPercorsoDIR() + "/Testi/" + Artista + "/" +
+                Album + "/";
+        String NomeFile = Brano + ".2.txt";
+
+        String Cosa = VariabiliGlobali.getInstance().getStrutturaDelBrano().getBellezza() + ";" +
+                VariabiliGlobali.getInstance().getStrutturaDelBrano().getAscoltata();
+        Utility.getInstance().CreaCartelle(Path);
+        Utility.getInstance().EliminaFileUnico(Path + NomeFile);
+        Utility.getInstance().ScriveFile(Path, NomeFile, Cosa);
+
+        OggettiAVideo.getInstance().ScriveInformazioni();
     }
 }

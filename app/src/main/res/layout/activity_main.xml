@@ -392,6 +392,9 @@
         </LinearLayout>
     </RelativeLayout>
 
+    <include layout="@layout/amministrazione" />
+
+    <include layout="@layout/gestione_album" />
 
     <LinearLayout
         android:id="@+id/laySplash"
