@@ -28,6 +28,7 @@ public class AlberoBrani {
     int posY = 0;
 
     public void GeneraAlbero() {
+        Log.getInstance().ScriveLog("Creazione albero artisti. Inizio");
         LinearLayout layDestinazione = OggettiAVideo.getInstance().getLayAlbero();
 
         HorizontalScrollView sh =  new HorizontalScrollView(VariabiliGlobali.getInstance().getContext());
@@ -64,6 +65,7 @@ public class AlberoBrani {
                 }
             }
         }
+        Log.getInstance().ScriveLog("Creazione albero artisti. Padri: " + Padri.size());
 
         for (int i = 0; i < Padri.size(); i++) {
             // Log.getInstance().ScriveLog("Albero: Padri: " + Padri.get(i));
@@ -146,8 +148,11 @@ public class AlberoBrani {
                                 String Artista = AlbInterno[0];
                                 String Album = AlbInterno[2];
                                 String Anno = AlbInterno[1];
-                                TextView txtAlbum = (TextView) VariabiliGlobali.getInstance().getFragmentActivityPrincipale().findViewById(R.id.txtNomeAlbumGA);
-                                txtAlbum.setText(Album + " (" + Artista + "). Anno " + Anno);
+                                VariabiliGlobali.getInstance().setNomeAlbumGA(Album);
+                                VariabiliGlobali.getInstance().setNomeArtistaGA(Artista);
+                                VariabiliGlobali.getInstance().setAnnoAlbumGA(Anno);
+                                // TextView txtAlbum = (TextView) VariabiliGlobali.getInstance().getFragmentActivityPrincipale().findViewById(R.id.txtNomeAlbumGA);
+                                OggettiAVideo.getInstance().getTxtNomeAlbumGA().setText(Album + " (" + Artista + "). Anno " + Anno);
                                 Bitmap bitmap = BitmapFactory.decodeFile(PathImmagineF);
                                 OggettiAVideo.getInstance().getImgAlbumGA().setImageBitmap(bitmap);
                                 OggettiAVideo.getInstance().getImgCambiaAlbumGA().setOnClickListener(new View.OnClickListener() {
@@ -295,6 +300,8 @@ public class AlberoBrani {
 
             // root.addChild(nodoPadre);
         }
+
+        Log.getInstance().ScriveLog("Creazione albero artisti. Finito");
 
         // View treeView = new TreeView(root, VariabiliGlobali.getInstance().getContext(), new MyNodeViewFactory()).getView();
         // laySottoScroll.removeAllViews();

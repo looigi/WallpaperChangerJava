@@ -266,6 +266,20 @@
                         android:layout_gravity="center"
                         android:background="@drawable/preferito_vuoto" />
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_height="30dp">
+
+                    <ImageView
+                        android:id="@+id/imgBellezza10"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/preferito_vuoto" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -388,6 +402,10 @@
             <include layout="@layout/gestionetags" />
         </LinearLayout>
     </RelativeLayout>
+
+    <include layout="@layout/amministrazione" />
+
+    <include layout="@layout/gestione_album" />
 
     <LinearLayout
         android:id="@+id/laySplash"

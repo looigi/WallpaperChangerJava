@@ -39,6 +39,7 @@ public class OggettiAVideo {
     private ImageView imgBellezzza7;
     private ImageView imgBellezzza8;
     private ImageView imgBellezzza9;
+    private ImageView imgBellezzza10;
     private ImageView imgNoNet;
     private ListView lstArtisti;
     private TextView txtPreferiti;
@@ -129,6 +130,7 @@ public class OggettiAVideo {
     private ImageView imgTags;
     private ImageView imgSuoneria;
     private LinearLayout layGestioneAlbum;
+
     private LinearLayout layCambioImmagineGA;
     private ImageView imgCambiaAlbumGA;
     private ImageView imgSceltaGA;
@@ -137,6 +139,72 @@ public class OggettiAVideo {
     private TextView txtInfoGA;
     private ImageView imgAlbumGA;
     private EditText edtQuanteImmaginiGA;
+    private ImageView imgRinominaAlbumGA;
+    private ImageView imgAnnullaRinominaAlbumGA;
+    private LinearLayout layEditGA;
+    private EditText edtNomeAlbumGA;
+    private EditText edtAnnoAlbumGA;
+    private TextView txtNomeAlbumGA;
+
+    public static OggettiAVideo getOurInstance() {
+        return ourInstance;
+    }
+
+    public ImageView getImgBellezzza10() {
+        return imgBellezzza10;
+    }
+
+    public void setImgBellezzza10(ImageView imgBellezzza10) {
+        this.imgBellezzza10 = imgBellezzza10;
+    }
+
+    public ImageView getImgRinominaAlbumGA() {
+        return imgRinominaAlbumGA;
+    }
+
+    public ImageView getImgAnnullaRinominaAlbumGA() {
+        return imgAnnullaRinominaAlbumGA;
+    }
+
+    public void setImgAnnullaRinominaAlbumGA(ImageView imgAnnullaRinominaAlbumGA) {
+        this.imgAnnullaRinominaAlbumGA = imgAnnullaRinominaAlbumGA;
+    }
+
+    public EditText getEdtAnnoAlbumGA() {
+        return edtAnnoAlbumGA;
+    }
+
+    public void setEdtAnnoAlbumGA(EditText edtAnnoAlbumGA) {
+        this.edtAnnoAlbumGA = edtAnnoAlbumGA;
+    }
+
+    public LinearLayout getLayEditGA() {
+        return layEditGA;
+    }
+
+    public void setLayEditGA(LinearLayout layEditGA) {
+        this.layEditGA = layEditGA;
+    }
+
+    public void setImgRinominaAlbumGA(ImageView imgRinominaAlbumGA) {
+        this.imgRinominaAlbumGA = imgRinominaAlbumGA;
+    }
+
+    public EditText getEdtNomeAlbumGA() {
+        return edtNomeAlbumGA;
+    }
+
+    public void setEdtNomeAlbumGA(EditText edtNomeAlbumGA) {
+        this.edtNomeAlbumGA = edtNomeAlbumGA;
+    }
+
+    public TextView getTxtNomeAlbumGA() {
+        return txtNomeAlbumGA;
+    }
+
+    public void setTxtNomeAlbumGA(TextView txtNomeAlbumGA) {
+        this.txtNomeAlbumGA = txtNomeAlbumGA;
+    }
 
     public EditText getEdtQuanteImmaginiGA() {
         return edtQuanteImmaginiGA;
@@ -1135,7 +1203,7 @@ public class OggettiAVideo {
         this.txtInformazioni.setText(Informazioni);
 
         int Stelle = VariabiliGlobali.getInstance().getStelleBrano();
-        boolean[] bStelle = {false, false, false, false, false, false, false, false, false, false};
+        boolean[] bStelle = {false, false, false, false, false, false, false, false, false, false, false};
         for (int i = 0; i <= Stelle; i++) {
             bStelle[i] = true;
         }
@@ -1149,6 +1217,7 @@ public class OggettiAVideo {
         imgBellezzza7.setImageResource(bStelle[7] ? R.drawable.preferito : R.drawable.preferito_vuoto);
         imgBellezzza8.setImageResource(bStelle[8] ? R.drawable.preferito : R.drawable.preferito_vuoto);
         imgBellezzza9.setImageResource(bStelle[9] ? R.drawable.preferito : R.drawable.preferito_vuoto);
+        imgBellezzza10.setImageResource(bStelle[10] ? R.drawable.preferito : R.drawable.preferito_vuoto);
     // }
     }
 }

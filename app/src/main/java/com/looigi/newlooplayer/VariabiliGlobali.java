@@ -1,7 +1,11 @@
 package com.looigi.newlooplayer;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Environment;
 
@@ -136,9 +140,15 @@ public class VariabiliGlobali {
     private String txtDataInferiore = "";
     private List<StrutturaImmaginiDaCambiare> ImmaginiAlbumDaCambiare = new ArrayList<>();
     private Integer quanteImmaginiDaScaricareGA = 10;
+    private boolean staEditandoAlbum = false;
+    private String nomeAlbumGA;
+    private String nomeArtistaGA;
+    private String annoAlbumGA;
 
     private int dimeSchermoX;
     private int dimeSchermoY;
+    private AudioManager mAudioManager;
+    private ComponentName mReceiverComponent;
 
     public Context getContext() {
         return context;
@@ -146,6 +156,63 @@ public class VariabiliGlobali {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public BroadcastReceiver mNoisyReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (VariabiliGlobali.getInstance().isStaSuonando()) {
+                Utility.getInstance().premutoPlay(false);
+            }
+        }
+    };
+
+    public AudioManager getmAudioManager() {
+        return mAudioManager;
+    }
+
+    public void setmAudioManager(AudioManager mAudioManager) {
+        this.mAudioManager = mAudioManager;
+    }
+
+    public ComponentName getmReceiverComponent() {
+        return mReceiverComponent;
+    }
+
+    public void setmReceiverComponent(ComponentName mReceiverComponent) {
+        this.mReceiverComponent = mReceiverComponent;
+    }
+
+    public String getNomeAlbumGA() {
+        return nomeAlbumGA;
+    }
+
+    public void setNomeAlbumGA(String nomeAlbumGA) {
+        this.nomeAlbumGA = nomeAlbumGA;
+    }
+
+    public String getNomeArtistaGA() {
+        return nomeArtistaGA;
+    }
+
+    public void setNomeArtistaGA(String nomeArtistaGA) {
+        this.nomeArtistaGA = nomeArtistaGA;
+    }
+
+    public String getAnnoAlbumGA() {
+        return annoAlbumGA;
+    }
+
+    public void setAnnoAlbumGA(String annoAlbumGA) {
+        this.annoAlbumGA = annoAlbumGA;
+    }
+
+    public boolean isStaEditandoAlbum() {
+        return staEditandoAlbum;
+    }
+
+    public void setStaEditandoAlbum(boolean staEditandoAlbum) {
+        this.staEditandoAlbum = staEditandoAlbum;
     }
 
     public Integer getQuanteImmaginiDaScaricareGA() {

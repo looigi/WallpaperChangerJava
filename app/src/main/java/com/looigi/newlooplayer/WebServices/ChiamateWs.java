@@ -48,34 +48,50 @@ public class ChiamateWs implements TaskDelegate {
     private String TipoOperazione = "";
     private boolean branoPregresso;
 
-    /* public void RitornaListaBrani() {
-        long sec = (System.currentTimeMillis() - VariabiliGlobali.getInstance().getLastTimeChiamata()) / 1000;
-        if (sec < 5 &&
-                VariabiliGlobali.getInstance().getLastTimeChiamata() >0) {
-            return;
-        }
-        VariabiliGlobali.getInstance().setLastTimeChiamata(System.currentTimeMillis());
+    public void PuliziaCompleta() {
+        Log.getInstance().ScriveLog("Pulizie di Pasqua");
 
-        Log.getInstance().ScriveLog("Ritorna lista brani");
+        String Urletto="PulizieDiPasqua?Simula=SI";
 
-        String NomeFile = VariabiliGlobali.getInstance().getPercorsoDIR() + "/listaBrani.txt";
-        if (Utility.getInstance().EsisteFile(NomeFile)) {
-            Log.getInstance().ScriveLog("Lista Esistente");
-            String contenuto = Utility.getInstance().LeggeFile(VariabiliGlobali.getInstance().getPercorsoDIR(), "listaBrani.txt");
-            Utility.getInstance().LettaLista(contenuto);
-        } else {
-            String Urletto = "RitornaListaBraniMobile";
+        TipoOperazione = "PulizieDiPasqua";
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                200000,
+                true);
+    }
 
-            TipoOperazione = "RitornaListaBraniMobile";
-            Esegue(
-                    RadiceWS + ws + Urletto,
-                    TipoOperazione,
-                    NS,
-                    SA,
-                    30000,
-                    false);
-        }
-    } */
+    public void RicaricaBrani() {
+        Log.getInstance().ScriveLog("Ricarica brani. Eliminazione JSON");
+
+        String Urletto="EliminaJSON?idUtente=1";
+
+        TipoOperazione = "EliminaJSON";
+        Esegue(
+                RadiceWS + ws2 + Urletto,
+                TipoOperazione,
+                NS2,
+                SA2,
+                10000,
+                true);
+    }
+
+    public void RicaricaBrani2() {
+        Log.getInstance().ScriveLog("Ricarica brani2. Creazione JSON");
+
+        String Urletto="RefreshCanzoniHard?idUtente=1";
+
+        TipoOperazione = "RefreshCanzoniHard";
+        Esegue(
+                RadiceWS + ws2 + Urletto,
+                TipoOperazione,
+                NS2,
+                SA2,
+                200000,
+                true);
+    }
 
     public void RitornaVersioneApplicazione() {
         Log.getInstance().ScriveLog("Ritorna versione applicazione");
@@ -121,7 +137,7 @@ public class ChiamateWs implements TaskDelegate {
                 NS,
                 SA,
                 30000,
-                false);
+                true);
     }
 
     public void RitornaListaBrani(String Artista, String Album) {
@@ -386,6 +402,62 @@ public class ChiamateWs implements TaskDelegate {
             case "RitornaVersioneApplicazione":
                 RitornaVersione(result);
                 break;
+            case "EliminaJSON":
+                fEliminaJSON(result);
+                break;
+            case "RefreshCanzoniHard":
+                fRitornaJSON(result);
+                break;
+            case "PulizieDiPasqua":
+                fPulizieDiPasqua(result);
+                break;
+        }
+    }
+
+    private void fPulizieDiPasqua(String result) {
+        if (result.contains("ERROR:")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            Log.getInstance().ScriveLog("Pulizia lanciata");
+            AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("Pulizia lanciata in background");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
+        }
+    }
+
+    private void fRitornaJSON(String result) {
+        if (result.contains("ERROR:")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            Log.getInstance().ScriveLog("Refresh brani effettuato");
+            Utility.getInstance().PulisceListe(false);
+            AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+            alertDialog.setTitle("Alert");
+            alertDialog.setMessage("Brani ricaricati. E' necessaria una ripartenza");
+            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            Utility.getInstance().Uscita();
+                        }
+                    });
+            alertDialog.show();
+        }
+    }
+
+    private void fEliminaJSON(String result) {
+        if (result.contains("ERROR:")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            ChiamateWs ws = new ChiamateWs();
+            ws.RicaricaBrani2();
         }
     }
 
@@ -495,16 +567,7 @@ public class ChiamateWs implements TaskDelegate {
     private void fAggiornaTagsBrano(String result) {
         Log.getInstance().ScriveLog("Aggiornamento tags brano eseguito: " + result);
         if (result.contains("ERROR")) {
-            AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
-            alertDialog.setTitle("Alert");
-            alertDialog.setMessage(result);
-            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-            alertDialog.show();
+            Utility.getInstance().VisualizzaErrore(result);
         } else {
             OggettiAVideo.getInstance().getLayTagsBrano().setVisibility(LinearLayout.GONE);
         }
@@ -548,10 +611,11 @@ public class ChiamateWs implements TaskDelegate {
     }
 
     private void RitornaListaAlbumArtistaBrani(String result) {
-        // Log.getInstance().ScriveLog("Result: " + result);
+        Log.getInstance().ScriveLog("Ritorna lista album artisti: " + result.substring(0, 8));
         if (!result.equals("anyType{}")) {
             List<StrutturaListaBrani> lista = new ArrayList<>();
             String[] Globale = result.split("§");
+            Log.getInstance().ScriveLog("Ritorna lista album artisti: Rilevati " + Globale.length);
             for (int i = 0; i < Globale.length; i++) {
                 if (!Globale[i].isEmpty()) {
                     String[] Campi = Globale[i].split(";");
@@ -588,6 +652,8 @@ public class ChiamateWs implements TaskDelegate {
 
             AlberoBrani a = new AlberoBrani();
             a.GeneraAlbero();
+        } else {
+            Log.getInstance().ScriveLog("Ritorna lista album artisti: Nessun ritorno valido");
         }
     }
 
@@ -690,7 +756,10 @@ public class ChiamateWs implements TaskDelegate {
     }
 
     public void RitornaArtisti2(String result) {
+        Log.getInstance().ScriveLog("Ritorno artisti");
+
         String[] Globale = result.split("§");
+        Log.getInstance().ScriveLog("Ritorno artisti -> " + Globale.length);
 
         for (int i = 0; i < Globale.length; i++) {
             try {
@@ -715,12 +784,13 @@ public class ChiamateWs implements TaskDelegate {
                 sa.setImmagine(Immagine);
 
                 VariabiliGlobali.getInstance().AggiungeArtista(sa);
-
-                OggettiAVideo.getInstance().getBtnLista().setVisibility(LinearLayout.VISIBLE);
             } catch (Exception ignored) {
-
+                Log.getInstance().ScriveLog("Ritorno artisti. Errore: " + Utility.getInstance().PrendeErroreDaException(ignored));
             }
         }
+        Log.getInstance().ScriveLog("Ritorno artisti effettuato");
+
+        OggettiAVideo.getInstance().getBtnLista().setVisibility(LinearLayout.VISIBLE);
 
         AdapterListenerArtisti customAdapter = new AdapterListenerArtisti(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
                 VariabiliGlobali.getInstance().getArtisti());
@@ -928,6 +998,8 @@ public class ChiamateWs implements TaskDelegate {
         String Testo = "";
         if (TestoEAltro.length > 2) {
             Testo = TestoEAltro[2];
+        } else {
+            Testo = "";
         }
         if (!Testo.isEmpty()) {
             Testo = Testo.replace("§", "\n");

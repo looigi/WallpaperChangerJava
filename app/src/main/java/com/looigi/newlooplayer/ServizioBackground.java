@@ -355,6 +355,11 @@ public class ServizioBackground extends Service {
                 Utility.getInstance().SettaBellezza(9);
             }
         });
+        OggettiAVideo.getInstance().getImgBellezzza10().setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Utility.getInstance().SettaBellezza(10);
+            }
+        });
         /* ScrollView scrollView = (ScrollView) findViewById(R.id.horizontalScroll);
         MyHorizontalScrollView.OnScrollChangedListener o = new MyHorizontalScrollView.OnScrollChangedListener() {
             @Override
@@ -373,7 +378,7 @@ public class ServizioBackground extends Service {
                 OggettiAVideo.getInstance().getImgLinguetta1().setVisibility(LinearLayout.GONE);
             }
         });
-        OggettiAVideo.getInstance().setBtnLista(OggettiAVideo.getInstance().getBtnLista());
+        // OggettiAVideo.getInstance().setBtnLista(OggettiAVideo.getInstance().getBtnLista());
 
         /* imgChiudeLista.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {

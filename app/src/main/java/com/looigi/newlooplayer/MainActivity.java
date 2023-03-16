@@ -36,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.looigi.newlooplayer.WebServices.ChiamateWs;
+import com.looigi.newlooplayer.WebServices.ChiamateWsAmministrazione;
 import com.looigi.newlooplayer.adapters.AdapterListenerTagsBrano;
 import com.looigi.newlooplayer.adapters.AdapterListenerTagsTutti;
 import com.looigi.newlooplayer.cuffie.GestioneTastoCuffie;
@@ -46,13 +47,16 @@ import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private boolean ciSonoPermessi;
-    private AudioManager mAudioManager;
-    private ComponentName mReceiverComponent;
+    private AudioManager mAudioManagerInterno;
+    private ComponentName mReceiverComponentInterno;
 
     // private AudioManager mAudioManager;
     // private ComponentName mReceiverComponent;
@@ -193,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView imgBellezza7 = (ImageView) findViewById(R.id.imgBellezza7);
         ImageView imgBellezza8 = (ImageView) findViewById(R.id.imgBellezza8);
         ImageView imgBellezza9 = (ImageView) findViewById(R.id.imgBellezza9);
+        ImageView imgBellezza10 = (ImageView) findViewById(R.id.imgBellezza10);
         ImageView imgNoNet = (ImageView) findViewById(R.id.imgNoInternet);
         ListView lstArtisti = (ListView) findViewById(R.id.lstArtisti);
         ListView lstTags = (ListView) findViewById(R.id.lstTags);
@@ -269,6 +274,34 @@ public class MainActivity extends AppCompatActivity {
         Button btnDebug = (Button) findViewById(R.id.btnDebug);
         LinearLayout layShareDebug = (LinearLayout) findViewById(R.id.layShareDebug);
         Button btnShareDebug = (Button) findViewById(R.id.btnShareDebug);
+        Button btnShareDB = (Button) findViewById(R.id.btnShareDB);
+        btnShareDB.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String FileLog = VariabiliGlobali.getInstance().getPercorsoDIR() + "/DB/dati.db";
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault());
+                String currentDateAndTime = sdf.format(new Date());
+                String FileLogDest = VariabiliGlobali.getInstance().getPercorsoDIR() + "/Versioni/dati_" + currentDateAndTime + ".db";
+                Utility.getInstance().EliminaFileUnico(FileLogDest);
+
+                try {
+                    Utility.getInstance().CopiaFile(FileLog, FileLogDest);
+
+                    File fileImagePath = new File(FileLogDest);
+                    Uri apkUri = FileProvider.getUriForFile(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                            BuildConfig.APPLICATION_ID + ".fileprovider", fileImagePath);
+
+                    Intent share = new Intent(Intent.ACTION_SEND);
+                    share.putExtra(Intent.EXTRA_STREAM, apkUri);
+                    share.setType("text/*");
+                    share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    VariabiliGlobali.getInstance().getFragmentActivityPrincipale().startActivity(Intent.createChooser(share, "Share log File"));
+                    // Utility.getInstance().EliminaFileUnico(FileLogDest);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
         Button btnListe = (Button) findViewById(R.id.btnListe);
         Switch switchOrologio = (Switch) findViewById(R.id.switchOrologio);
         DigitalClock clock = (DigitalClock) findViewById(R.id.fldOrologio);
@@ -409,6 +442,53 @@ public class MainActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){}
         });
+
+        LinearLayout layEditGA = (LinearLayout) findViewById(R.id.layEditGA);
+        layEditGA.setVisibility(LinearLayout.GONE);
+        TextView txtNomeAlbumGA = (TextView) findViewById(R.id.txtNomeAlbumGA);
+        EditText edtNuovoNomeAlbumGA = (EditText) findViewById(R.id.edtNomeAlbumGA);
+        EditText edtNuovoAnnoAlbumGA = (EditText) findViewById(R.id.edtAnnoAlbumGA);
+        ImageView imgRinominaAlbumGA = (ImageView) findViewById(R.id.imgRinominaAlbumGA);
+        ImageView imgAnnullaRinominaAlbumGA = (ImageView) findViewById(R.id.imgAnnullaRinominaAlbumGA);
+        imgAnnullaRinominaAlbumGA.setVisibility(LinearLayout.GONE);
+        imgAnnullaRinominaAlbumGA.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                txtNomeAlbumGA.setVisibility(LinearLayout.VISIBLE);
+                layEditGA.setVisibility(LinearLayout.GONE);
+                imgAnnullaRinominaAlbumGA.setVisibility(LinearLayout.GONE);
+                VariabiliGlobali.getInstance().setStaEditandoAlbum(false);
+            }
+        });
+        VariabiliGlobali.getInstance().setStaEditandoAlbum(false);
+        imgRinominaAlbumGA.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (!VariabiliGlobali.getInstance().isStaEditandoAlbum()) {
+                    edtNuovoNomeAlbumGA.setText(VariabiliGlobali.getInstance().getNomeAlbumGA());
+                    edtNuovoAnnoAlbumGA.setText(VariabiliGlobali.getInstance().getAnnoAlbumGA());
+                    txtNomeAlbumGA.setVisibility(LinearLayout.GONE);
+                    layEditGA.setVisibility(LinearLayout.VISIBLE);
+                    imgAnnullaRinominaAlbumGA.setVisibility(LinearLayout.VISIBLE);
+                    VariabiliGlobali.getInstance().setStaEditandoAlbum(true);
+                } else {
+                    // TextView txtAlbum = (TextView) VariabiliGlobali.getInstance().getFragmentActivityPrincipale().findViewById(R.id.txtNomeAlbumGA);
+                    OggettiAVideo.getInstance().getTxtNomeAlbumGA().setText(edtNuovoNomeAlbumGA.getText().toString() +
+                            " (" + VariabiliGlobali.getInstance().getNomeArtistaGA() + "). Anno " + edtNuovoAnnoAlbumGA.getText().toString());
+
+                    ChiamateWsAmministrazione ws = new ChiamateWsAmministrazione();
+                    ws.RinominaAlbum(VariabiliGlobali.getInstance().getNomeArtistaGA(),
+                            VariabiliGlobali.getInstance().getNomeAlbumGA(),
+                            VariabiliGlobali.getInstance().getAnnoAlbumGA(),
+                            edtNuovoNomeAlbumGA.getText().toString(),
+                            edtNuovoAnnoAlbumGA.getText().toString());
+                }
+            }
+        });
+        edtNuovoNomeAlbumGA.setText(VariabiliGlobali.getInstance().getQuanteImmaginiDaScaricareGA().toString());
+        txtNomeAlbumGA.setVisibility(LinearLayout.VISIBLE);
+        OggettiAVideo.getInstance().setTxtNomeAlbumGA(txtNomeAlbumGA);
+        OggettiAVideo.getInstance().setImgRinominaAlbumGA(imgRinominaAlbumGA);
+        OggettiAVideo.getInstance().setEdtNomeAlbumGA(edtNuovoNomeAlbumGA);
+
         OggettiAVideo.getInstance().setLayCambioImmagineGA(layCambioImmagineGA);
         OggettiAVideo.getInstance().setImgSceltaGA(imgImmagineSceltaGA);
         OggettiAVideo.getInstance().setImgCambiaAlbumGA(imgCambioImmagineAlbum);
@@ -517,6 +597,7 @@ public class MainActivity extends AppCompatActivity {
         OggettiAVideo.getInstance().setImgBellezzza7(imgBellezza7);
         OggettiAVideo.getInstance().setImgBellezzza8(imgBellezza8);
         OggettiAVideo.getInstance().setImgBellezzza9(imgBellezza9);
+        OggettiAVideo.getInstance().setImgBellezzza10(imgBellezza10);
         OggettiAVideo.getInstance().setImgNoNet(imgNoNet);
         OggettiAVideo.getInstance().setLstArtisti(lstArtisti);
         OggettiAVideo.getInstance().setLstTags(lstTags);
@@ -604,6 +685,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button imgRicaricaBrani = (Button) findViewById(R.id.btnRicaricaBrani);
+        imgRicaricaBrani.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ChiamateWs ws = new ChiamateWs();
+                ws.RicaricaBrani();
+            }
+        });
+
+        Button imgPuliziaCompleta = (Button) findViewById(R.id.btnPuliziaCompleta);
+        imgPuliziaCompleta.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                PuliziaGenerale p = new PuliziaGenerale();
+                p.Pulizia();
+
+                ChiamateWs ws = new ChiamateWs();
+                ws.PuliziaCompleta();
+            }
+        });
+
         LinearLayout layGestioneAlbum = (LinearLayout) findViewById(R.id.layGestioneAlbum);
         layGestioneAlbum.setVisibility(LinearLayout.GONE);
         OggettiAVideo.getInstance().setLayGestioneAlbum(layGestioneAlbum);
@@ -676,23 +776,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mAudioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-        mReceiverComponent = new ComponentName(this, GestioneTastoCuffie.class);
-        mAudioManager.registerMediaButtonEventReceiver(mReceiverComponent);
+        mAudioManagerInterno = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+        mReceiverComponentInterno = new ComponentName(this, GestioneTastoCuffie.class);
+        mAudioManagerInterno.registerMediaButtonEventReceiver(mReceiverComponentInterno);
+        VariabiliGlobali.getInstance().setmAudioManager(mAudioManagerInterno);
+        VariabiliGlobali.getInstance().setmReceiverComponent(mReceiverComponentInterno);
 
         IntentFilter filterHeadset;
         filterHeadset = new IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-        registerReceiver(mNoisyReceiver, filterHeadset);
+        registerReceiver(VariabiliGlobali.getInstance().mNoisyReceiver, filterHeadset);
     }
-
-    private BroadcastReceiver mNoisyReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (VariabiliGlobali.getInstance().isStaSuonando()) {
-                Utility.getInstance().premutoPlay(false);
-            }
-        }
-    };
 
     @Override
     protected void onResume() {
@@ -738,36 +831,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void Uscita() {
         Log.getInstance().ScriveLog("Applicazione terminata");
-
-        Notifica.getInstance().RimuoviNotifica();
-
-        // GestioneCPU.getInstance().DisattivaCPU();
-
-        /* unregisterReceiver(mNoisyReceiver);
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-            receiver = null;
-        }
-        try {
-            mAudioManager.unregisterMediaButtonEventReceiver(mReceiverComponent);
-        } catch (Exception e) {
-            Log.getInstance().ScriveLog(e.getMessage());
-        }
-        if (VariabiliGlobali.getInstance().getMyReceiverCuffie() != null) {
-            unregisterReceiver(VariabiliGlobali.getInstance().getMyReceiverCuffie());
-            VariabiliGlobali.getInstance().setMyReceiverCuffie(null);
-        }
-        if (VariabiliGlobali.getInstance().getMyReceiverCuffie() != null) {
-            try {
-                unregisterReceiver(VariabiliGlobali.getInstance().getMyReceiverCuffie());
-            } catch (Exception e) {
-                Log.getInstance().ScriveLog(e.getMessage());
-            }
-        } */
-        stopService(new Intent(MainActivity.this, ServizioBackground.class));
-        mAudioManager.unregisterMediaButtonEventReceiver(mReceiverComponent);
-        unregisterReceiver(mNoisyReceiver);
-
-        System.exit(0);
+        Utility.getInstance().Uscita();
     }
 }

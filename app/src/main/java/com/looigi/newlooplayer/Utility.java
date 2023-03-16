@@ -2,6 +2,7 @@ package com.looigi.newlooplayer;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -46,7 +47,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.EventListener;
 import java.util.List;
 import java.util.Random;
 
@@ -697,19 +697,35 @@ public class Utility {
         ImpostaSfondoLogo();
 
         if (VariabiliGlobali.getInstance().isRandom()) {
-            int quantiBrani = db.ContaBraniFiltrati(); // VariabiliGlobali.getInstance().getQuantiBraniInLocale(); // ListaBrani.size();
-            if (quantiBrani < 1) {
-                int random = GeneraNumeroRandom(quantiBrani);
-                Log.getInstance().ScriveLog("Avanti brano in locale. Random: " + Integer.toString(random) + "/" + Integer.toString(quantiBrani));
-                try {
-                    int idBrano = db.CercaBrano(random); //  VariabiliGlobali.getInstance().getBraniInLocale().get(random);
-                    sb = db.RitornaBrano(Integer.toString(idBrano));
-                } catch (Exception e) {
-                    sb = null;
-                }
-            } else {
+            String Ritorno = db.ContaBraniFiltrati(); // VariabiliGlobali.getInstance().getQuantiBraniInLocale(); // ListaBrani.size();
+            if (Ritorno.contains("ERRORE")) {
+                sb = null;
                 Toast.makeText(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
-                        "Nessun brano rilevato con i filtri attuali", Toast.LENGTH_LONG).show();
+                        "Errore nel rilevamento dei brani", Toast.LENGTH_LONG).show();
+            } else {
+                String[] r = Ritorno.split(";");
+                int quantiBrani = Integer.parseInt(r[0]);
+                boolean ConFiltro = r[1].equals("FILTRO");
+                if (quantiBrani > 0) {
+                    int random = GeneraNumeroRandom(quantiBrani);
+                    Log.getInstance().ScriveLog("Avanti brano in locale. Random: " + Integer.toString(random) + "/" + Integer.toString(quantiBrani));
+                    try {
+                        int idBrano = db.CercaBrano(random, ConFiltro); //  VariabiliGlobali.getInstance().getBraniInLocale().get(random);
+                        if (idBrano == -1) {
+                            sb = null;
+                            Toast.makeText(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                                    "Nessun brano rilevato con i filtri attuali", Toast.LENGTH_LONG).show();
+                        } else {
+                            sb = db.RitornaBrano(Integer.toString(idBrano));
+                        }
+                    } catch (Exception e) {
+                        sb = null;
+                    }
+                } else {
+                    sb = null;
+                    Toast.makeText(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                            "Nessun brano rilevato con i filtri attuali", Toast.LENGTH_LONG).show();
+                }
             }
         } else {
             Log.getInstance().ScriveLog("Avanti brano in locale. Progressivo: " + Integer.toString(1));
@@ -726,6 +742,8 @@ public class Utility {
 
             String Path = sb.getPathBrano();
             boolean durata = Utility.getInstance().DurataBrano(Path);
+
+            OggettiAVideo.getInstance().getTxtTagsBrano().setText(sb.getTags());
 
             String ImmagineDaImpostare = "";
             StrutturaImmagini StruttImmDaImpostare = new StrutturaImmagini();
@@ -1328,5 +1346,39 @@ public class Utility {
         Utility.getInstance().ScriveFile(Path, NomeFile, Cosa);
 
         OggettiAVideo.getInstance().ScriveInformazioni();
+    }
+
+    public void Uscita() {
+        Notifica.getInstance().RimuoviNotifica();
+
+        // GestioneCPU.getInstance().DisattivaCPU();
+
+        /* unregisterReceiver(mNoisyReceiver);
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
+        try {
+            mAudioManager.unregisterMediaButtonEventReceiver(mReceiverComponent);
+        } catch (Exception e) {
+            Log.getInstance().ScriveLog(e.getMessage());
+        }
+        if (VariabiliGlobali.getInstance().getMyReceiverCuffie() != null) {
+            unregisterReceiver(VariabiliGlobali.getInstance().getMyReceiverCuffie());
+            VariabiliGlobali.getInstance().setMyReceiverCuffie(null);
+        }
+        if (VariabiliGlobali.getInstance().getMyReceiverCuffie() != null) {
+            try {
+                unregisterReceiver(VariabiliGlobali.getInstance().getMyReceiverCuffie());
+            } catch (Exception e) {
+                Log.getInstance().ScriveLog(e.getMessage());
+            }
+        } */
+        VariabiliGlobali.getInstance().getFragmentActivityPrincipale().stopService(new Intent(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                ServizioBackground.class));
+        VariabiliGlobali.getInstance().getmAudioManager().unregisterMediaButtonEventReceiver(VariabiliGlobali.getInstance().getmReceiverComponent());
+        VariabiliGlobali.getInstance().getFragmentActivityPrincipale().unregisterReceiver(VariabiliGlobali.getInstance().mNoisyReceiver);
+
+        System.exit(0);
     }
 }

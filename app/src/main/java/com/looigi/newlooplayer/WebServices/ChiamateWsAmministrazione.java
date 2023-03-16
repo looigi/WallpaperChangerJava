@@ -15,9 +15,11 @@ import com.looigi.newlooplayer.OggettiAVideo;
 import com.looigi.newlooplayer.R;
 import com.looigi.newlooplayer.Utility;
 import com.looigi.newlooplayer.VariabiliGlobali;
+import com.looigi.newlooplayer.db_locale.db_dati;
 import com.looigi.newlooplayer.download.DownloadImage;
 import com.looigi.newlooplayer.strutture.StrutturaImmaginiDaCambiare;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,29 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
     private final String NS2="http://csaricanuovai.org/";
     private final String SA2="http://csaricanuovai.org/";
     private String TipoOperazione = "";
+
+    public void RinominaAlbum(String Artista, String Album, String Anno, String NuovoNomeAlbum, String NuovoAnno) {
+        Log.getInstance().ScriveLog("Rinomina album. Artista: " + Artista + ", Album: " + Album + ", Anno: " + Anno +
+                ", Nuovo Anno: " + NuovoAnno + ", Nuovo Nome Album: " + NuovoNomeAlbum);
+
+        String Urletto="RinominaAlbum?" +
+                "idUtente=1" +
+                "&Artista=" + Artista +
+                "&Album=" + Album +
+                "&Anno=" + Anno +
+                "&NuovoAnno=" + NuovoAnno +
+                "&NuovoNomeAlbum=" + NuovoNomeAlbum;
+
+        TipoOperazione = "RinominaAlbum";
+
+        Esegue(
+                RadiceWS + ws2 + Urletto,
+                TipoOperazione,
+                NS2,
+                SA2,
+                10000,
+                true);
+    }
 
     public void AggiornaImmagineAlbum(String Artista, String Album, String Anno, String Immagine) {
         Log.getInstance().ScriveLog("Aggiorna immagine album. Artista: " + Artista + ", Album: " + Album + ", Anno: " + Anno + ", Immagine: " + Immagine);
@@ -69,6 +94,7 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
                 "&Album=" + Album +
                 "&Anno=" + Anno +
                 "&QuanteImmagini=" + VariabiliGlobali.getInstance().getQuanteImmaginiDaScaricareGA();
+        Urletto = Urletto.replace(" ", "%20");
 
         TipoOperazione = "ScaricaImmagineAlbum";
 
@@ -134,6 +160,74 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
             case "AggiornaImmagineAlbum":
                 fAggiornaImmagineAlbum(result);
                 break;
+            case "RinominaAlbum":
+                fRinominaAlbum(result);
+                break;
+        }
+    }
+
+    private void fRinominaAlbum(String result) {
+        if (result.contains("ERROR:")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            // RINOMINA PATHS
+            String VecchioPathBrani = VariabiliGlobali.getInstance().getPercorsoDIR() + "/Brani/" +
+                    VariabiliGlobali.getInstance().getNomeArtistaGA() + "/" +
+                    VariabiliGlobali.getInstance().getAnnoAlbumGA() + "-" + VariabiliGlobali.getInstance().getNomeAlbumGA();
+            String NuovoPathBrani = VariabiliGlobali.getInstance().getPercorsoDIR() + "/Brani/" +
+                    VariabiliGlobali.getInstance().getNomeArtistaGA() + "/" +
+                    OggettiAVideo.getInstance().getEdtAnnoAlbumGA().getText().toString() + "-" + OggettiAVideo.getInstance().getEdtNomeAlbumGA().getText().toString();
+            File oldFolder = new File(VecchioPathBrani);
+            File newFolder = new File(NuovoPathBrani);
+            boolean success = oldFolder.renameTo(newFolder);
+            Log.getInstance().ScriveLog("Rinomina path album: " + VecchioPathBrani + " -> " + NuovoPathBrani + " : " + success);
+
+            String VecchioPathImmaginiBrani = VariabiliGlobali.getInstance().getPercorsoDIR() + "/ImmaginiMusica/" +
+                    VariabiliGlobali.getInstance().getNomeArtistaGA() + "/" +
+                    VariabiliGlobali.getInstance().getAnnoAlbumGA() + "-" + VariabiliGlobali.getInstance().getNomeAlbumGA();
+            String NuovoPathImmaginiBrani = VariabiliGlobali.getInstance().getPercorsoDIR() + "/ImmaginiMusica/" +
+                    VariabiliGlobali.getInstance().getNomeArtistaGA() + "/" +
+                    OggettiAVideo.getInstance().getEdtAnnoAlbumGA().getText().toString() + "-" + OggettiAVideo.getInstance().getEdtNomeAlbumGA().getText().toString();
+            oldFolder = new File(VecchioPathImmaginiBrani);
+            newFolder = new File(NuovoPathImmaginiBrani);
+            success = oldFolder.renameTo(newFolder);
+            Log.getInstance().ScriveLog("Rinomina path immagini album: " + VecchioPathImmaginiBrani + " -> " + NuovoPathImmaginiBrani + " : " + success);
+
+            String VecchioPathTestiBrani = VariabiliGlobali.getInstance().getPercorsoDIR() + "/Testi/" +
+                    VariabiliGlobali.getInstance().getNomeArtistaGA() + "/" +
+                    VariabiliGlobali.getInstance().getAnnoAlbumGA() + "-" + VariabiliGlobali.getInstance().getNomeAlbumGA();
+            String NuovoPathTestiBrani = VariabiliGlobali.getInstance().getPercorsoDIR() + "/Testi/" +
+                    VariabiliGlobali.getInstance().getNomeArtistaGA() + "/" +
+                    OggettiAVideo.getInstance().getEdtAnnoAlbumGA().getText().toString() + "-" + OggettiAVideo.getInstance().getEdtNomeAlbumGA().getText().toString();
+            oldFolder = new File(VecchioPathTestiBrani);
+            newFolder = new File(NuovoPathTestiBrani);
+            success = oldFolder.renameTo(newFolder);
+            Log.getInstance().ScriveLog("Rinomina path testi album: " + VecchioPathTestiBrani + " -> " + NuovoPathTestiBrani + " : " + success);
+            // RINOMINA PATHS
+
+            // MODIFICHE SU DB
+            Log.getInstance().ScriveLog("Rinomina dati su tabelle");
+            db_dati db = new db_dati();
+            db.RinominaAlbum(VariabiliGlobali.getInstance().getNomeArtistaGA(),
+                    VariabiliGlobali.getInstance().getNomeAlbumGA(),
+                    VariabiliGlobali.getInstance().getAnnoAlbumGA(),
+                    OggettiAVideo.getInstance().getEdtNomeAlbumGA().getText().toString(),
+                    OggettiAVideo.getInstance().getEdtAnnoAlbumGA().getText().toString()
+                    );
+            // MODIFICHE SU DB
+
+            // ELIMINAZIONE LISTE
+            Log.getInstance().ScriveLog("Pulizia liste");
+            Utility.getInstance().PulisceListe(false);
+            // ELIMINAZIONE LISTE
+
+            VariabiliGlobali.getInstance().setNomeAlbumGA(OggettiAVideo.getInstance().getEdtNomeAlbumGA().getText().toString());
+            VariabiliGlobali.getInstance().setAnnoAlbumGA(OggettiAVideo.getInstance().getEdtAnnoAlbumGA().getText().toString());
+
+            OggettiAVideo.getInstance().getTxtNomeAlbumGA().setVisibility(LinearLayout.VISIBLE);
+            OggettiAVideo.getInstance().getLayEditGA().setVisibility(LinearLayout.GONE);
+            OggettiAVideo.getInstance().getImgAnnullaRinominaAlbumGA().setVisibility(LinearLayout.GONE);
+            VariabiliGlobali.getInstance().setStaEditandoAlbum(false);
         }
     }
 

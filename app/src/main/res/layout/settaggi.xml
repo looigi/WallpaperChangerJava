@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="5dp"
-        android:visibility="gone"
         android:background="@drawable/bordo_arrotondato_bianco_sfumato_trasp"
         android:orientation="vertical">
 
@@ -226,6 +225,37 @@
                     android:layout_marginBottom="2dp"
                     android:background="@android:color/darker_gray"/>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="6">
+
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:textColor="#0000CC"
+                        android:text="Condividi DB"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <Button
+                        android:id="@+id/btnShareDB"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#0000CC"
+                        android:layout_weight="2"
+                        android:ems="10" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:color/darker_gray"/>
+
                 <Switch
                     android:id="@+id/switchEliminaBrani"
                     android:layout_width="match_parent"
@@ -283,6 +313,31 @@
 
                     <Button
                         android:id="@+id/btnListe"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:textColor="#0000CC"
+                        android:layout_weight="2"
+                        android:ems="10" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="6">
+
+                    <TextView
+                        android:layout_gravity="center_vertical"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
+                        android:textColor="#0000CC"
+                        android:text="Ricarica Brani"
+                        android:layout_height="wrap_content">
+                    </TextView>
+
+                    <Button
+                        android:id="@+id/btnRicaricaBrani"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:textColor="#0000CC"

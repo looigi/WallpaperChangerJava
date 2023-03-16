@@ -84,8 +84,55 @@ public class db_dati {
         }
     }
 
-    public int ContaBraniFiltrati() {
-        int quantiBrani = -1;
+    public void RinominaAlbum(String Artista, String VecchioAlbum, String VecchioAnno, String NuovoAlbum, String NuovoAnno) {
+        if (myDB != null) {
+            // MODIFICA BRANI
+            String sql = "Update BraniInLocale Set " +
+                    "Album='" + NuovoAlbum + "', Anno='" + NuovoAnno + "' " +
+                    "Where Artista='" + Artista + "' And Album='" + VecchioAlbum + "' And Anno='" + VecchioAnno + "'";
+            Log.getInstance().ScriveLog("Rinomina album su db: " + sql);
+            try {
+                myDB.execSQL(sql);
+            } catch (Exception ignored) {
+                Log.getInstance().ScriveLog("ERRORE Nella rinomina dell'album: " + Utility.getInstance().PrendeErroreDaException(ignored));
+            }
+
+            // MODIFICA NOME ALBUM IMMAGINI
+            sql = "Update ImmaginiInLocale Set " +
+                    "Album='" + NuovoAlbum + "' " +
+                    "Where Album='" + VecchioAlbum + "'";
+            Log.getInstance().ScriveLog("Rinomina nome album su tabella immagini: " + sql);
+            try {
+                myDB.execSQL(sql);
+            } catch (Exception ignored) {
+                Log.getInstance().ScriveLog("ERRORE Nella rinomina del nome album sulle immagini: " + Utility.getInstance().PrendeErroreDaException(ignored));
+            }
+
+            // http://looigi.ddns.net:1051/ImmaginiMusica/Within Temptation/2008-Black Symphony/Cover_Within Temptation.jpg
+            String nuovoUrl = VariabiliGlobali.getInstance().getPercorsoBranoMP3SuURL() + "/ImmaginiMusica/" + Artista + "/" +
+                    NuovoAnno + "-" + NuovoAlbum + "/Cover_" + Artista + ".jpg";
+            // /storage/emulated/0/LooigiSoft/looWebPlayer/ImmaginiMusica/Within Temptation/2008-Black Symphony/Cover_Within Temptation.jpg
+            String nuovoPath = VariabiliGlobali.getInstance().getPercorsoDIR() + "/ImmaginiMusica/" + Artista + "/" +
+                    NuovoAnno + "-" + NuovoAlbum + "/Cover_" + Artista + ".jpg";
+            // /storage/emulated/0/LooigiSoft/looWebPlayer/ImmaginiMusica/Within Temptation/2008-Black Symphony
+            String nuovaCartella = VariabiliGlobali.getInstance().getPercorsoDIR() + "/ImmaginiMusica/" + Artista + "/" +
+                    NuovoAnno + "-" + NuovoAlbum;
+            sql = "Update ImmaginiInLocale Set " +
+                    "UrlImmagine='" + nuovoUrl + "', " +
+                    "PathImmagine='" + nuovoPath + "', " +
+                    "CartellaImmagine='" + nuovaCartella + "' " +
+                    "Where Album='" + NuovoAlbum + "'";
+            Log.getInstance().ScriveLog("Rinomina dati immagine su tabella immagini: " + sql);
+            try {
+                myDB.execSQL(sql);
+            } catch (Exception ignored) {
+                Log.getInstance().ScriveLog("ERRORE Nella rinomina dei dati immagine sulle immagini: " + Utility.getInstance().PrendeErroreDaException(ignored));
+            }
+        }
+    }
+
+    public String ContaBraniFiltrati() {
+        String quantiBrani = "";
 
         if (myDB != null) {
             try {
@@ -241,10 +288,37 @@ public class db_dati {
                 Cursor c = myDB.rawQuery(SQL, null);
                 c.moveToFirst();
                 if (c.getCount() > 0) {
-                    quantiBrani = c.getInt(0);
+                    if (c.getInt(0) > 0) {
+                        quantiBrani = Integer.toString(c.getInt(0)) + ";FILTRO";
+                    } else {
+                        SQL = "SELECT Count(*) FROM BraniInLocale";
+                        Log.getInstance().ScriveLog("Conteggia brani NON filtrati 1 in quanto non ho trovato nulla prima: " + SQL);
+
+                        Cursor c2 = myDB.rawQuery(SQL, null);
+                        c2.moveToFirst();
+                        if (c2.getCount() > 0) {
+                            quantiBrani = Integer.toString(c2.getInt(0)) + ";NOFILTRO";
+                        } else {
+                            Log.getInstance().ScriveLog("Ritorno 0... Nessun brano in locale");
+                            quantiBrani = "0;NULLA";
+                        }
+                    }
+                } else {
+                    SQL = "SELECT Count(*) FROM BraniInLocale";
+                    Log.getInstance().ScriveLog("Conteggia brani NON filtrati 2 in quanto non ho trovato nulla prima: " + SQL);
+
+                    Cursor c2 = myDB.rawQuery(SQL, null);
+                    c2.moveToFirst();
+                    if (c2.getCount() > 0) {
+                        quantiBrani = Integer.toString(c.getInt(0)) + ";NOFILTRO";
+                    } else {
+                        Log.getInstance().ScriveLog("Ritorno 0... Nessun brano in locale");
+                        quantiBrani = "0;NULLA";
+                    }
                 }
             } catch(SQLException e) {
                 // Ok = Utility.getInstance().PrendeErroreDaException(e);
+                quantiBrani = "0;ERRORE";
                 Log.getInstance().ScriveLog("ERRORE Nel conteggio dei brani: " + Utility.getInstance().PrendeErroreDaException(e));
             }
         }
@@ -252,25 +326,26 @@ public class db_dati {
         return quantiBrani;
     }
 
-    public int CercaBrano(int qualeBrano) {
+    public int CercaBrano(int qualeBrano, boolean FiltroPulito) {
         int idBrano = -1;
 
         if (myDB != null) {
             try {
                 String Altro = "";
-                if (VariabiliGlobali.getInstance().isRicercaTesto()) {
-                    String RicercaTesto = VariabiliGlobali.getInstance().getTestoDaRicercare().toUpperCase().trim().replace("'", "''");
-                    Altro +="Where (Artista Like '%" + RicercaTesto + "%' Or Album Like '%" + RicercaTesto + "%' Or Brano Like '%" + RicercaTesto + "%') ";
-                }
-                if (VariabiliGlobali.getInstance().isRicercaEsclusione()) {
-                    String RicercaTesto = VariabiliGlobali.getInstance().getTestoDaEscludere().toUpperCase().trim();
-                    if (Altro.isEmpty()) {
-                        Altro = "Where (Artista Not Like '%" + RicercaTesto + "%' And Album Not Like '%" + RicercaTesto + "%' And Brano Not Like '%" + RicercaTesto + "%') ";
-                    } else {
-                        Altro += "And (Artista Not Like '%" + RicercaTesto + "%' And Album Not Like '%" + RicercaTesto + "%' And Brano Not Like '%" + RicercaTesto + "%') ";
+                if (FiltroPulito) {
+                    if (VariabiliGlobali.getInstance().isRicercaTesto()) {
+                        String RicercaTesto = VariabiliGlobali.getInstance().getTestoDaRicercare().toUpperCase().trim().replace("'", "''");
+                        Altro += "Where (Artista Like '%" + RicercaTesto + "%' Or Album Like '%" + RicercaTesto + "%' Or Brano Like '%" + RicercaTesto + "%') ";
                     }
-                }
-                // if (VariabiliGlobali.getInstance().isRetePresente()) {
+                    if (VariabiliGlobali.getInstance().isRicercaEsclusione()) {
+                        String RicercaTesto = VariabiliGlobali.getInstance().getTestoDaEscludere().toUpperCase().trim();
+                        if (Altro.isEmpty()) {
+                            Altro = "Where (Artista Not Like '%" + RicercaTesto + "%' And Album Not Like '%" + RicercaTesto + "%' And Brano Not Like '%" + RicercaTesto + "%') ";
+                        } else {
+                            Altro += "And (Artista Not Like '%" + RicercaTesto + "%' And Album Not Like '%" + RicercaTesto + "%' And Brano Not Like '%" + RicercaTesto + "%') ";
+                        }
+                    }
+                    // if (VariabiliGlobali.getInstance().isRetePresente()) {
                     if (VariabiliGlobali.getInstance().isRicercaStelle()) {
                         int Stelle = VariabiliGlobali.getInstance().getStelleBrano();
                         if (Stelle == 0) {
@@ -287,7 +362,7 @@ public class db_dati {
                             }
                         }
                     }
-                // }
+                    // }
                 /* if (VariabiliGlobali.getInstance().isRicercaMaiAscoltata()) {
                     if (Altro.isEmpty()) {
                         Altro = "Where Bellezza = 0";
@@ -296,127 +371,134 @@ public class db_dati {
                     }
                 } */
 
-                String Preferiti = VariabiliGlobali.getInstance().getPreferiti();
-                Preferiti = Preferiti.replace(";;", ";");
-                if (VariabiliGlobali.getInstance().isRicercaPreferiti()) {
-                    String[] pref = Preferiti.split(";");
-                    if (!Preferiti.isEmpty() && Preferiti.contains(";") && !Preferiti.equals(";")) {
-                        if (Altro.isEmpty()) {
-                            Altro = "Where (";
-                        } else {
-                            Altro += " And (";
-                        }
-                        for (int i = 0; i < pref.length; i++) {
-                            if (!pref[i].isEmpty()) {
-                                Altro += "Artista = '" + pref[i] + "' Or ";
+                    String Preferiti = VariabiliGlobali.getInstance().getPreferiti();
+                    Preferiti = Preferiti.replace(";;", ";");
+                    if (VariabiliGlobali.getInstance().isRicercaPreferiti()) {
+                        String[] pref = Preferiti.split(";");
+                        if (!Preferiti.isEmpty() && Preferiti.contains(";") && !Preferiti.equals(";")) {
+                            if (Altro.isEmpty()) {
+                                Altro = "Where (";
+                            } else {
+                                Altro += " And (";
+                            }
+                            for (int i = 0; i < pref.length; i++) {
+                                if (!pref[i].isEmpty()) {
+                                    Altro += "Artista = '" + pref[i] + "' Or ";
+                                }
+                            }
+                            if (!Altro.isEmpty()) {
+                                Altro = Altro.substring(0, Altro.length() - 4) + ")";
                             }
                         }
-                        if (!Altro.isEmpty()) {
-                            Altro = Altro.substring(0, Altro.length() - 4) + ")";
+
+                        String PreferitiElimina = VariabiliGlobali.getInstance().getPreferitiElimina();
+                        PreferitiElimina = PreferitiElimina.replace(";;", ";");
+                        if (!PreferitiElimina.isEmpty() && PreferitiElimina.contains(";") && !PreferitiElimina.equals(";")) {
+                            if (Altro.isEmpty()) {
+                                Altro = "Where (";
+                            } else {
+                                Altro += " And (";
+                            }
+                            String[] prefElim = PreferitiElimina.split(";");
+                            boolean messo = false;
+                            for (int i = 0; i < prefElim.length; i++) {
+                                if (!prefElim[i].isEmpty()) {
+                                    Altro += "Artista != '" + prefElim[i] + "' And ";
+                                    messo = true;
+                                }
+                            }
+                            if (messo) {
+                                Altro = Altro.substring(0, Altro.length() - 5) + ")";
+                            }
                         }
                     }
 
-                    String PreferitiElimina = VariabiliGlobali.getInstance().getPreferitiElimina();
-                    PreferitiElimina = PreferitiElimina.replace(";;", ";");
-                    if (!PreferitiElimina.isEmpty() && PreferitiElimina.contains(";") && !PreferitiElimina.equals(";")) {
-                        if (Altro.isEmpty()) {
-                            Altro = "Where (";
-                        } else {
-                            Altro += " And (";
-                        }
-                        String[] prefElim = PreferitiElimina.split(";");
-                        boolean messo = false;
-                        for (int i = 0; i < prefElim.length; i++) {
-                            if (!prefElim[i].isEmpty()) {
-                                Altro += "Artista != '" + prefElim[i] + "' And ";
-                                messo = true;
+                    if (VariabiliGlobali.getInstance().isRicercaTags()) {
+                        String Tags = VariabiliGlobali.getInstance().getPreferitiTags();
+                        Tags = Tags.replace(";;", ";");
+                        if (!Tags.isEmpty() && Tags.contains(";") && !Tags.equals(";")) {
+                            if (Altro.isEmpty()) {
+                                Altro = "Where (";
+                            } else {
+                                Altro += " And (";
+                            }
+                            String[] t = Tags.split(";");
+                            for (int i = 0; i < t.length; i++) {
+                                if (!t[i].isEmpty()) {
+                                    Altro += "Instr(Tags, ';' || '" + t[i] + "' || ';') > 0 And ";
+                                }
+                            }
+                            if (!Altro.isEmpty()) {
+                                Altro = Altro.substring(0, Altro.length() - 5) + ")";
                             }
                         }
-                        if (messo) {
-                            Altro = Altro.substring(0, Altro.length() - 5) + ")";
-                        }
-                    }
-                }
 
-                if (VariabiliGlobali.getInstance().isRicercaTags()) {
-                    String Tags = VariabiliGlobali.getInstance().getPreferitiTags();
-                    Tags = Tags.replace(";;", ";");
-                    if (!Tags.isEmpty() && Tags.contains(";") && !Tags.equals(";")) {
-                        if (Altro.isEmpty()) {
-                            Altro = "Where (";
-                        } else {
-                            Altro += " And (";
-                        }
-                        String[] t = Tags.split(";");
-                        for (int i = 0; i < t.length; i++) {
-                            if (!t[i].isEmpty()) {
-                                Altro += "Instr(Tags, ';' || '" + t[i] + "' || ';') > 0 And ";
+                        String TagsElimina = VariabiliGlobali.getInstance().getPreferitiEliminaTags();
+                        TagsElimina = TagsElimina.replace(";;", ";");
+                        if (!TagsElimina.isEmpty() && TagsElimina.contains(";") && !TagsElimina.equals(";")) {
+                            if (Altro.isEmpty()) {
+                                Altro = "Where (";
+                            } else {
+                                Altro += " And (";
+                            }
+                            String[] t = TagsElimina.split(";");
+                            boolean messo = false;
+                            for (int i = 0; i < t.length; i++) {
+                                if (!t[i].isEmpty()) {
+                                    Altro += "Instr(Tags, ';' || '" + t[i] + "' || ';') = 0 And ";
+                                    messo = true;
+                                }
+                            }
+                            if (messo) {
+                                Altro = Altro.substring(0, Altro.length() - 5) + ")";
                             }
                         }
-                        if (!Altro.isEmpty()) {
-                            Altro = Altro.substring(0, Altro.length() - 5) + ")";
-                        }
                     }
 
-                    String TagsElimina = VariabiliGlobali.getInstance().getPreferitiEliminaTags();
-                    TagsElimina = TagsElimina.replace(";;", ";");
-                    if (!TagsElimina.isEmpty() && TagsElimina.contains(";") && !TagsElimina.equals(";")) {
-                        if (Altro.isEmpty()) {
-                            Altro = "Where (";
-                        } else {
-                            Altro += " And (";
-                        }
-                        String[] t = TagsElimina.split(";");
-                        boolean messo = false;
-                        for (int i = 0; i < t.length; i++) {
-                            if (!t[i].isEmpty()) {
-                                Altro += "Instr(Tags, ';' || '" + t[i] + "' || ';') = 0 And ";
-                                messo = true;
-                            }
-                        }
-                        if (messo) {
-                            Altro = Altro.substring(0, Altro.length() - 5) + ")";
-                        }
-                    }
-                }
-
-                if (VariabiliGlobali.getInstance().isDate()) {
-                    if (VariabiliGlobali.getInstance().isDataSuperiore()) {
-                        if (Altro.isEmpty()) {
-                            Altro = "Where ";
-                        } else {
-                            Altro += " And ";
-                        }
-                        Altro += "datetime(substr(data, 7, 4) || '-' || substr(data, 4, 2) || '-' || substr(data, 1, 2)) > '" + VariabiliGlobali.getInstance().getTxtDataSuperiore() + "'";
-                    } else {
-                        if (VariabiliGlobali.getInstance().isDataInferiore()) {
+                    if (VariabiliGlobali.getInstance().isDate()) {
+                        if (VariabiliGlobali.getInstance().isDataSuperiore()) {
                             if (Altro.isEmpty()) {
                                 Altro = "Where ";
                             } else {
                                 Altro += " And ";
                             }
-                            Altro += "datetime(substr(data, 7, 4) || '-' || substr(data, 4, 2) || '-' || substr(data, 1, 2)) < '" + VariabiliGlobali.getInstance().getTxtDataInferiore() + "'";
+                            Altro += "datetime(substr(data, 7, 4) || '-' || substr(data, 4, 2) || '-' || substr(data, 1, 2)) > '" + VariabiliGlobali.getInstance().getTxtDataSuperiore() + "'";
+                        } else {
+                            if (VariabiliGlobali.getInstance().isDataInferiore()) {
+                                if (Altro.isEmpty()) {
+                                    Altro = "Where ";
+                                } else {
+                                    Altro += " And ";
+                                }
+                                Altro += "datetime(substr(data, 7, 4) || '-' || substr(data, 4, 2) || '-' || substr(data, 1, 2)) < '" + VariabiliGlobali.getInstance().getTxtDataInferiore() + "'";
+                            }
                         }
                     }
+                } else {
+                    // NEssun filtro in quanto nella prima ricerca non ha trovato nulla
                 }
 
                 String SQL = "SELECT * FROM BraniInLocale " + Altro;
-                Log.getInstance().ScriveLog("Ricerca brano: " + SQL);
-                Log.getInstance().ScriveLog("Indice da ricercare: " + qualeBrano);
+                Log.getInstance().ScriveLog("Ricerca brano con filtro: " + SQL);
+                Log.getInstance().ScriveLog("Indice da ricercare con filtro: " + qualeBrano);
 
-                Cursor c = myDB.rawQuery(SQL, null);
-                c.moveToFirst();
-                if (c.getCount() > 0) {
-                    int conta = 0;
-                    do {
-                        conta++;
-                        if (conta >= qualeBrano) {
-                            idBrano = Integer.parseInt(c.getString(0));
-                            break;
-                        }
-                    } while (c.moveToNext());
+                if (qualeBrano > -1) {
+                    Cursor c = myDB.rawQuery(SQL, null);
+                    c.moveToFirst();
+                    if (c.getCount() > 0) {
+                        int conta = 0;
+                        do {
+                            conta++;
+                            if (conta >= qualeBrano) {
+                                idBrano = Integer.parseInt(c.getString(0));
+                                break;
+                            }
+                        } while (c.moveToNext());
+                    } else {
+                        Log.getInstance().ScriveLog("Brano non rilevato");
+                        idBrano = -1;
+                    }
                 } else {
-                    Log.getInstance().ScriveLog("Brano non rilevato");
                     idBrano = -1;
                 }
             } catch(SQLException e) {
@@ -812,7 +894,7 @@ public class db_dati {
                     VariabiliGlobali.getInstance().setDataInferiore(c.getString(23).equals("S"));
                     VariabiliGlobali.getInstance().setTxtDataInferiore(c.getString(24));
                     VariabiliGlobali.getInstance().setDate(c.getString(25).equals("S"));
-                    VariabiliGlobali.getInstance().setQuanteImmaginiDaScaricareGA(Integer.parseInt(c.getString(25)));
+                    VariabiliGlobali.getInstance().setQuanteImmaginiDaScaricareGA(Integer.parseInt(c.getString(26)));
 
                     VariabiliGlobali.getInstance().setBranosSuSDOriginale(VariabiliGlobali.getInstance().isBranoSuSD());
                 } else {
