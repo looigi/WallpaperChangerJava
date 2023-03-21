@@ -1225,6 +1225,38 @@ public class Utility {
         return lista;
     }
 
+    public List<StrutturaTags> CreaVettoreTagsAlbum(String Tags) {
+        String[] ListaTags = Tags.split(";");
+
+        List<StrutturaTags> lista = new ArrayList<>();
+        for (int i = 0; i < VariabiliGlobali.getInstance().getListaTags().size(); i++) {
+            boolean Ok = true;
+            for (int k = 0; k < ListaTags.length; k++) {
+                if (VariabiliGlobali.getInstance().getListaTags().get(i).getTag().equals(ListaTags[k])) {
+                    Ok = false;
+                    break;
+                }
+            }
+            if (Ok) {
+                lista.add(VariabiliGlobali.getInstance().getListaTags().get(i));
+            }
+        }
+
+        Collections.sort(lista, new Comparator<StrutturaTags>(){
+            public int compare(StrutturaTags obj1, StrutturaTags obj2) {
+                // ## Ascending order
+                return obj1.getTag().compareToIgnoreCase(obj2.getTag()); // To compare string values
+                // return Integer.valueOf(obj1.empId).compareTo(Integer.valueOf(obj2.empId)); // To compare integer values
+
+                // ## Descending order
+                // return obj2.firstName.compareToIgnoreCase(obj1.firstName); // To compare string values
+                // return Integer.valueOf(obj2.empId).compareTo(Integer.valueOf(obj1.empId)); // To compare integer values
+            }
+        });
+
+        return lista;
+    }
+
     public void PulisceListe(boolean mostraDialog) {
         EliminaFile(VariabiliGlobali.getInstance().getPercorsoDIR() + "/Liste", "ListaArtisti.txt");
         EliminaFile(VariabiliGlobali.getInstance().getPercorsoDIR() + "/Liste", "ListaTags.txt");

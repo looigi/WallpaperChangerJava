@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.looigi.newlooplayer.Log;
 import com.looigi.newlooplayer.OggettiAVideo;
@@ -18,6 +19,7 @@ import com.looigi.newlooplayer.Utility;
 import com.looigi.newlooplayer.VariabiliGlobali;
 import com.looigi.newlooplayer.WebServices.ChiamateWs;
 import com.looigi.newlooplayer.WebServices.ChiamateWsAmministrazione;
+import com.looigi.newlooplayer.adapters.AdapterListenerTagsTutti;
 import com.looigi.newlooplayer.download.DownloadImage;
 import com.looigi.newlooplayer.strutture.StrutturaArtisti;
 
@@ -38,7 +40,12 @@ public class AlberoBrani {
         layDestinazione.addView(sh);
 
         ScrollView sv =  new ScrollView(VariabiliGlobali.getInstance().getContext());
-        sv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT));
+
+        LinearLayout.LayoutParams layout_param= new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        layout_param.setMargins(5, 3, 3, 3);
+        sv.setLayoutParams(layout_param); // new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT));
 
         sh.removeAllViews();
         sh.addView(sv);
@@ -71,20 +78,48 @@ public class AlberoBrani {
             // Log.getInstance().ScriveLog("Albero: Padri: " + Padri.get(i));
             // TreeNode nodoPadre = new TreeNode(Padri.get(i));
             // nodoPadre.setLevel(0);
+            LinearLayout layPadre = new LinearLayout(VariabiliGlobali.getInstance().getContext());
+            LinearLayout.LayoutParams paramspadre = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            paramspadre.setMargins(0,5,0,0);
+            final Integer ii = i;
+            layPadre.setId(1000 + ii);
+            layPadre.setLayoutParams(paramspadre);
+
+            ImageView imgPadre = new ImageView(VariabiliGlobali.getInstance().getContext());
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(80, 80);
+            imgPadre.setLayoutParams(layoutParams);
+            imgPadre.setTag(Padri.get(i));
+            imgPadre.setImageResource(R.drawable.icona_cerca);
+            imgPadre.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    String ArtistaPremuto = imgPadre.getTag().toString();
+
+                    ChiamateWs ws = new ChiamateWs();
+                    ws.RitornaTagsArtista(ArtistaPremuto);
+
+                    OggettiAVideo.getInstance().getTxtArtistaGAR().setText(ArtistaPremuto);
+                    OggettiAVideo.getInstance().getLayGestioneArtista().setVisibility(LinearLayout.VISIBLE);
+                    // Toast.makeText(VariabiliGlobali.getInstance().getContext(),"Modifica Artista; " + ArtistaPremuto, Toast.LENGTH_LONG).show();
+                }
+            });
+            layPadre.addView(imgPadre);
+
             TextView txtPadre = new TextView(VariabiliGlobali.getInstance().getContext());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            final Integer ii = i;
-            txtPadre.setId(1000 + ii);
             txtPadre.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            txtPadre.setPadding(5, 0, 0, 0);
             txtPadre.setLayoutParams(params);
             txtPadre.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT));
             txtPadre.setText(Padri.get(i));
             txtPadre.setTextColor(VariabiliGlobali.getInstance().getFragmentActivityPrincipale().getResources().getColor(R.color.colorPrimary));
             txtPadre.setTextSize(20);
+
             txtPadre.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     String ArtistaPremuto = txtPadre.getText().toString();
+
                     ChiamateWs ws = new ChiamateWs();
                     ws.RitornaListaAlbum(ArtistaPremuto);
 
@@ -92,7 +127,9 @@ public class AlberoBrani {
                     // VariabiliGlobali.getInstance().setTxtAlberoScelto(txtPadre);
                 }
             });
-            laySottoScroll.addView(txtPadre);
+            layPadre.addView(txtPadre);
+
+            laySottoScroll.addView(layPadre);
 
             List<String> Figli = new ArrayList<>();
             if (VariabiliGlobali.getInstance().getListaAlbum() != null) {
@@ -161,6 +198,10 @@ public class AlberoBrani {
                                         ws.ScaricaImmagineAlbum(Artista, Album, Anno);
                                     }
                                 });
+
+                                ChiamateWs ws = new ChiamateWs();
+                                ws.RitornaTagsAlbum();
+
                                 OggettiAVideo.getInstance().getLayCambioImmagineGA().setVisibility(LinearLayout.GONE);
                                 OggettiAVideo.getInstance().getLayGestioneAlbum().setVisibility(LinearLayout.VISIBLE);
 
@@ -321,7 +362,7 @@ public class AlberoBrani {
                     // lay.setVerticalScrollbarPosition(posY);
                     // lay.scrollTo(0, posY);
 
-                    TextView textView = (TextView) layDestinazione.findViewById(VariabiliGlobali.getInstance().getIdSelezionato());
+                    LinearLayout textView = (LinearLayout) layDestinazione.findViewById(VariabiliGlobali.getInstance().getIdSelezionato());
                     int posX = textView.getLeft(); //  VariabiliGlobali.getInstance().getPosizioneScrollAlberoX();
                     int posY = textView.getTop(); //  VariabiliGlobali.getInstance().getPosizioneScrollAlberoY();
 

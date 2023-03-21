@@ -18,8 +18,8 @@
 
             <ImageView
                 android:id="@+id/imgAggiungeTagsBrano"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:background="@drawable/icona_salva" />
 
         </LinearLayout>
@@ -30,7 +30,7 @@
             android:layout_weight="7"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:textColor="@color/black" />
     </LinearLayout>
 

@@ -129,8 +129,8 @@ public class OggettiAVideo {
     private Button btnDataInferiore;
     private ImageView imgTags;
     private ImageView imgSuoneria;
-    private LinearLayout layGestioneAlbum;
 
+    private LinearLayout layGestioneAlbum;
     private LinearLayout layCambioImmagineGA;
     private ImageView imgCambiaAlbumGA;
     private ImageView imgSceltaGA;
@@ -145,9 +145,82 @@ public class OggettiAVideo {
     private EditText edtNomeAlbumGA;
     private EditText edtAnnoAlbumGA;
     private TextView txtNomeAlbumGA;
+    private ListView lstTagsGA;
+    private ListView lstTagsTuttiGA;
+    private ImageView imgSalvaTagsGA;
+
+    private LinearLayout layGestioneArtista;
+    private TextView txtArtistaGAR;
+    private ListView lstTagsGAR;
+    private ListView lstTagsTuttiGAR;
+    private ImageView imgSalvaTagsGAR;
 
     public static OggettiAVideo getOurInstance() {
         return ourInstance;
+    }
+
+    public ListView getLstTagsGAR() {
+        return lstTagsGAR;
+    }
+
+    public void setLstTagsGAR(ListView lstTagsGAR) {
+        this.lstTagsGAR = lstTagsGAR;
+    }
+
+    public ListView getLstTagsTuttiGAR() {
+        return lstTagsTuttiGAR;
+    }
+
+    public void setLstTagsTuttiGAR(ListView lstTagsTuttiGAR) {
+        this.lstTagsTuttiGAR = lstTagsTuttiGAR;
+    }
+
+    public ImageView getImgSalvaTagsGAR() {
+        return imgSalvaTagsGAR;
+    }
+
+    public void setImgSalvaTagsGAR(ImageView imgSalvaTagsGAR) {
+        this.imgSalvaTagsGAR = imgSalvaTagsGAR;
+    }
+
+    public TextView getTxtArtistaGAR() {
+        return txtArtistaGAR;
+    }
+
+    public void setTxtArtistaGAR(TextView txtArtistaGAR) {
+        this.txtArtistaGAR = txtArtistaGAR;
+    }
+
+    public LinearLayout getLayGestioneArtista() {
+        return layGestioneArtista;
+    }
+
+    public void setLayGestioneArtista(LinearLayout layGestioneArtista) {
+        this.layGestioneArtista = layGestioneArtista;
+    }
+
+    public ListView getLstTagsGA() {
+        return lstTagsGA;
+    }
+
+    public void setLstTagsGA(ListView lstTagsGA) {
+        this.lstTagsGA = lstTagsGA;
+    }
+
+    public ListView getLstTagsTuttiGA() {
+        return lstTagsTuttiGA;
+    }
+
+    public void setLstTagsTuttiGA(ListView lstTagsTuttiGA) {
+        this.lstTagsTuttiGA = lstTagsTuttiGA;
+    }
+
+    public ImageView getImgSalvaTagsGA() {
+        return imgSalvaTagsGA;
+    }
+
+    public void setImgSalvaTagsGA(ImageView imgSalvaTagsGA) {
+        this.imgSalvaTagsGA = imgSalvaTagsGA;
     }
 
     public ImageView getImgBellezzza10() {

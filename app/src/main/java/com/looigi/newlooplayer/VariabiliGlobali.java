@@ -149,6 +149,9 @@ public class VariabiliGlobali {
     private int dimeSchermoY;
     private AudioManager mAudioManager;
     private ComponentName mReceiverComponent;
+    private boolean Simulazione = true;
+    private List<String> ListaTagsAlbum = new ArrayList<>();
+    private List<String> ListaTagsArtista = new ArrayList<>();
 
     public Context getContext() {
         return context;
@@ -156,6 +159,30 @@ public class VariabiliGlobali {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public List<String> getListaTagsArtista() {
+        return ListaTagsArtista;
+    }
+
+    public void setListaTagsArtista(List<String> listaTagsArtista) {
+        ListaTagsArtista = listaTagsArtista;
+    }
+
+    public List<String> getListaTagsAlbum() {
+        return ListaTagsAlbum;
+    }
+
+    public void setListaTagsAlbum(List<String> listaTagsAlbum) {
+        ListaTagsAlbum = listaTagsAlbum;
+    }
+
+    public boolean isSimulazione() {
+        return Simulazione;
+    }
+
+    public void setSimulazione(boolean simulazione) {
+        Simulazione = simulazione;
     }
 
     public BroadcastReceiver mNoisyReceiver = new BroadcastReceiver() {

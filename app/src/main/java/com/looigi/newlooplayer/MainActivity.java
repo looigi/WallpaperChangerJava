@@ -25,6 +25,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DigitalClock;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -420,6 +421,24 @@ public class MainActivity extends AppCompatActivity {
         });
         Amministrazione.getInstance().GestioneTastiAmministrazione(this);
 
+        TextView txtArtistaGAR = (TextView) findViewById(R.id.txtArtistaGAR);
+        ListView lstTagsGAR = (ListView) findViewById(R.id.lstTagsGAR);
+        ListView lstTagsTuttiGAR = (ListView) findViewById(R.id.lstTagsTuttiGAR);
+        ImageView imgSalvaTagsGAR = (ImageView) findViewById(R.id.imgSalvaTagsGAR);
+        imgSalvaTagsGAR.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String Artista = OggettiAVideo.getInstance().getTxtArtistaGAR().getText().toString();
+
+                ChiamateWs ws = new ChiamateWs();
+                ws.AggiornaTagsArtista(Artista);
+            }
+        });
+
+        OggettiAVideo.getInstance().setLstTagsGAR(lstTagsGAR);
+        OggettiAVideo.getInstance().setLstTagsTuttiGAR(lstTagsTuttiGAR);
+        OggettiAVideo.getInstance().setImgSalvaTagsGAR(imgSalvaTagsGAR);
+        OggettiAVideo.getInstance().setTxtArtistaGAR(txtArtistaGAR);
+
         LinearLayout layCambioImmagineGA = (LinearLayout) findViewById(R.id.layCambioImmagineGA);
         layCambioImmagineGA.setVisibility(LinearLayout.GONE);
         ImageView imgImmagineSceltaGA = (ImageView) findViewById(R.id.imgImmagineSceltaGA);
@@ -485,6 +504,19 @@ public class MainActivity extends AppCompatActivity {
         });
         edtNuovoNomeAlbumGA.setText(VariabiliGlobali.getInstance().getQuanteImmaginiDaScaricareGA().toString());
         txtNomeAlbumGA.setVisibility(LinearLayout.VISIBLE);
+        ListView lstTagsGA = (ListView) findViewById(R.id.lstTagsGA);
+        ListView lstTagsTuttiGA = (ListView) findViewById(R.id.lstTagsTuttiGA);
+        ImageView imgSalvaTagsGA = (ImageView) findViewById(R.id.imgSalvaTagsGA);
+        imgSalvaTagsGA.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ChiamateWs ws = new ChiamateWs();
+                ws.AggiornaTagsAlbum();
+            }
+        });
+        OggettiAVideo.getInstance().setLstTagsGA(lstTagsGA);
+        OggettiAVideo.getInstance().setLstTagsTuttiGA(lstTagsTuttiGA);
+        OggettiAVideo.getInstance().setImgSalvaTagsGA(imgSalvaTagsGA);
+
         OggettiAVideo.getInstance().setTxtNomeAlbumGA(txtNomeAlbumGA);
         OggettiAVideo.getInstance().setImgRinominaAlbumGA(imgRinominaAlbumGA);
         OggettiAVideo.getInstance().setEdtNomeAlbumGA(edtNuovoNomeAlbumGA);
@@ -693,6 +725,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Switch swcSimulazione = (Switch) findViewById(R.id.swcSimulazione);
+        swcSimulazione.setChecked(true);
+        VariabiliGlobali.getInstance().setSimulazione(true);
+        swcSimulazione.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+              public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                  VariabiliGlobali.getInstance().setSimulazione(isChecked);
+              }
+        });
         Button imgPuliziaCompleta = (Button) findViewById(R.id.btnPuliziaCompleta);
         imgPuliziaCompleta.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -711,6 +751,16 @@ public class MainActivity extends AppCompatActivity {
         imgChiudeAlbum.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 layGestioneAlbum.setVisibility(LinearLayout.GONE);
+            }
+        });
+
+        LinearLayout layGestioneArtista = (LinearLayout) findViewById(R.id.layGestioneArtista);
+        layGestioneArtista.setVisibility(LinearLayout.GONE);
+        OggettiAVideo.getInstance().setLayGestioneArtista(layGestioneArtista);
+        ImageView imgChiudeArtista = (ImageView) findViewById(R.id.imgChiudeGestioneArtista);
+        imgChiudeArtista.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                layGestioneArtista.setVisibility(LinearLayout.GONE);
             }
         });
 

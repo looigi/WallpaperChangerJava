@@ -407,6 +407,8 @@
 
     <include layout="@layout/gestione_album" />
 
+    <include layout="@layout/gestione_artista" />
+
     <LinearLayout
         android:id="@+id/laySplash"
         android:orientation="horizontal"

@@ -38,6 +38,7 @@
 
                 <ImageView
                     android:id="@+id/imgChiudeGestioneAlbum"
+                    android:layout_marginTop="3dp"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@drawable/elimina_quadrato" />
@@ -149,8 +150,10 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
+                    android:background="@drawable/bordo_arrotondato_bianco_sfumato_trasp"
                     android:orientation="horizontal"
                     android:gravity="right"
+                    android:padding="3dp"
                     android:weightSum="10"
                     android:layout_height="wrap_content">
 
@@ -169,7 +172,6 @@
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_weight="3"
-                        android:background="@drawable/bordo_arrotondato_bianco_sfumato_trasp"
                         android:orientation="vertical"
                         android:gravity="center_vertical"
                         android:layout_height="match_parent">
@@ -274,6 +276,88 @@
                         </TextView>
                     </LinearLayout>
                 </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:textSize="22sp"
+                    android:background="@drawable/bordo_arrotondato_bianco_sfumato_trasp"
+                    android:gravity="center_horizontal"
+                    android:textColor="#000099"
+                    android:text="Tags Album"
+                    android:padding="3dp"
+                    android:layout_height="wrap_content">
+
+                </TextView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:weightSum="2"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:background="@drawable/bordo_arrotondato_bianco_non_sfumato_trasp"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:textColor="#00CC00"
+                        android:text="Selezionati"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:background="@drawable/bordo_arrotondato_bianco_non_sfumato_trasp"
+                        android:layout_weight="1"
+                        android:gravity="center_horizontal"
+                        android:textColor="#0000CC"
+                        android:text="Da Selezionare"
+                        android:layout_height="wrap_content">
+
+                    </TextView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:weightSum="2"
+                    android:orientation="horizontal">
+
+                    <ListView
+                        android:id="@+id/lstTagsGA"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="200dp"
+                        android:dividerHeight="1dp"
+                        android:listSelector="#9999EE" />
+
+                    <ListView
+                        android:id="@+id/lstTagsTuttiGA"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="200dp"
+                        android:dividerHeight="1dp"
+                        android:listSelector="#9999EE" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:gravity="right"
+                    android:background="@drawable/bordo_arrotondato_bianco_sfumato_trasp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/imgSalvaTagsGA"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/icona_salva" />
+
+                </LinearLayout>
+
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

@@ -2,23 +2,21 @@ package com.looigi.newlooplayer.WebServices;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.FileProvider;
 
 import com.looigi.newlooplayer.BuildConfig;
-import com.looigi.newlooplayer.MainActivity;
-import com.looigi.newlooplayer.R;
 import com.looigi.newlooplayer.ServizioBackground;
 import com.looigi.newlooplayer.adapters.AdapterListenerArtisti;
 import com.looigi.newlooplayer.Log;
 import com.looigi.newlooplayer.OggettiAVideo;
 import com.looigi.newlooplayer.Utility;
 import com.looigi.newlooplayer.adapters.AdapterListenerTags;
+import com.looigi.newlooplayer.adapters.AdapterListenerTagsBranoGA;
+import com.looigi.newlooplayer.adapters.AdapterListenerTagsBranoGAR;
+import com.looigi.newlooplayer.adapters.AdapterListenerTagsTuttiGA;
+import com.looigi.newlooplayer.adapters.AdapterListenerTagsTuttiGAR;
 import com.looigi.newlooplayer.download.DownloadAPK;
 import com.looigi.newlooplayer.download.DownloadBrano;
 import com.looigi.newlooplayer.download.DownloadImage;
@@ -31,9 +29,9 @@ import com.looigi.newlooplayer.strutture.StrutturaListaBrani;
 import com.looigi.newlooplayer.strutture.StrutturaTags;
 import com.looigi.newlooplayer.treeview.AlberoBrani;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 public class ChiamateWs implements TaskDelegate {
     private LetturaWSAsincrona bckAsyncTask;
@@ -47,11 +45,14 @@ public class ChiamateWs implements TaskDelegate {
     private final String SA2="http://csaricanuovai.org/";
     private String TipoOperazione = "";
     private boolean branoPregresso;
+    private long inizioChiamata;
+    private boolean ControllaTempoEsecuzione = false;
+    private boolean accesoStatoReteMancante = false;
 
     public void PuliziaCompleta() {
         Log.getInstance().ScriveLog("Pulizie di Pasqua");
 
-        String Urletto="PulizieDiPasqua?Simula=SI";
+        String Urletto="PulizieDiPasqua?Simula=" + (VariabiliGlobali.getInstance().isSimulazione() ? "SI" : "NO");
 
         TipoOperazione = "PulizieDiPasqua";
         Esegue(
@@ -98,6 +99,7 @@ public class ChiamateWs implements TaskDelegate {
 
         String Urletto="RitornaVersioneApplicazione";
 
+        ControllaTempoEsecuzione = true;
         TipoOperazione = "RitornaVersioneApplicazione";
         Esegue(
                 RadiceWS + ws + Urletto,
@@ -121,6 +123,100 @@ public class ChiamateWs implements TaskDelegate {
                 SA,
                 30000,
                 false);
+    }
+
+    public void RitornaTagsAlbum() {
+        String Album = VariabiliGlobali.getInstance().getNomeAlbumGA();
+        String Artista = VariabiliGlobali.getInstance().getNomeArtistaGA();
+        String Anno = VariabiliGlobali.getInstance().getAnnoAlbumGA();
+        /* if (Album.contains("-")) {
+            String[] a = Album.split("-");
+            Album = a[1];
+        } */
+
+        Log.getInstance().ScriveLog("Ritorna Tags Album " + Album +
+                " Artista " + Artista + " Anno " + Anno);
+
+        String Urletto="RitornaTagsAlbumArtista?Artista=" + Artista +
+                "&Album=" + Album +
+                "&Anno=" + Anno;
+
+        TipoOperazione = "RitornaTagsAlbum";
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                30000,
+                true);
+    }
+
+    public void RitornaTagsArtista(String Artista) {
+        Log.getInstance().ScriveLog("Ritorna Tags Artista " + Artista);
+
+        String Urletto="RitornaTagsAlbumArtista?Artista=" + Artista +
+                "&Album=" +
+                "&Anno=";
+
+        TipoOperazione = "RitornaTagsArtista";
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                30000,
+                true);
+    }
+
+    public void AggiornaTagsArtista(String Artista) {
+        String t = "";
+        for (int i = 0; i < VariabiliGlobali.getInstance().getListaTagsArtista().size(); i++) {
+            t += VariabiliGlobali.getInstance().getListaTagsArtista().get(i) + ";";
+        }
+        String Tags = t;
+        Log.getInstance().ScriveLog("Aggiorna Tags Artista " + Artista + ": " + Tags);
+
+        String Urletto="AggiornaTagsAlbumArtista?Artista=" + Artista +
+                "&Album=" +
+                "&Anno=" +
+                "&Tags=" + Tags;
+
+        TipoOperazione = "AggiornaTagsArtista";
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                30000,
+                true);
+    }
+
+    public void AggiornaTagsAlbum() {
+        String Album = VariabiliGlobali.getInstance().getNomeAlbumGA();
+        String Artista = VariabiliGlobali.getInstance().getNomeArtistaGA();
+        String Anno = VariabiliGlobali.getInstance().getAnnoAlbumGA();
+
+        String t = "";
+        for (int i = 0; i < VariabiliGlobali.getInstance().getListaTagsAlbum().size(); i++) {
+            t += VariabiliGlobali.getInstance().getListaTagsAlbum().get(i) + ";";
+        }
+        String Tags = t;
+        Log.getInstance().ScriveLog("Aggiorna Tags Album " + Album +
+                " Anno " + Anno + " Artista " + Artista + ": " + Tags);
+
+        String Urletto="AggiornaTagsAlbumArtista?Artista=" + Artista +
+                "&Album=" + Album +
+                "&Anno=" + Anno +
+                "&Tags=" + Tags;
+
+        TipoOperazione = "AggiornaTagsAlbum";
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                30000,
+                true);
     }
 
     public void AggiornaTagsBrano() {
@@ -254,6 +350,7 @@ public class ChiamateWs implements TaskDelegate {
 
         String Urletto="ControllaAggiornamento";
 
+        ControllaTempoEsecuzione = true;
         TipoOperazione = "ControllaAggiornamento";
         Esegue(
                 RadiceWS + ws + Urletto,
@@ -328,6 +425,7 @@ public class ChiamateWs implements TaskDelegate {
         Urletto += "&DataSuperiore=" + DataSuperiore;
         Urletto += "&DataInferiore=" + DataInferiore;
 
+        ControllaTempoEsecuzione = true;
         TipoOperazione = "RitornaProssimoBranoMobile";
         Esegue(
                 RadiceWS + ws + Urletto,
@@ -343,6 +441,7 @@ public class ChiamateWs implements TaskDelegate {
                        boolean ApriDialog) {
 
         Long tsLong = System.currentTimeMillis()/1000;
+        inizioChiamata = tsLong;
         String TimeStampAttuale = tsLong.toString();
 
         bckAsyncTask = new LetturaWSAsincrona(
@@ -363,6 +462,28 @@ public class ChiamateWs implements TaskDelegate {
             Log.getInstance().ScriveLog("Ritorno WS " + TipoOperazione + ". ERRORE...");
         } else {
             Log.getInstance().ScriveLog("Ritorno WS " + TipoOperazione + ". OK");
+        }
+
+        long fineChiamata = System.currentTimeMillis()/1000;
+        long differenza = fineChiamata - inizioChiamata;
+        if (ControllaTempoEsecuzione) {
+            if (differenza > 3500) {
+                // Ci ha messo troppo tempo
+                Log.getInstance().ScriveLog("Ritorno WS " + TipoOperazione + ". Troppo tempo a rispondere: " + differenza);
+
+                OggettiAVideo.getInstance().getImgNoNet().setVisibility(LinearLayout.VISIBLE);
+                VariabiliGlobali.getInstance().setBranoSuSD(true);
+                accesoStatoReteMancante = true;
+            } else {
+                if (accesoStatoReteMancante) {
+                    Log.getInstance().ScriveLog("Ritorno WS " + TipoOperazione + ". Ripristino stato rete");
+                    accesoStatoReteMancante = false;
+                    OggettiAVideo.getInstance().getImgNoNet().setVisibility(LinearLayout.GONE);
+                    if (!VariabiliGlobali.getInstance().isBranosSuSDOriginale()) {
+                        VariabiliGlobali.getInstance().setBranoSuSD(false);
+                    }
+                }
+            }
         }
 
         switch (TipoOperazione) {
@@ -395,6 +516,18 @@ public class ChiamateWs implements TaskDelegate {
                 break;
             case "AggiornaTagsBrano":
                 fAggiornaTagsBrano(result);
+                break;
+            case "AggiornaTagsAlbum":
+                fAggiornaTagsAlbum(result);
+                break;
+            case "RitornaTagsAlbum":
+                fRitornaTagsAlbum(result);
+                break;
+            case "AggiornaTagsArtista":
+                fAggiornaTagsArtista(result);
+                break;
+            case "RitornaTagsArtista":
+                fRitornaTagsArtista(result);
                 break;
             case "RitornaListaBraniAlbumArtista":
                 RitornaListaAlbumArtistaBrani(result);
@@ -570,6 +703,94 @@ public class ChiamateWs implements TaskDelegate {
             Utility.getInstance().VisualizzaErrore(result);
         } else {
             OggettiAVideo.getInstance().getLayTagsBrano().setVisibility(LinearLayout.GONE);
+        }
+    }
+
+    private void fAggiornaTagsAlbum(String result) {
+        Log.getInstance().ScriveLog("Aggiornamento tags album eseguito: " + result);
+        if (result.contains("ERROR")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+        }
+    }
+
+    private void fAggiornaTagsArtista(String result) {
+        Log.getInstance().ScriveLog("Aggiornamento tags artista eseguito: " + result);
+        if (result.contains("ERROR")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+        }
+    }
+
+    private void fRitornaTagsArtista(String result) {
+        Log.getInstance().ScriveLog("Lettura tags artista eseguita: " + result);
+        if (result.contains("ERROR")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            if (result.contains("anyType")) {
+                // Utility.getInstance().VisualizzaErrore("Ritorno anyType per i tags");
+                List<String> l = new ArrayList<>();
+                VariabiliGlobali.getInstance().setListaTagsArtista(l);
+
+                String[] r = {};
+                AdapterListenerTagsBranoGAR customAdapterTags = new AdapterListenerTagsBranoGAR(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        r);
+                OggettiAVideo.getInstance().getLstTagsGAR().setAdapter(customAdapterTags);
+
+                AdapterListenerTagsTuttiGAR customAdapterT = new AdapterListenerTagsTuttiGAR(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        Utility.getInstance().CreaVettoreTagsAlbum(result));
+                OggettiAVideo.getInstance().getLstTagsTuttiGAR().setAdapter(customAdapterT);
+            } else {
+                String[] r = result.split(";");
+                List<String> l = new ArrayList<>();
+                for (int i = 0; i < r.length; i++) {
+                    l.add(r[i]);
+                }
+                VariabiliGlobali.getInstance().setListaTagsArtista(l);
+                AdapterListenerTagsBranoGAR customAdapterTags = new AdapterListenerTagsBranoGAR(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        r);
+                OggettiAVideo.getInstance().getLstTagsGAR().setAdapter(customAdapterTags);
+
+                AdapterListenerTagsTuttiGAR customAdapterT = new AdapterListenerTagsTuttiGAR(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        Utility.getInstance().CreaVettoreTagsAlbum(result));
+                OggettiAVideo.getInstance().getLstTagsTuttiGAR().setAdapter(customAdapterT);
+            }
+        }
+    }
+
+    private void fRitornaTagsAlbum(String result) {
+        Log.getInstance().ScriveLog("Lettura tags album eseguita: " + result);
+        if (result.contains("ERROR")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            if (result.contains("anyType")) {
+                // Utility.getInstance().VisualizzaErrore("Ritorno anyType per i tags");
+                List<String> l = new ArrayList<>();
+                VariabiliGlobali.getInstance().setListaTagsAlbum(l);
+
+                String[] r = {};
+                AdapterListenerTagsBranoGA customAdapterTags = new AdapterListenerTagsBranoGA(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        r);
+                OggettiAVideo.getInstance().getLstTagsGA().setAdapter(customAdapterTags);
+
+                AdapterListenerTagsTuttiGA customAdapterT = new AdapterListenerTagsTuttiGA(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        Utility.getInstance().CreaVettoreTagsAlbum(result));
+                OggettiAVideo.getInstance().getLstTagsTuttiGA().setAdapter(customAdapterT);
+            } else {
+                String[] r = result.split(";");
+                List<String> l = new ArrayList<>();
+                for (int i = 0; i < r.length; i++) {
+                    l.add(r[i]);
+                }
+                VariabiliGlobali.getInstance().setListaTagsAlbum(l);
+                AdapterListenerTagsBranoGA customAdapterTags = new AdapterListenerTagsBranoGA(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        r);
+                OggettiAVideo.getInstance().getLstTagsGA().setAdapter(customAdapterTags);
+
+                AdapterListenerTagsTuttiGA customAdapterT = new AdapterListenerTagsTuttiGA(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        Utility.getInstance().CreaVettoreTagsAlbum(result));
+                OggettiAVideo.getInstance().getLstTagsTuttiGA().setAdapter(customAdapterT);
+            }
         }
     }
 
