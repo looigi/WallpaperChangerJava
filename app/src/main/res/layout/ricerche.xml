@@ -8,7 +8,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="5dp"
-        android:visibility="gone"
         android:background="@drawable/bordo_arrotondato_bianco_sfumato_trasp"
         android:orientation="vertical">
 
@@ -320,6 +319,71 @@
                         </Button>
                     </LinearLayout>
 
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:background="@android:color/darker_gray"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="2">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_gravity="center_vertical"
+                            android:layout_width="0dp"
+                            android:text="Playlist"
+                            android:textSize="15sp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textColor="#00CC00" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:weightSum="5"
+                        android:orientation="horizontal"
+                        android:layout_height="40dp">
+
+                        <EditText
+                            android:id="@+id/edtPreferito"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:textColor="#0000CC"
+                            android:layout_gravity="left|center_vertical"
+                            android:layout_weight="4"
+                            android:ems="10"
+                            android:inputType="text" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:gravity="right"
+                            android:layout_height="match_parent">
+
+                            <ImageView
+                                android:id="@+id/imgSalvaPreferito"
+                                android:layout_gravity="bottom"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:background="@drawable/icona_salva" />
+
+                            <ImageView
+                                android:id="@+id/imgCaricaPreferito"
+                                android:layout_gravity="bottom"
+                                android:layout_width="35dp"
+                                android:layout_height="35dp"
+                                android:background="@drawable/icona_imposta" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <View

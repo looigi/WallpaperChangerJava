@@ -51,6 +51,7 @@ public class OggettiAVideo {
     private ImageView imgDownloadBrano;
     private ImageView imgCuffie;
     private ImageView imgRest;
+    private ImageView imgChiudeListaTags;
     // private ImageView imgPregresso;
     private LinearLayout layPregresso;
     private TextView txtBranoPregresso;
@@ -155,8 +156,44 @@ public class OggettiAVideo {
     private ListView lstTagsTuttiGAR;
     private ImageView imgSalvaTagsGAR;
 
+    private ListView lstListaPreferiti;
+    private LinearLayout layGestionePreferiti;
+    private EditText edtNomePreferito;
+
     public static OggettiAVideo getOurInstance() {
         return ourInstance;
+    }
+
+    public EditText getEdtNomePreferito() {
+        return edtNomePreferito;
+    }
+
+    public void setEdtNomePreferito(EditText edtNomePreferito) {
+        this.edtNomePreferito = edtNomePreferito;
+    }
+
+    public LinearLayout getLayGestionePreferiti() {
+        return layGestionePreferiti;
+    }
+
+    public void setLayGestionePreferiti(LinearLayout layGestionePreferiti) {
+        this.layGestionePreferiti = layGestionePreferiti;
+    }
+
+    public ListView getLstListaPreferiti() {
+        return lstListaPreferiti;
+    }
+
+    public void setLstListaPreferiti(ListView lstListaPreferiti) {
+        this.lstListaPreferiti = lstListaPreferiti;
+    }
+
+    public ImageView getImgChiudeListaTags() {
+        return imgChiudeListaTags;
+    }
+
+    public void setImgChiudeListaTags(ImageView imgChiudeListaTags) {
+        this.imgChiudeListaTags = imgChiudeListaTags;
     }
 
     public ListView getLstTagsGAR() {

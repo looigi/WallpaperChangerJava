@@ -17,6 +17,7 @@ import com.looigi.newlooplayer.strutture.StrutturaImmagini;
 import com.looigi.newlooplayer.strutture.StrutturaImmaginiDaCambiare;
 import com.looigi.newlooplayer.strutture.StrutturaListaAlbum;
 import com.looigi.newlooplayer.strutture.StrutturaListaBrani;
+import com.looigi.newlooplayer.strutture.StrutturaListaPreferiti;
 import com.looigi.newlooplayer.strutture.StrutturaTags;
 
 import java.util.ArrayList;
@@ -152,6 +153,7 @@ public class VariabiliGlobali {
     private boolean Simulazione = true;
     private List<String> ListaTagsAlbum = new ArrayList<>();
     private List<String> ListaTagsArtista = new ArrayList<>();
+    private List<StrutturaListaPreferiti> ListaPreferiti = new ArrayList<>();
 
     public Context getContext() {
         return context;
@@ -159,6 +161,14 @@ public class VariabiliGlobali {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public List<StrutturaListaPreferiti> getListaPreferiti() {
+        return ListaPreferiti;
+    }
+
+    public void setListaPreferiti(List<StrutturaListaPreferiti> listaPreferiti) {
+        ListaPreferiti = listaPreferiti;
     }
 
     public List<String> getListaTagsArtista() {

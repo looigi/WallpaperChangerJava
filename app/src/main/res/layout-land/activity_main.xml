@@ -308,7 +308,7 @@
         <include layout="@layout/tags" />
 
         <!-- Lista Artisti -->
-        <include layout="@layout/artisti" />
+        <include layout="@layout/preferiti" />
 
         <!-- Albero -->
         <LinearLayout
@@ -400,6 +400,17 @@
             android:layout_height="wrap_content">
 
             <include layout="@layout/gestionetags" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layGestionePreferiti"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:background="@drawable/bordo_arrotondato_bianco_non_sfumato_trasp"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/gestione_preferiti" />
         </LinearLayout>
     </RelativeLayout>
 

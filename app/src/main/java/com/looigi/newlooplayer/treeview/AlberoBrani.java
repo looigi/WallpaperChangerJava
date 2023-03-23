@@ -103,7 +103,9 @@ public class AlberoBrani {
                     // Toast.makeText(VariabiliGlobali.getInstance().getContext(),"Modifica Artista; " + ArtistaPremuto, Toast.LENGTH_LONG).show();
                 }
             });
-            layPadre.addView(imgPadre);
+            if (VariabiliGlobali.getInstance().isAmministratore()) {
+                layPadre.addView(imgPadre);
+            }
 
             TextView txtPadre = new TextView(VariabiliGlobali.getInstance().getContext());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(

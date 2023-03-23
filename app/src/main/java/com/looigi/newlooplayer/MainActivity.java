@@ -38,6 +38,9 @@ import android.widget.Toast;
 
 import com.looigi.newlooplayer.WebServices.ChiamateWs;
 import com.looigi.newlooplayer.WebServices.ChiamateWsAmministrazione;
+import com.looigi.newlooplayer.adapters.AdapterListenerArtisti;
+import com.looigi.newlooplayer.adapters.AdapterListenerListaPreferiti;
+import com.looigi.newlooplayer.adapters.AdapterListenerTags;
 import com.looigi.newlooplayer.adapters.AdapterListenerTagsBrano;
 import com.looigi.newlooplayer.adapters.AdapterListenerTagsTutti;
 import com.looigi.newlooplayer.cuffie.GestioneTastoCuffie;
@@ -206,7 +209,9 @@ public class MainActivity extends AppCompatActivity {
         TextView txtPreferitiElimina = (TextView) findViewById(R.id.txtPreferitiElimina);
         TextView txtTags = (TextView) findViewById(R.id.txtTags);
         TextView txtEliminaTags = (TextView) findViewById(R.id.txtEliminaTags);
-        // ImageView imgChiudeLista = (ImageView) findViewById(R.id.imgChiudeLista);
+        ImageView imgChiudeLista = (ImageView) findViewById(R.id.imgChiudeLista);
+        ImageView imgChiudeListaTags = (ImageView) findViewById(R.id.imgChiudeListaTags);
+        OggettiAVideo.getInstance().setImgChiudeListaTags(imgChiudeListaTags);
         ImageView imgChiudeESalvaLista = (ImageView) findViewById(R.id.imgChiudeESalvaLista);
         TextView txtArtista = (TextView) findViewById(R.id.txtNomeArtista);
         TextView txtAlbum = (TextView) findViewById(R.id.txtNomeAlbum);
@@ -767,6 +772,7 @@ public class MainActivity extends AppCompatActivity {
         imgChiudeESalvaLista.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 imgLinguetta1.setVisibility(LinearLayout.VISIBLE);
+                OggettiAVideo.getInstance().getLayGestionePreferiti().setVisibility(LinearLayout.GONE);
                 layLista.setVisibility(LinearLayout.GONE);
 
                 db_dati db = new db_dati();
@@ -774,6 +780,14 @@ public class MainActivity extends AppCompatActivity {
 
                 // FiltraBrani f = new FiltraBrani();
                 // f.FiltraLista(true);
+            }
+        });
+
+        imgChiudeLista.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                OggettiAVideo.getInstance().getLayGestionePreferiti().setVisibility(LinearLayout.GONE);
+                imgLinguetta1.setVisibility(LinearLayout.VISIBLE);
+                layLista.setVisibility(LinearLayout.GONE);
             }
         });
 
@@ -819,12 +833,102 @@ public class MainActivity extends AppCompatActivity {
         });
 
         ImageView imgRefreshTesto = (ImageView) findViewById(R.id.imgRefreshTesto);
+        if (!VariabiliGlobali.getInstance().isAmministratore()) {
+            imgRefreshTesto.setVisibility(LinearLayout.GONE);
+        }
         imgRefreshTesto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ChiamateWs ws = new ChiamateWs();
                 ws.AggiornaTesto();
             }
         });
+
+        // GESTIONE PREFERITI
+        LinearLayout layGestionePreferiti = (LinearLayout) findViewById(R.id.layGestionePreferiti);
+        layGestionePreferiti.setVisibility(LinearLayout.GONE);
+        OggettiAVideo.getInstance().setLayGestionePreferiti(layGestionePreferiti);
+
+        EditText edtPreferito = (EditText) findViewById(R.id.edtPreferito);
+        OggettiAVideo.getInstance().setEdtNomePreferito(edtPreferito);
+        ImageView imgSalvaPreferito = (ImageView) findViewById(R.id.imgSalvaPreferito);
+        imgSalvaPreferito.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String preferito = edtPreferito.getText().toString();
+                if (preferito.isEmpty()) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+                    alertDialog.setTitle("Alert");
+                    alertDialog.setMessage("Inserire un nome di preferito");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                } else {
+                    db_dati db = new db_dati();
+                    if (db.SalvaListaPreferiti(preferito)) {
+                        AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+                        alertDialog.setTitle("Alert");
+                        alertDialog.setMessage("Salvataggio effettuato");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }
+                }
+            }
+        });
+
+        ImageView imgPuliscePreferiti = (ImageView) findViewById(R.id.imgPuliscePreferiti);
+        imgPuliscePreferiti.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                VariabiliGlobali.getInstance().setPreferiti(";");
+                VariabiliGlobali.getInstance().setPreferitiElimina(";");
+
+                AdapterListenerListaPreferiti customAdapter = new AdapterListenerListaPreferiti(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        VariabiliGlobali.getInstance().getListaPreferiti());
+                OggettiAVideo.getInstance().getLstListaPreferiti().setAdapter(customAdapter);
+            }
+        });
+
+        ImageView imgPulisceTags = (ImageView) findViewById(R.id.imgPulisceTags);
+        imgPulisceTags.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                VariabiliGlobali.getInstance().setPreferitiTags(";");
+                VariabiliGlobali.getInstance().setPreferitiEliminaTags(";");
+
+                AdapterListenerTags customAdapterTags = new AdapterListenerTags(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        VariabiliGlobali.getInstance().getListaTags());
+                OggettiAVideo.getInstance().getLstTags().setAdapter(customAdapterTags);
+            }
+        });
+
+        ListView lstListaPreferiti = (ListView) findViewById(R.id.lstListaPreferiti);
+        OggettiAVideo.getInstance().setLstListaPreferiti(lstListaPreferiti);
+        ImageView imgCaricaPreferito = (ImageView) findViewById(R.id.imgCaricaPreferito);
+        imgCaricaPreferito.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                db_dati db = new db_dati();
+                db.RitornaListaPreferiti();
+
+                AdapterListenerListaPreferiti customAdapter = new AdapterListenerListaPreferiti(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        VariabiliGlobali.getInstance().getListaPreferiti());
+                OggettiAVideo.getInstance().getLstListaPreferiti().setAdapter(customAdapter);
+
+                layGestionePreferiti.setVisibility(LinearLayout.VISIBLE);
+            }
+        });
+        ImageView imgChiudeListaPreferiti = (ImageView) findViewById(R.id.imgChiudeListaPreferiti);
+        imgChiudeListaPreferiti.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                layGestionePreferiti.setVisibility(LinearLayout.GONE);
+            }
+        });
+        // GESTIONE PREFERITI
 
         mAudioManagerInterno = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         mReceiverComponentInterno = new ComponentName(this, GestioneTastoCuffie.class);

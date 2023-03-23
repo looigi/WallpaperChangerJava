@@ -1,14 +1,18 @@
 package com.looigi.newlooplayer.db_locale;
 
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.looigi.newlooplayer.Log;
 import com.looigi.newlooplayer.Utility;
 import com.looigi.newlooplayer.VariabiliGlobali;
 import com.looigi.newlooplayer.strutture.StrutturaBrano;
 import com.looigi.newlooplayer.strutture.StrutturaImmagini;
+import com.looigi.newlooplayer.strutture.StrutturaListaPreferiti;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -68,6 +72,9 @@ public class db_dati {
                         + "ImmaginiInLocale "
                         + "(idBrano VARCHAR, Progressivo VARCHAR, Album VARCHAR, NomeImmagine VARCHAR, "
                         + "UrlImmagine VARCHAR, PathImmagine VARCHAR, CartellaImmagine VARCHAR)");
+                myDB.execSQL("CREATE TABLE IF NOT EXISTS "
+                        + "ListePreferiti "
+                        + "(NomePreferito VARCHAR, Preferito VARCHAR, PreferitoElimina VARCHAR, Tags VARCHAR, TagsElimina VARCHAR)");
                 String sql = "CREATE TABLE IF NOT EXISTS "
                         + "Impostazioni "
                         + " (RicercaTesto VARCHAR, RicercaEsclusione VARCHAR, RicercaStelle VARCHAR, " +
@@ -548,20 +555,160 @@ public class db_dati {
         return quanti;
     }
 
+    public boolean EliminaListaPreferiti(String NomeLista) {
+        boolean Ok = true;
+
+        if (myDB != null) {
+            try {
+                String SQL = "Delete From ListePreferiti Where NomePreferito = '" + NomeLista + "'";
+                myDB.execSQL(SQL);
+            } catch (Exception e) {
+                String err = Utility.getInstance().PrendeErroreDaException(e);
+                Log.getInstance().ScriveLog("ERRORE Nell'eliminazione della lista " + NomeLista + ": " + err);
+                AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+                alertDialog.setTitle("ERROR");
+                alertDialog.setMessage("Errore nell'eliminazione della lista " + NomeLista + ": " + err);
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+                Ok = false;
+            }
+        }
+
+        return Ok;
+    }
+
+    public boolean SalvaListaPreferiti(String NomeLista) {
+        boolean Ok = true;
+
+        if (myDB != null) {
+            try {
+                String SQL = "Delete From ListePreferiti Where NomePreferito = '" + NomeLista + "'";
+                myDB.execSQL(SQL);
+            } catch (Exception e) {
+                String err = Utility.getInstance().PrendeErroreDaException(e);
+                Log.getInstance().ScriveLog("ERRORE Nell'eliminazione della lista " + NomeLista + ": " + err);
+                AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+                alertDialog.setTitle("ERROR");
+                alertDialog.setMessage("Errore nel salvataggio della lista " + NomeLista + " durante l'eliminazione: " + err);
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+                Ok = false;
+            }
+
+            if (Ok) {
+                String Lista = VariabiliGlobali.getInstance().getPreferiti();
+                String ListaElimina = VariabiliGlobali.getInstance().getPreferitiElimina();
+                String PreferitiTags = VariabiliGlobali.getInstance().getPreferitiTags();
+                String PreferitiEliminaTags = VariabiliGlobali.getInstance().getPreferitiEliminaTags();
+
+                try {
+                    String SQL = "Insert Into ListePreferiti Values('" + NomeLista + "', '" + Lista + "', '" + ListaElimina + "', '" +  PreferitiTags + "', '" +  PreferitiEliminaTags + "')";
+                    myDB.execSQL(SQL);
+                } catch (Exception e) {
+                    String err = Utility.getInstance().PrendeErroreDaException(e);
+                    Log.getInstance().ScriveLog("ERRORE Nel salvataggio della lista  " + NomeLista + ": " + err);
+                    AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+                    alertDialog.setTitle("ERROR");
+                    alertDialog.setMessage("Errore nel salvataggio della lista " + NomeLista + ": " + err);
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                    Ok = false;
+                }
+            }
+        }
+
+        return Ok;
+    }
+
+    public boolean RitornaPreferitiDaLista(String Lista) {
+        if (myDB != null) {
+            try {
+                Cursor c = myDB.rawQuery("SELECT * FROM ListePreferiti Where NomePreferito = ?",  new String[] {Lista});
+                c.moveToFirst();
+                if (c.getCount() > 0) {
+                    VariabiliGlobali.getInstance().setPreferiti(c.getString(1));
+                    VariabiliGlobali.getInstance().setPreferitiElimina(c.getString(2));
+                    VariabiliGlobali.getInstance().setPreferitiTags(c.getString(3));
+                    VariabiliGlobali.getInstance().setPreferitiEliminaTags(c.getString(4));
+                }
+            } catch(SQLException e) {
+                // Ok = Utility.getInstance().PrendeErroreDaException(e);
+                Log.getInstance().ScriveLog("ERRORE Nel ritorno della lista preferiti: " + Utility.getInstance().PrendeErroreDaException(e));
+                Log.getInstance().ScriveLog("Pulizia tabelle preferiti");
+                PulisceTabellaPreferiti();
+                Log.getInstance().ScriveLog("Creazione tabelle preferiti");
+                CreazioneTabelle();
+                RitornaPreferitiDaLista(Lista);
+            }
+        }
+
+        return true;
+    }
+
+    public boolean RitornaListaPreferiti() {
+        if (myDB != null) {
+            try {
+                Cursor c = myDB.rawQuery("SELECT * FROM ListePreferiti", null);
+                c.moveToFirst();
+                List<StrutturaListaPreferiti> lista = new ArrayList<>();
+                if (c.getCount() > 0) {
+                    do {
+                        StrutturaListaPreferiti s = new StrutturaListaPreferiti();
+                        s.setNomeLista(c.getString(0));
+                        s.setPreferiti(c.getString(1));
+                        s.setPreferitiElimina(c.getString(2));
+                        s.setTags(c.getString(3));
+                        s.setTagsElimina(c.getString(4));
+
+                        lista.add(s);
+                    } while (c.moveToNext());
+                    VariabiliGlobali.getInstance().setListaPreferiti(lista);
+                } else {
+                    VariabiliGlobali.getInstance().setListaPreferiti(lista);
+                }
+            } catch(SQLException e) {
+                // Ok = Utility.getInstance().PrendeErroreDaException(e);
+                Log.getInstance().ScriveLog("ERRORE Nel ritorno della lista preferiti: " + Utility.getInstance().PrendeErroreDaException(e));
+                Log.getInstance().ScriveLog("Pulizia tabelle preferiti");
+                PulisceTabellaPreferiti();
+                Log.getInstance().ScriveLog("Creazione tabelle preferiti");
+                CreazioneTabelle();
+                RitornaListaPreferiti();
+            }
+        }
+
+        return true;
+    }
+
     public boolean EliminaBrano(String idBrano) {
         if (myDB != null) {
             try {
                 String SQL = "Delete From BraniInLocale Where idBrano = " + idBrano;
                 myDB.execSQL(SQL);
             } catch (Exception e) {
-                Log.getInstance().ScriveLog("ERRORE Nell'eliminazione del brano': " + Utility.getInstance().PrendeErroreDaException(e));
+                Log.getInstance().ScriveLog("ERRORE Nell'eliminazione del brano: " + Utility.getInstance().PrendeErroreDaException(e));
             }
 
             try {
                 String SQL = "Delete From ImmaginiInLocale Where idBrano = " + idBrano;
                 myDB.execSQL(SQL);
             } catch (Exception e) {
-                Log.getInstance().ScriveLog("ERRORE Nell'eliminazione delle immagini del brano': " + Utility.getInstance().PrendeErroreDaException(e));
+                Log.getInstance().ScriveLog("ERRORE Nell'eliminazione delle immagini del brano: " + Utility.getInstance().PrendeErroreDaException(e));
             }
         }
 
@@ -929,6 +1076,15 @@ public class db_dati {
             // myDB.execSQL("Delete From Ultima");
             myDB.execSQL("Drop Table BraniInLocale");
             myDB.execSQL("Drop Table ImmaginiInLocale");
+        }
+    }
+
+    public void PulisceTabellaPreferiti() {
+        // SQLiteDatabase myDB = ApreDB();
+        if (myDB != null) {
+            // myDB.execSQL("Delete From Utente");
+            // myDB.execSQL("Delete From Ultima");
+            myDB.execSQL("Drop Table ListePreferiti");
         }
     }
 

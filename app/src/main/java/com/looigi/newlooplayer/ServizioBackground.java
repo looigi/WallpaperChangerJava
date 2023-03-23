@@ -425,6 +425,15 @@ public class ServizioBackground extends Service {
 
         OggettiAVideo.getInstance().getImgMenu().setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                VariabiliGlobali.getInstance().setTestoAperto(false);
+                OggettiAVideo.getInstance().getLayTesto().setVisibility(LinearLayout.GONE);
+
+                OggettiAVideo.getInstance().getImgLinguetta1().setX(0);
+                VariabiliGlobali.getInstance().setAlberoAperto(false);
+                OggettiAVideo.getInstance().getLayAlbero().setVisibility(LinearLayout.GONE);
+
+                OggettiAVideo.getInstance().getImgLinguetta2().setX(0);
+
                 if (OggettiAVideo.getInstance().getLaySettaggi().getVisibility() == LinearLayout.VISIBLE) {
                     OggettiAVideo.getInstance().getLaySettaggi().setVisibility(LinearLayout.GONE);
                 } else {
@@ -437,6 +446,15 @@ public class ServizioBackground extends Service {
 
         OggettiAVideo.getInstance().getImgRicerche().setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                VariabiliGlobali.getInstance().setTestoAperto(false);
+                OggettiAVideo.getInstance().getLayTesto().setVisibility(LinearLayout.GONE);
+
+                OggettiAVideo.getInstance().getImgLinguetta1().setX(0);
+                VariabiliGlobali.getInstance().setAlberoAperto(false);
+                OggettiAVideo.getInstance().getLayAlbero().setVisibility(LinearLayout.GONE);
+
+                OggettiAVideo.getInstance().getImgLinguetta2().setX(0);
+
                 if (OggettiAVideo.getInstance().getLayRicerche().getVisibility() == LinearLayout.VISIBLE) {
                     OggettiAVideo.getInstance().getLayRicerche().setVisibility(LinearLayout.GONE);
                 } else {
@@ -1118,6 +1136,13 @@ public class ServizioBackground extends Service {
 
                 // FiltraBrani f = new FiltraBrani();
                 // f.FiltraLista(true);
+            }
+        });
+
+        OggettiAVideo.getInstance().getImgChiudeListaTags().setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                OggettiAVideo.getInstance().getImgLinguetta1().setVisibility(LinearLayout.VISIBLE);
+                OggettiAVideo.getInstance().getLayListaTags().setVisibility(LinearLayout.GONE);
             }
         });
         // TAGS

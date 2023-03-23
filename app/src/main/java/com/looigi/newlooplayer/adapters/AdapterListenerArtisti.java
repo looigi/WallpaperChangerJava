@@ -53,13 +53,13 @@ public class AdapterListenerArtisti extends BaseAdapter {
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
-        view = inflter.inflate(R.layout.lista_artisti, null);
+        view = inflter.inflate(R.layout.lista_elementi_preferiti, null);
         boolean soloSelezionati = VariabiliGlobali.getInstance().isSoloSelezionati();
         boolean selezionato = Preferiti.contains(";" + listaArtisti.get(i).getNomeArtista() + ";");
         boolean eliminato = PreferitiElimina.contains(";" + listaArtisti.get(i).getNomeArtista() + ";");
 
         LinearLayout layContenitore = (LinearLayout) view.findViewById(R.id.layContenitoreLista);
-        View viewDivisore = (View) view.findViewById(R.id.layDivisore);
+        // View viewDivisore = (View) view.findViewById(R.id.layDivisore);
         TextView artista = (TextView) view.findViewById(R.id.txtArtista);
         TextView tags = (TextView) view.findViewById(R.id.txtTags);
         Switch switchOnOff = (Switch) view.findViewById(R.id.switchArtista);
@@ -83,7 +83,7 @@ public class AdapterListenerArtisti extends BaseAdapter {
 
         if (Visualizza) {
             layContenitore.setVisibility(LinearLayout.VISIBLE);
-            viewDivisore.setVisibility(LinearLayout.VISIBLE);
+            // viewDivisore.setVisibility(LinearLayout.VISIBLE);
 
             switchOnOff.setChecked(selezionato);
             switchOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -141,11 +141,11 @@ public class AdapterListenerArtisti extends BaseAdapter {
             tags.setText(listaTags);
         } else {
             layContenitore.setVisibility(LinearLayout.GONE);
-            viewDivisore.setVisibility(LinearLayout.GONE);
+            /* viewDivisore.setVisibility(LinearLayout.GONE);
             artista.setVisibility(LinearLayout.GONE);
             tags.setVisibility(LinearLayout.GONE);
             switchOnOff.setVisibility(LinearLayout.GONE);
-            icon.setVisibility(LinearLayout.GONE);
+            icon.setVisibility(LinearLayout.GONE); */
         }
 
         return view;
