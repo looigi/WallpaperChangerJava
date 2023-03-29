@@ -146,7 +146,7 @@ public class DownloadBrano extends AsyncTask<String, String, String> {
         }
         int p2 = (int)(p * 100);
         float p3 =  (float)p2 / 100;
-        OggettiAVideo.getInstance().getTxtDownload().setText("Downalod MP3 - " + p3 + " " + s);
+        OggettiAVideo.getInstance().getTxtDownload().setText("Download MP3 - " + p3 + " " + s);
     }
 
     /**
@@ -156,11 +156,24 @@ public class DownloadBrano extends AsyncTask<String, String, String> {
     protected void onPostExecute(String file_url) {
         // dismiss the dialog after the file was downloaded
         // dismissDialog(progress_bar_type);
-        if (!VariabiliGlobali.getInstance().isBloccaDownload()) {
+        if (!VariabiliGlobali.getInstance().isBloccaDownload() && !VariabiliGlobali.getInstance().isSkippatoBrano()) {
             final Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if (!VariabiliGlobali.getInstance().isCaricatoIlPregresso()) {
+                        // Prende durata brano solo in caso di nuovo brano e non di pregresso
+                        boolean durata = Utility.getInstance().DurataBrano(sb.getPathBrano());
+                        if (!durata) {
+                            Log.getInstance().ScriveLog("Impossibile rilevare la durata del brano: " + sb.getPathBrano());
+                            // OggettiAVideo.getInstance().getImgPlay().setVisibility(LinearLayout.GONE);
+                            OggettiAVideo.getInstance().getImgErroreBrano().setVisibility(LinearLayout.VISIBLE);
+                        } else {
+                            // OggettiAVideo.getInstance().getImgPlay().setVisibility(LinearLayout.VISIBLE);
+                            OggettiAVideo.getInstance().getImgErroreBrano().setVisibility(LinearLayout.GONE);
+                        }
+                    }
+
                     // Do something after 5s = 5000ms
                     int dime = Utility.getInstance().DimensioniFile(sb.getPathBrano());
                     Log.getInstance().ScriveLog("File scaricato: " + sb.getPathBrano() + ". Dimensioni: " + dime);
@@ -189,8 +202,15 @@ public class DownloadBrano extends AsyncTask<String, String, String> {
                 }
             }, 100);
         } else {
+            if (VariabiliGlobali.getInstance().isSkippatoBrano()) {
+                Log.getInstance().ScriveLog("Skippato brano");
+            }
+            OggettiAVideo.getInstance().getImgDownloadBrano().setVisibility(LinearLayout.GONE);
+            OggettiAVideo.getInstance().getLayDownload().setVisibility(LinearLayout.GONE);
             VariabiliGlobali.getInstance().setBloccaDownload(false);
         }
+
+        VariabiliGlobali.getInstance().setSkippatoBrano(false);
     }
 
 }

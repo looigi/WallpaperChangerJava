@@ -5,8 +5,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.looigi.newlooplayer.Log;
+import com.looigi.newlooplayer.OggettiAVideo;
 import com.looigi.newlooplayer.Utility;
 import com.looigi.newlooplayer.VariabiliGlobali;
 import com.looigi.newlooplayer.notifiche.Notifica;
@@ -53,10 +55,14 @@ public class DownloadImage extends AsyncTask<String, Void, Bitmap> {
 
     protected void onPostExecute(Bitmap result) {
         if (!Errore) {
+            OggettiAVideo.getInstance().getImgSfondo().setVisibility(LinearLayout.VISIBLE);
+            OggettiAVideo.getInstance().getImgSfondoLogo().setVisibility(LinearLayout.GONE);
+
             bmImage.setImageBitmap(result);
 
             BitmapDrawable drawable = (BitmapDrawable) bmImage.getDrawable();
             Bitmap bitmap = drawable.getBitmap();
+
             Log.getInstance().ScriveLog("URL per salvataggio immagine: " + this.Immagine);
             Log.getInstance().ScriveLog("Creo cartelle per salvataggio immagine: " + this.CartellaImmagine);
             Log.getInstance().ScriveLog("Path salvataggio immagine: " + this.PathImmagine);
@@ -81,6 +87,11 @@ public class DownloadImage extends AsyncTask<String, Void, Bitmap> {
             } catch (IOException e) {
                 Log.getInstance().ScriveLog("Errore nel salvataggio su download Immagine: " + e.getMessage());
             }
+        } else {
+            Log.getInstance().ScriveLog("Errore sul download immagine. Imposto logo");
+
+            OggettiAVideo.getInstance().getImgSfondo().setVisibility(LinearLayout.GONE);
+            OggettiAVideo.getInstance().getImgSfondoLogo().setVisibility(LinearLayout.VISIBLE);
         }
     }
 }

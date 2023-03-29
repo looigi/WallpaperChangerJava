@@ -23,7 +23,8 @@ public class OggettiAVideo {
     private TextView txtInizio;
     private TextView txtFine;
     private TextView txtNomeBrano;
-    private ImageView imgSfondo;
+    private ImmagineZoomabile imgSfondo;
+    private ImageView imgSfondoLogo;
     private ImageView imgIndietro;
     private ImageView imgPlay;
     private ImageView imgAvanti;
@@ -1212,11 +1213,19 @@ public class OggettiAVideo {
         this.txtNomeBrano = txtNomeBrano;
     }
 
-    public ImageView getImgSfondo() {
+    public ImageView getImgSfondoLogo() {
+        return imgSfondoLogo;
+    }
+
+    public void setImgSfondoLogo(ImageView imgSfondoLogo) {
+        this.imgSfondoLogo = imgSfondoLogo;
+    }
+
+    public ImmagineZoomabile getImgSfondo() {
         return imgSfondo;
     }
 
-    public void setImgSfondo(ImageView imgSfondo) {
+    public void setImgSfondo(ImmagineZoomabile imgSfondo) {
         this.imgSfondo = imgSfondo;
     }
 

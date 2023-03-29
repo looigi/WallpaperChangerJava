@@ -821,6 +821,49 @@ public class db_dati {
         return true;
     }
 
+    public boolean RitornaTuttiIBrani() {
+        if (myDB != null) {
+            List<StrutturaBrano> lista = new ArrayList<>();
+            try {
+                String SQL = "Select * From BraniInLocale";
+                Cursor c = myDB.rawQuery(SQL, null);
+                c.moveToFirst();
+                if (c.getCount() > 0) {
+                    do {
+                        StrutturaBrano s = new StrutturaBrano();
+                        s.setIdBrano(c.getInt(0));
+                        s.setQuantiBrani(c.getInt(1));
+                        s.setArtista(c.getString(2));
+                        s.setAlbum(c.getString(3));
+                        s.setBrano(c.getString(4));
+                        s.setAnno(c.getString(5));
+                        s.setTraccia(c.getString(6));
+                        s.setEstensione(c.getString(7));
+                        s.setData(c.getString(8));
+                        s.setDimensione(c.getInt(9));
+                        s.setAscoltata(c.getInt(10));
+                        s.setBellezza(c.getInt(11));
+                        s.setTesto(c.getString(12));
+                        s.setTestoTradotto(c.getString(13));
+                        s.setUrlBrano(c.getString(14));
+                        s.setPathBrano(c.getString(15));
+                        s.setCartellaBrano(c.getString(16));
+                        s.setEsisteBranoSuDisco(c.getString(17).equals("S"));
+                        s.setTags(c.getString(18));
+
+                        lista.add(s);
+                    } while (c.moveToNext());
+                }
+
+                VariabiliGlobali.getInstance().setListaBraniInLocale(lista);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public Boolean AggiungeBrano(StrutturaBrano s) {
         String Ok = "";
         // Log.getInstance().ScriveLog("Aggiungo brano al db in locale: " + s.getBrano());

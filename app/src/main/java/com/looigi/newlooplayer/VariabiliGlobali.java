@@ -46,6 +46,7 @@ public class VariabiliGlobali {
     // private List<DettaglioBrano> ListaBraniCompleta;
     // private List<DettaglioBrano> ListaBraniFiltrata;
     private StrutturaBrano StrutturaDelBrano;
+    private List<StrutturaBrano> ListaBraniInLocale;
     private MediaPlayer mediaPlayer;
     private boolean FermaTimer = false;
     // private boolean CambiatoBrano = false;
@@ -151,9 +152,11 @@ public class VariabiliGlobali {
     private AudioManager mAudioManager;
     private ComponentName mReceiverComponent;
     private boolean Simulazione = true;
+    private boolean SoloLocale = true;
     private List<String> ListaTagsAlbum = new ArrayList<>();
     private List<String> ListaTagsArtista = new ArrayList<>();
     private List<StrutturaListaPreferiti> ListaPreferiti = new ArrayList<>();
+    private boolean SkippatoBrano = false;
 
     public Context getContext() {
         return context;
@@ -161,6 +164,30 @@ public class VariabiliGlobali {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public boolean isSkippatoBrano() {
+        return SkippatoBrano;
+    }
+
+    public void setSkippatoBrano(boolean skippatoBrano) {
+        SkippatoBrano = skippatoBrano;
+    }
+
+    public boolean isSoloLocale() {
+        return SoloLocale;
+    }
+
+    public void setSoloLocale(boolean soloLocale) {
+        SoloLocale = soloLocale;
+    }
+
+    public List<StrutturaBrano> getListaBraniInLocale() {
+        return ListaBraniInLocale;
+    }
+
+    public void setListaBraniInLocale(List<StrutturaBrano> listaBraniInLocale) {
+        ListaBraniInLocale = listaBraniInLocale;
     }
 
     public List<StrutturaListaPreferiti> getListaPreferiti() {

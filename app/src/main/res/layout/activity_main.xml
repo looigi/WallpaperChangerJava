@@ -18,21 +18,7 @@
         android:background="#000000"
         tools:context=".MainActivity" >
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
-
-            <com.looigi.newlooplayer.ImmagineZoomabile
-                android:id="@+id/imgImmagineSfondo"
-                android:scaleType="fitXY"
-                android:adjustViewBounds="true"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+        <include layout="@layout/immagine_sfondo" />
 
         <ImageView
             android:id="@+id/imgLinguettaSinistra"

@@ -103,6 +103,8 @@ public class ScannaDiscoPerBraniLocali extends AsyncTask<String, Integer, String
         OggettiAVideo.getInstance().getLayCaricamento().setVisibility(LinearLayout.GONE);
         OggettiAVideo.getInstance().getTxtCaricamento().setVisibility(LinearLayout.GONE);
         OggettiAVideo.getInstance().getTxtCaricamento().setText("");
+
+        VariabiliGlobali.getInstance().setListaBraniInLocale(BraniInLocale);
     }
 
     @Override
@@ -172,7 +174,7 @@ public class ScannaDiscoPerBraniLocali extends AsyncTask<String, Integer, String
                 sb.setEstensione(Estensione);
                 String UrlBrano = VariabiliGlobali.getInstance().getPercorsoBranoMP3SuURL() +
                         "/MP3/" + Artista + "/" + Anno + "-" + Album + "/" +
-                        Traccia + "-" + Nome + Estensione;
+                        Nome + Estensione;
                 sb.setUrlBrano(UrlBrano);
                 String CartellaBrano = VariabiliGlobali.getInstance().getPercorsoDIR() +
                         "/Brani/" + Artista + "/" + Anno + "-" + Album;

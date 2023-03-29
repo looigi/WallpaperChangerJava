@@ -326,7 +326,7 @@ public class ChiamateWs implements TaskDelegate {
                 TipoOperazione,
                 NS,
                 SA,
-                30000,
+                60000,
                 false);
     }
 
@@ -884,22 +884,27 @@ public class ChiamateWs implements TaskDelegate {
             String[] Globale = result.split("§");
             for (int i = 0; i < Globale.length; i++) {
                 if (!Globale[i].isEmpty()) {
-                    String[] Campi = Globale[i].split(";");
+                    try {
+                        String[] Campi = Globale[i].split(";");
 
-                    StrutturaListaAlbum s = new StrutturaListaAlbum();
-                    s.setArtista(Campi[0]);
-                    String Anno = Campi[1];
-                    if (Anno.isEmpty()) {
-                        Anno = "0000";
-                    } else {
-                        for (int k = Anno.length() + 1; k < 5; k++) {
-                            Anno = "0" + Anno;
+                        StrutturaListaAlbum s = new StrutturaListaAlbum();
+                        s.setArtista(Campi[0]);
+                        String Anno = Campi[1];
+                        if (Anno.isEmpty()) {
+                            Anno = "0000";
+                        } else {
+                            for (int k = Anno.length() + 1; k < 5; k++) {
+                                Anno = "0" + Anno;
+                            }
                         }
-                    }
-                    s.setAnno(Anno);
-                    s.setAlbum(Campi[2]);
+                        s.setAnno(Anno);
+                        s.setAlbum(Campi[2]);
 
-                    lista.add(s);
+                        lista.add(s);
+                    } catch (Exception ignored) {
+                        Log.getInstance().ScriveLog("Problemi nel ritorno della lista album artista (" + Globale[i] + "): " +
+                                Utility.getInstance().PrendeErroreDaException(ignored));
+                    }
                 }
             }
 
@@ -970,10 +975,14 @@ public class ChiamateWs implements TaskDelegate {
     } */
 
     private void RitornaArtisti(String result) {
-        Utility.getInstance().EliminaFile(VariabiliGlobali.getInstance().getPercorsoDIR() + "/Liste", "ListaArtisti.txt");
-        Utility.getInstance().ScriveFile(VariabiliGlobali.getInstance().getPercorsoDIR() + "/Liste", "ListaArtisti.txt", result);
+        if (result.contains("ERROR:")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            Utility.getInstance().EliminaFile(VariabiliGlobali.getInstance().getPercorsoDIR() + "/Liste", "ListaArtisti.txt");
+            Utility.getInstance().ScriveFile(VariabiliGlobali.getInstance().getPercorsoDIR() + "/Liste", "ListaArtisti.txt", result);
 
-        RitornaArtisti2(result);
+            RitornaArtisti2(result);
+        }
     }
 
     public void RitornaArtisti2(String result) {
@@ -983,30 +992,32 @@ public class ChiamateWs implements TaskDelegate {
         Log.getInstance().ScriveLog("Ritorno artisti -> " + Globale.length);
 
         for (int i = 0; i < Globale.length; i++) {
-            try {
-                String[] dati = Globale[i].split("\\|");
-                String Artista = dati[0];
-                String Immagine = dati[1];
-                // String UrlImmagine = VariabiliGlobali.getInstance().getPercorsoBranoMP3SuSD() +
-                //         "/ImmaginiMusica" + Immagine;
-                List<String> listaTags = new ArrayList<>();
-                if (!dati[2].isEmpty()) {
-                    String[] Tags = dati[2].split("%");
-                    for (int k = 0; k < Tags.length; k++) {
-                        if (!Tags[k].isEmpty()) {
-                            listaTags.add(Tags[k]);
+            if (!Globale[i].trim().replace("\n", "").isEmpty()) {
+                try {
+                    String[] dati = Globale[i].split("\\|");
+                    String Artista = dati[0];
+                    String Immagine = dati[1];
+                    // String UrlImmagine = VariabiliGlobali.getInstance().getPercorsoBranoMP3SuSD() +
+                    //         "/ImmaginiMusica" + Immagine;
+                    List<String> listaTags = new ArrayList<>();
+                    if (!dati[2].isEmpty()) {
+                        String[] Tags = dati[2].split("%");
+                        for (int k = 0; k < Tags.length; k++) {
+                            if (!Tags[k].isEmpty()) {
+                                listaTags.add(Tags[k]);
+                            }
                         }
                     }
+
+                    StrutturaArtisti sa = new StrutturaArtisti();
+                    sa.setNomeArtista(Artista);
+                    sa.setTags(listaTags);
+                    sa.setImmagine(Immagine);
+
+                    VariabiliGlobali.getInstance().AggiungeArtista(sa);
+                } catch (Exception ignored) {
+                    Log.getInstance().ScriveLog("Ritorno artisti. Errore su parse (" + Globale[i] + "): " + Utility.getInstance().PrendeErroreDaException(ignored));
                 }
-
-                StrutturaArtisti sa = new StrutturaArtisti();
-                sa.setNomeArtista(Artista);
-                sa.setTags(listaTags);
-                sa.setImmagine(Immagine);
-
-                VariabiliGlobali.getInstance().AggiungeArtista(sa);
-            } catch (Exception ignored) {
-                Log.getInstance().ScriveLog("Ritorno artisti. Errore: " + Utility.getInstance().PrendeErroreDaException(ignored));
             }
         }
         Log.getInstance().ScriveLog("Ritorno artisti effettuato");

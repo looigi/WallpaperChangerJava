@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(myReceiver, filter); */
 
-        Log.getInstance().ScriveLog("--------------------NUOVA SESSIONE--------------------");
+        Log.getInstance().ScriveLog(">>>>>>>>>>>>>>>>>>>>>>>>NUOVA SESSIONE<<<<<<<<<<<<<<<<<<<<<<<<");
         Log.getInstance().ScriveLog("Applicazione partita: " + VariabiliGlobali.getInstance().isePartito());
 
         ControllaAmministratore();
@@ -186,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
         TextView txtFine = (TextView) findViewById(R.id.txtFine);
         TextView txtNomeBrano = (TextView) findViewById(R.id.txtNomeBrano);
         ImmagineZoomabile imgSfondo = (ImmagineZoomabile) findViewById(R.id.imgImmagineSfondo);
+        ImageView imgSfondoLogo = (ImageView) findViewById(R.id.imgImmagineSfondoLogo);
+        imgSfondoLogo.setVisibility(LinearLayout.GONE);
         ImageView imgIndietro = (ImageView) findViewById(R.id.imgIndietro);
         ImageView imgPlay = (ImageView) findViewById(R.id.imgPlay);
         ImageView imgAvanti = (ImageView) findViewById(R.id.imgAvanti);
@@ -620,6 +622,7 @@ public class MainActivity extends AppCompatActivity {
         OggettiAVideo.getInstance().setTxtNomeBrano(txtNomeBrano);
         OggettiAVideo.getInstance().setTxtInformazioni(txtInformazioni);
         OggettiAVideo.getInstance().setImgSfondo(imgSfondo);
+        OggettiAVideo.getInstance().setImgSfondoLogo(imgSfondoLogo);
         OggettiAVideo.getInstance().setImgIndietro(imgIndietro);
         OggettiAVideo.getInstance().setImgPlay(imgPlay);
         OggettiAVideo.getInstance().setImgAvanti(imgAvanti);
@@ -667,8 +670,8 @@ public class MainActivity extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels / 2;
         int width = displayMetrics.widthPixels;
-        VariabiliGlobali.getInstance().setDimeSchermoX(width);
-        VariabiliGlobali.getInstance().setDimeSchermoY(height);
+        VariabiliGlobali.getInstance().setDimeSchermoX(displayMetrics.widthPixels);
+        VariabiliGlobali.getInstance().setDimeSchermoY(displayMetrics.heightPixels);
         ViewGroup.LayoutParams params = layTesto.getLayoutParams();
         params.width = width / 2;
         OggettiAVideo.getInstance().getLayTesto().setLayoutParams(params);
@@ -738,14 +741,26 @@ public class MainActivity extends AppCompatActivity {
                   VariabiliGlobali.getInstance().setSimulazione(isChecked);
               }
         });
+        Switch swcSoloLocale = (Switch) findViewById(R.id.swcSoloLocale);
+        swcSoloLocale.setChecked(true);
+        VariabiliGlobali.getInstance().setSoloLocale(true);
+        swcSoloLocale.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                VariabiliGlobali.getInstance().setSoloLocale(isChecked);
+            }
+        });
         Button imgPuliziaCompleta = (Button) findViewById(R.id.btnPuliziaCompleta);
         imgPuliziaCompleta.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 PuliziaGenerale p = new PuliziaGenerale();
                 p.Pulizia();
 
-                ChiamateWs ws = new ChiamateWs();
-                ws.PuliziaCompleta();
+                if (!VariabiliGlobali.getInstance().isSoloLocale()) {
+                    ChiamateWs ws = new ChiamateWs();
+                    ws.PuliziaCompleta();
+                }
+
+                p.PulizieProfonde();
             }
         });
 
