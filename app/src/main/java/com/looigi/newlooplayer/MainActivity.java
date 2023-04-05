@@ -4,7 +4,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
@@ -38,16 +37,13 @@ import android.widget.Toast;
 
 import com.looigi.newlooplayer.WebServices.ChiamateWs;
 import com.looigi.newlooplayer.WebServices.ChiamateWsAmministrazione;
-import com.looigi.newlooplayer.adapters.AdapterListenerArtisti;
 import com.looigi.newlooplayer.adapters.AdapterListenerListaPreferiti;
 import com.looigi.newlooplayer.adapters.AdapterListenerTags;
 import com.looigi.newlooplayer.adapters.AdapterListenerTagsBrano;
 import com.looigi.newlooplayer.adapters.AdapterListenerTagsTutti;
 import com.looigi.newlooplayer.cuffie.GestioneTastoCuffie;
 import com.looigi.newlooplayer.db_locale.db_dati;
-import com.looigi.newlooplayer.notifiche.Notifica;
-
-import org.w3c.dom.Text;
+import com.looigi.newlooplayer.download.DownloadFileTesto;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,40 +57,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean ciSonoPermessi;
     private AudioManager mAudioManagerInterno;
     private ComponentName mReceiverComponentInterno;
-
-    // private AudioManager mAudioManager;
-    // private ComponentName mReceiverComponent;
-    // private GestioneTastoCuffie myReceiver;
-    // private MusicIntentReceiver myReceiver;
-
-    /* private static class MusicIntentReceiver extends BroadcastReceiver {
-        public MusicIntentReceiver() {
-            Log.getInstance().ScriveLog("---> AZIONATO RECEIVER CUFFIE <---");
-        }
-
-        @Override public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_HEADSET_PLUG)) {
-                int state = intent.getIntExtra("state", -1);
-                switch (state) {
-                    case 0:
-                        Log.getInstance().ScriveLog("---> CUFFIE DISINSERITE <---");
-                        VariabiliGlobali.getInstance().setCuffieInserite(false);
-                        OggettiAVideo.getInstance().getImgCuffie().setVisibility(LinearLayout.GONE);
-                        if (VariabiliGlobali.getInstance().isStaSuonando()) {
-                            Utility.getInstance().premutoPlay(false);
-                        }
-                        break;
-                    case 1:
-                        Log.getInstance().ScriveLog("---> CUFFIE INSERITE <---");
-                        VariabiliGlobali.getInstance().setCuffieInserite(true);
-                        OggettiAVideo.getInstance().getImgCuffie().setVisibility(LinearLayout.VISIBLE);
-                        break;
-                    default:
-                        // Log.d(TAG, "I have no idea what the headset state is");
-                }
-            }
-        }
-    } */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter(Intent.ACTION_HEADSET_PLUG);
         registerReceiver(myReceiver, filter); */
 
+        Log.getInstance().ScriveLog("");
         Log.getInstance().ScriveLog(">>>>>>>>>>>>>>>>>>>>>>>>NUOVA SESSIONE<<<<<<<<<<<<<<<<<<<<<<<<");
         Log.getInstance().ScriveLog("Applicazione partita: " + VariabiliGlobali.getInstance().isePartito());
 
@@ -160,7 +123,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void EsegueEntrata() {
-        Utility.getInstance().PulisceTemporanei();
+        PuliziaGenerale pu = new PuliziaGenerale();
+        pu.PuliziaCartelleInutili();
+        pu.PulisceTemporanei();
+        pu.AttesaFinePulizia(true);
 
         ImpostaOggettiAVideo();
 
@@ -673,7 +639,7 @@ public class MainActivity extends AppCompatActivity {
         VariabiliGlobali.getInstance().setDimeSchermoX(displayMetrics.widthPixels);
         VariabiliGlobali.getInstance().setDimeSchermoY(displayMetrics.heightPixels);
         ViewGroup.LayoutParams params = layTesto.getLayoutParams();
-        params.width = width / 2;
+        params.width = (width * 3) / 4;
         OggettiAVideo.getInstance().getLayTesto().setLayoutParams(params);
 
         VariabiliGlobali.getInstance().setTestoAperto(false);
@@ -688,7 +654,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     VariabiliGlobali.getInstance().setTestoAperto(true);
                     OggettiAVideo.getInstance().getLayTesto().setVisibility(LinearLayout.VISIBLE);
-                    int doveX = width / 2;
+                    int doveX = (width * 3) / 4;
                     OggettiAVideo.getInstance().getImgLinguetta1().setX(doveX);
                 }
             }
@@ -742,7 +708,7 @@ public class MainActivity extends AppCompatActivity {
               }
         });
         Switch swcSoloLocale = (Switch) findViewById(R.id.swcSoloLocale);
-        swcSoloLocale.setChecked(true);
+        swcSoloLocale.setChecked(false);
         VariabiliGlobali.getInstance().setSoloLocale(true);
         swcSoloLocale.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -752,8 +718,10 @@ public class MainActivity extends AppCompatActivity {
         Button imgPuliziaCompleta = (Button) findViewById(R.id.btnPuliziaCompleta);
         imgPuliziaCompleta.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                LogPulizia.getInstance().EliminaFileLog();
+
                 PuliziaGenerale p = new PuliziaGenerale();
-                p.Pulizia();
+                p.PuliziaCartelleInutili();
 
                 if (!VariabiliGlobali.getInstance().isSoloLocale()) {
                     ChiamateWs ws = new ChiamateWs();
@@ -854,7 +822,7 @@ public class MainActivity extends AppCompatActivity {
         imgRefreshTesto.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 ChiamateWs ws = new ChiamateWs();
-                ws.AggiornaTesto();
+                ws.AggiornaTesto(true);
             }
         });
 

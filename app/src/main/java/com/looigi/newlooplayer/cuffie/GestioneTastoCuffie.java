@@ -52,18 +52,22 @@ public class GestioneTastoCuffie extends BroadcastReceiver {
             }
         } else {
             String intentAction = intent.getAction();
+
             Log.getInstance().ScriveLog("CUFFIE: " + intentAction.toString() + " happended");
+            Log.getInstance().ScriveLog("CUFFIE: Data String: " + intent.getDataString() + " ");
             /* if (!Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
                 Log.getInstance().ScriveLog("CUFFIE: no media button information");
                 return;
             } */
             KeyEvent event1 = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
             KeyEvent event2 = (KeyEvent) intent.getParcelableExtra(Intent.ACTION_MEDIA_BUTTON);
+            Log.getInstance().ScriveLog("CUFFIE: event1: " + event1.toString());
+            Log.getInstance().ScriveLog("CUFFIE: event2: " + event2.toString());
             KeyEvent event;
-            if (event1 == null && event2 == null) {
+            /* if (event1 == null && event2 == null) {
                 Log.getInstance().ScriveLog("CUFFIE: no keypress");
                 return;
-            } else {
+            } else { */
                 if (event1 != null) {
                     Log.getInstance().ScriveLog("CUFFIE: Extra Key Event");
                     event = event1;
@@ -71,7 +75,7 @@ public class GestioneTastoCuffie extends BroadcastReceiver {
                     Log.getInstance().ScriveLog("CUFFIE: Action media button");
                     event = event2;
                 }
-            }
+            // }
             // other stuff you want to do
 
             // if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {

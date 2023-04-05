@@ -1,16 +1,21 @@
 package com.looigi.newlooplayer.treeview;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.looigi.newlooplayer.Log;
 import com.looigi.newlooplayer.OggettiAVideo;
@@ -196,8 +201,40 @@ public class AlberoBrani {
                                 OggettiAVideo.getInstance().getImgAlbumGA().setImageBitmap(bitmap);
                                 OggettiAVideo.getInstance().getImgCambiaAlbumGA().setOnClickListener(new View.OnClickListener() {
                                     public void onClick(View v) {
-                                        ChiamateWsAmministrazione ws = new ChiamateWsAmministrazione();
-                                        ws.ScaricaImmagineAlbum(Artista, Album, Anno);
+                                        AlertDialog.Builder builder = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale());
+                                        builder.setTitle("Inserire il nome da ricercare (Artista;Album;Anno)");
+                                        final EditText input = new EditText(VariabiliGlobali.getInstance().getFragmentActivityPrincipale());
+                                        input.setInputType(InputType.TYPE_CLASS_TEXT);
+                                        input.setText(Artista + ";" + Album + ";" + Anno);
+                                        builder.setView(input);
+                                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                String m_Text = input.getText().toString();
+                                                if (m_Text.contains(";")) {
+                                                    String[] campi = m_Text.split(";");
+                                                    if (campi.length > 2) {
+                                                        ChiamateWsAmministrazione ws = new ChiamateWsAmministrazione();
+                                                        ws.ScaricaImmagineAlbum(Artista, Album, Anno, campi[0], campi[1], campi[2]);
+                                                    } else {
+                                                        Utility.getInstance().VisualizzaErrore("Stringa non valida. Mancano punti e virgola");
+                                                    }
+                                                } else {
+                                                    Utility.getInstance().VisualizzaErrore("Stringa non valida");
+                                                }
+                                            }
+                                        });
+                                        builder.setNegativeButton("Annulla", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+
+                                        builder.show();
+
+                                        /* ChiamateWsAmministrazione ws = new ChiamateWsAmministrazione();
+                                        ws.ScaricaImmagineAlbum(Artista, Album, Anno); */
                                     }
                                 });
 

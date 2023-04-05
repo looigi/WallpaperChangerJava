@@ -2,11 +2,14 @@ package com.looigi.newlooplayer.WebServices;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AlertDialog;
 
 import com.looigi.newlooplayer.BuildConfig;
+import com.looigi.newlooplayer.PuliziaGenerale;
 import com.looigi.newlooplayer.ServizioBackground;
 import com.looigi.newlooplayer.adapters.AdapterListenerArtisti;
 import com.looigi.newlooplayer.Log;
@@ -36,7 +39,7 @@ import java.util.ResourceBundle;
 public class ChiamateWs implements TaskDelegate {
     private LetturaWSAsincrona bckAsyncTask;
 
-    private final String RadiceWS = "http://looigi.ddns.net:1021/";
+    private final String RadiceWS = VariabiliGlobali.getInstance().getUrlWS() + "/";
     private final String ws = "wsMobile.asmx/";
     private final String ws2 = "wsLWP.asmx/";
     private final String NS="http://wsMobile2.org/";
@@ -48,6 +51,24 @@ public class ChiamateWs implements TaskDelegate {
     private long inizioChiamata;
     private boolean ControllaTempoEsecuzione = false;
     private boolean accesoStatoReteMancante = false;
+    private PuliziaGenerale p;
+
+    public void AttendePuliziaCompleta(PuliziaGenerale p) {
+        Log.getInstance().ScriveLog("Attesa termine pulizia");
+
+        String Urletto="AttendePuliziaCompleta";
+
+        this.p = p;
+
+        TipoOperazione = "AttendePuliziaCompleta";
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                2000,
+                false);
+    }
 
     public void PuliziaCompleta() {
         Log.getInstance().ScriveLog("Pulizie di Pasqua");
@@ -251,7 +272,7 @@ public class ChiamateWs implements TaskDelegate {
                 false);
     }
 
-    public void AggiornaTesto() {
+    public void AggiornaTesto(boolean mostraPopup) {
         String id = VariabiliGlobali.getInstance().getStrutturaDelBrano().getIdBrano().toString();
         String Artista = VariabiliGlobali.getInstance().getStrutturaDelBrano().getArtista();
         String Album = VariabiliGlobali.getInstance().getStrutturaDelBrano().getAlbum();
@@ -267,7 +288,7 @@ public class ChiamateWs implements TaskDelegate {
                 NS2,
                 SA2,
                 30000,
-                true);
+                mostraPopup);
     }
 
     public void ScaricaNuovaImmagine(String Artista, String Album, String Brano) {
@@ -544,14 +565,21 @@ public class ChiamateWs implements TaskDelegate {
             case "PulizieDiPasqua":
                 fPulizieDiPasqua(result);
                 break;
+            case "AttendePuliziaCompleta":
+                fAttendePuliziaCompleta(result);
+                break;
         }
     }
+
+    private void fAttendePuliziaCompleta(String result) {
+        p.TerminePulizia(result);
+    };
 
     private void fPulizieDiPasqua(String result) {
         if (result.contains("ERROR:")) {
             Utility.getInstance().VisualizzaErrore(result);
         } else {
-            Log.getInstance().ScriveLog("Pulizia lanciata");
+            /* Log.getInstance().ScriveLog("Pulizia lanciata");
             AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
             alertDialog.setTitle("Alert");
             alertDialog.setMessage("Pulizia lanciata in background");
@@ -561,7 +589,9 @@ public class ChiamateWs implements TaskDelegate {
                             dialog.dismiss();
                         }
                     });
-            alertDialog.show();
+            alertDialog.show(); */
+            PuliziaGenerale p = new PuliziaGenerale();
+            p.AttesaFinePulizia(false);
         }
     }
 
@@ -1166,6 +1196,10 @@ public class ChiamateWs implements TaskDelegate {
             if (!Immagini[i].isEmpty()) {
                 String[] Imm2 = Immagini[i].split(";");
                 StrutturaImmagini Imm = new StrutturaImmagini();
+                /* if (Imm2[2].toUpperCase().contains("COVER_")) {
+                    Imm.setAlbum(Imm2[1]);
+                } else {
+                } */
                 Imm.setAlbum(Imm2[1]);
                 Imm.setNomeImmagine(Imm2[2]);
 

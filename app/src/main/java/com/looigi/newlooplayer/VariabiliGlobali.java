@@ -39,6 +39,7 @@ public class VariabiliGlobali {
     private final String NomeApplicazione = "NewLooPlayer";
     private final String PercorsoDIR= Environment.getExternalStorageDirectory().getPath()+"/LooigiSoft/looWebPlayer";
     private final String PercorsoBranoMP3SuURL = "http://looigi.ddns.net:1051";
+    private final String UrlWS = "http://looigi.ddns.net:1021";
     private final int QuanteImmaginePerNuovoScarico = 5;
     private Activity FragmentActivityPrincipale;
     private Integer idUltimoBranoAscoltato;
@@ -164,6 +165,10 @@ public class VariabiliGlobali {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public String getUrlWS() {
+        return UrlWS;
     }
 
     public boolean isSkippatoBrano() {

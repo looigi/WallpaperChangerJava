@@ -19,7 +19,7 @@ import java.util.List;
 public class ChiamataWsBellezza implements TaskDelegate {
     private LetturaWSAsincrona bckAsyncTask;
 
-    private final String RadiceWS = "http://looigi.ddns.net:1021/";
+    private final String RadiceWS = VariabiliGlobali.getInstance().getUrlWS() + "/";
     private final String ws = "wsMobile.asmx/";
     private final String ws2 = "wsLWP.asmx/";
     private final String NS="http://wsMobile2.org/";

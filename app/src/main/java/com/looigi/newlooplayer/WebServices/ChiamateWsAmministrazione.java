@@ -26,7 +26,7 @@ import java.util.List;
 public class ChiamateWsAmministrazione implements TaskDelegate {
     private LetturaWSAsincrona bckAsyncTask;
 
-    private final String RadiceWS = "http://looigi.ddns.net:1021/";
+    private final String RadiceWS = VariabiliGlobali.getInstance().getUrlWS() + "/";
     private final String ws = "wsMobile.asmx/";
     private final String ws2 = "wsLWP.asmx/";
     private final String NS="http://wsMobile2.org/";
@@ -82,17 +82,18 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
     private String AnnoAppoggio;
     private String AlbumAppoggio;
 
-    public void ScaricaImmagineAlbum(String Artista, String Album, String Anno) {
-        Log.getInstance().ScriveLog("Scarica immagine album. Artista: " + Artista + ", Album: " + Album + ", Anno: " + Anno);
+    public void ScaricaImmagineAlbum(String Artista, String Album, String Anno, String Ricerca1, String Ricerca2, String Ricerca3) {
+        Log.getInstance().ScriveLog("Scarica immagine album. Artista: " + Artista + ", Album: " + Album + ", Anno: " + Anno +
+                ", Ricerca1: " + Ricerca1 + ", Ricerca2: " + Ricerca2 + ", Ricerca3: " + Ricerca3);
 
         ArtistaAppoggio = Artista;
         AlbumAppoggio = Album;
         AnnoAppoggio = Anno;
 
         String Urletto="ScaricaImmagineAlbum?" +
-                "Artista=" + Artista +
-                "&Album=" + Album +
-                "&Anno=" + Anno +
+                "Artista=" + Ricerca1 +
+                "&Album=" + Ricerca2 +
+                "&Anno=" + Ricerca3 +
                 "&QuanteImmagini=" + VariabiliGlobali.getInstance().getQuanteImmaginiDaScaricareGA();
         Urletto = Urletto.replace(" ", "%20");
 
@@ -255,7 +256,7 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
                     String[] Campi = Immagini[i].split(";");
                     StrutturaImmaginiDaCambiare s = new StrutturaImmaginiDaCambiare();
                     s.setNomeImmagine(Campi[0]);
-                    s.setPathImmagine("http://looigi.ddns.net:1021/Appoggio/ImmaginiAlbum/" + Campi[0]);
+                    s.setPathImmagine(VariabiliGlobali.getInstance().getUrlWS() + "/Appoggio/ImmaginiAlbum/" + Campi[0]);
                     s.setDimensione(Campi[1]);
                     listaImmagini.add(s);
                 }

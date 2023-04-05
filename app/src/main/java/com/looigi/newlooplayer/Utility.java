@@ -178,6 +178,28 @@ public class Utility {
         return text.toString();
     }
 
+    public String LeggeFileUnico(String fileName) {
+        File file = new File(fileName);
+
+        StringBuilder text = new StringBuilder();
+
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+
+            while ((line = br.readLine()) != null) {
+                text.append(line);
+                text.append('\n');
+            }
+            br.close();
+        } catch (IOException e) {
+            //You'll need to add proper error handling here
+            return "ERROR: " + e.getMessage();
+        }
+
+        return text.toString();
+    }
+
     public int DimensioniFile(String sFile) {
         File file = new File(sFile);
         return Integer.parseInt(String.valueOf(file.length() / 1024));
@@ -306,24 +328,6 @@ public class Utility {
         }
     }
 
-    public void PulisceTemporanei() {
-        File rootPrincipale = new File(VariabiliGlobali.getInstance().getPercorsoDIR() + "/Versioni");
-        if (!rootPrincipale.exists()) {
-            rootPrincipale.mkdir();
-        }
-        File[] list = rootPrincipale.listFiles();
-
-        for (File f : list) {
-            if (f.isDirectory()) {
-            } else {
-                String Filetto = f.getAbsoluteFile().getPath(); // Questo contiene tutto, sia il path che il nome del file
-                if (Filetto.toUpperCase().contains(".TXT") || Filetto.toUpperCase().contains(".MP3") || Filetto.toUpperCase().contains(".WMA")) {
-                    Utility.getInstance().EliminaFileUnico(Filetto);
-                }
-            }
-        }
-    }
-
     public void EsegueBranoInStreaming() {
         String DaDove = "Url";
         String url = VariabiliGlobali.getInstance().getStrutturaDelBrano().getUrlBrano();
@@ -372,18 +376,33 @@ public class Utility {
                         con.setRequestMethod("HEAD");
                         if ((con.getResponseCode() == HttpURLConnection.HTTP_OK)) {
                             // File rilevato
-                            OggettiAVideo.getInstance().getImgPlay().setVisibility(LinearLayout.VISIBLE);
-                            Log.getInstance().ScriveLog("Brano da suonare da url: OK");
-                            ContinuaEsecuzioneBranoInStreaming(urlString);
+                            VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    OggettiAVideo.getInstance().getImgPlay().setVisibility(LinearLayout.VISIBLE);
+                                    Log.getInstance().ScriveLog("Brano da suonare da url: OK");
+                                    ContinuaEsecuzioneBranoInStreaming(urlString);
+                                }
+                            });
                         } else {
-                            OggettiAVideo.getInstance().getImgPlay().setVisibility(LinearLayout.GONE);
-                            Log.getInstance().ScriveLog("Brano da suonare da url: NON ESISTENTE");
-                            VisualizzaErrore("Brano da suonare da url: NON ESISTENTE:\n" + urlString);
+                            VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    OggettiAVideo.getInstance().getImgPlay().setVisibility(LinearLayout.GONE);
+                                    Log.getInstance().ScriveLog("Brano da suonare da url: NON ESISTENTE");
+                                    VisualizzaErrore("Brano da suonare da url: NON ESISTENTE:\n" + urlString);
+                                }
+                            });
                         }
                     } catch (Exception e) {
-                        OggettiAVideo.getInstance().getImgPlay().setVisibility(LinearLayout.GONE);
-                        Log.getInstance().ScriveLog("Brano da suonare da url: Errore " + PrendeErroreDaException(e));
-                        VisualizzaErrore(PrendeErroreDaException(e));
+                        VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                OggettiAVideo.getInstance().getImgPlay().setVisibility(LinearLayout.GONE);
+                                Log.getInstance().ScriveLog("Brano da suonare da url: Errore " + PrendeErroreDaException(e));
+                                VisualizzaErrore(PrendeErroreDaException(e));
+                            }
+                        });
                     }
                 }
             }.start();
@@ -391,64 +410,59 @@ public class Utility {
     }
 
     private void ContinuaEsecuzioneBranoInStreaming(String urlString) {
-        VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
+        Uri myUri = Uri.parse(urlString);
+
+        VariabiliGlobali.getInstance().getMediaPlayer().setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+        try {
+            VariabiliGlobali.getInstance().getMediaPlayer().setDataSource(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(), myUri);
+            VariabiliGlobali.getInstance().getMediaPlayer().prepare();
+        } catch (IOException e) {
+            Log.getInstance().ScriveLog("Errore nella preparazione del brano da url: " + e.getMessage());
+            Utility.getInstance().VisualizzaErrore("Errore nella preparazione del brano:\n\n" + e.getMessage());
+        }
+/* } catch (Exception e) {
+    Log.getInstance().ScriveLog("Errore nel caricamento del brano da url: " + e.getMessage());
+} */
+
+    /* VariabiliGlobali.getInstance().getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        @Override
+        public void onPrepared(MediaPlayer mediaPlayer) {
+        }
+    }); */
+
+        Log.getInstance().ScriveLog("Brano da suonare: Sta suonando: " + VariabiliGlobali.getInstance().isStaSuonando());
+        if (VariabiliGlobali.getInstance().isStaSuonando()) {
+            handlerTimer.removeCallbacks(runTimer);
+            runTimer = null;
+            VariabiliGlobali.getInstance().setFermaTimer(false);
+            FaiPartireTimer();
+
+            VariabiliGlobali.getInstance().getMediaPlayer().start();
+        }
+
+        int Asc = VariabiliGlobali.getInstance().getStrutturaDelBrano().getAscoltata() + 1;
+        VariabiliGlobali.getInstance().getStrutturaDelBrano().setAscoltata(Asc);
+        Utility.getInstance().AggiornaStelleAscoltata(
+                VariabiliGlobali.getInstance().getStrutturaDelBrano().getBellezza(),
+                VariabiliGlobali.getInstance().getStrutturaDelBrano().getAscoltata());
+
+        VariabiliGlobali.getInstance().getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
-            public void run() {
-                Uri myUri = Uri.parse(urlString);
-
-                VariabiliGlobali.getInstance().getMediaPlayer().setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-                try {
-                    VariabiliGlobali.getInstance().getMediaPlayer().setDataSource(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(), myUri);
-                    VariabiliGlobali.getInstance().getMediaPlayer().prepare();
-                } catch (IOException e) {
-                    Log.getInstance().ScriveLog("Errore nella preparazione del brano da url: " + e.getMessage());
-                    Utility.getInstance().VisualizzaErrore("Errore nella preparazione del brano:\n\n" + e.getMessage());
-                }
-        /* } catch (Exception e) {
-            Log.getInstance().ScriveLog("Errore nel caricamento del brano da url: " + e.getMessage());
-        } */
-
-            /* VariabiliGlobali.getInstance().getMediaPlayer().setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mediaPlayer) {
-                }
-            }); */
-
-                Log.getInstance().ScriveLog("Brano da suonare: Sta suonando: " + VariabiliGlobali.getInstance().isStaSuonando());
-                if (VariabiliGlobali.getInstance().isStaSuonando()) {
-                    handlerTimer.removeCallbacks(runTimer);
-                    runTimer = null;
-                    VariabiliGlobali.getInstance().setFermaTimer(false);
-                    FaiPartireTimer();
-
-                    VariabiliGlobali.getInstance().getMediaPlayer().start();
-                }
-
-                int Asc = VariabiliGlobali.getInstance().getStrutturaDelBrano().getAscoltata() + 1;
-                VariabiliGlobali.getInstance().getStrutturaDelBrano().setAscoltata(Asc);
-                Utility.getInstance().AggiornaStelleAscoltata(
-                        VariabiliGlobali.getInstance().getStrutturaDelBrano().getBellezza(),
-                        VariabiliGlobali.getInstance().getStrutturaDelBrano().getAscoltata());
-
-                VariabiliGlobali.getInstance().getMediaPlayer().setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        // Termine Brano
-                        Log.getInstance().ScriveLog("Terminato il brano. Skippo da Utility");
-                        AvantiBrano();
-                    }
-                });
-
-                if (VariabiliGlobali.getInstance().isScaricaBrano()) {
-                    if (!EsisteFile(VariabiliGlobali.getInstance().getStrutturaDelBrano().getPathBrano())) {
-                        // DOWNLOAD FILE
-                        Log.getInstance().ScriveLog("Scarico il brano in locale");
-                        new DownloadBrano(VariabiliGlobali.getInstance().getStrutturaDelBrano()).execute(VariabiliGlobali.getInstance().getStrutturaDelBrano().getUrlBrano());
-                    }
-                }
+            public void onCompletion(MediaPlayer mp) {
+                // Termine Brano
+                Log.getInstance().ScriveLog("Terminato il brano. Skippo da Utility");
+                AvantiBrano();
             }
         });
+
+        if (VariabiliGlobali.getInstance().isScaricaBrano()) {
+            if (!EsisteFile(VariabiliGlobali.getInstance().getStrutturaDelBrano().getPathBrano())) {
+                // DOWNLOAD FILE
+                Log.getInstance().ScriveLog("Scarico il brano in locale");
+                new DownloadBrano(VariabiliGlobali.getInstance().getStrutturaDelBrano()).execute(VariabiliGlobali.getInstance().getStrutturaDelBrano().getUrlBrano());
+            }
+        }
     }
 
     public void ImpostaPosizioneBrano(int Posizione) {
@@ -516,9 +530,17 @@ public class Utility {
                     }
 
                     if (SecondiPassati == 7) {
-                        ChiamateWs ws = new ChiamateWs();
                         if (VariabiliGlobali.getInstance().getStrutturaDelBrano() != null) {
+                            ChiamateWs ws = new ChiamateWs();
                             ws.AggiornaImmagini(VariabiliGlobali.getInstance().getStrutturaDelBrano().getArtista());
+                        }
+                    }
+
+                    if (SecondiPassati == 3) {
+                        String testo = VariabiliGlobali.getInstance().getStrutturaDelBrano().getTesto();
+                        if (testo == null || testo.isEmpty()) {
+                            ChiamateWs ws = new ChiamateWs();
+                            ws.AggiornaTesto(false);
                         }
                     }
 
@@ -558,6 +580,7 @@ public class Utility {
                 String[] c = Connessione.split(";");
                 qualitaRete = Integer.parseInt(c[0]);
                 if (qualitaRete == -1) {
+                    VariabiliGlobali.getInstance().setUltimoStatoRete(qualitaRete);
                     if (vecchiaQualitaRete != qualitaRete) {
                         Log.getInstance().ScriveLog("Rete Sconosciuta");
                     }
@@ -939,18 +962,20 @@ public class Utility {
                 Log.getInstance().ScriveLog("Cambio immagine: Nuova Immagine " + Integer.toString(NuovaImmagine));
                 if (NuovaImmagine > -1) {
                     StrutturaImmagini imm = VariabiliGlobali.getInstance().getStrutturaDelBrano().getImmagini().get(NuovaImmagine);
-                    VariabiliGlobali.getInstance().setImmagineAttuale(imm.getUrlImmagine());
-                    if (VariabiliGlobali.getInstance().getImmagineAttuale().isEmpty()) {
-                        Utility.getInstance().ImpostaSfondoLogo();
-                    } else {
-                        if (!EsisteFile(imm.getPathImmagine())) {
-                            new DownloadImage(OggettiAVideo.getInstance().getImgSfondo(), imm.getUrlImmagine()).execute(VariabiliGlobali.getInstance().getImmagineAttuale());
-                        } else {
-                            ImpostaImmagine(imm.getPathImmagine());
+                    String path = imm.getPathImmagine();
+                    if (Utility.getInstance().EsisteFile(path)) {
+                        VariabiliGlobali.getInstance().setImmagineAttuale(imm.getUrlImmagine());
+                        ImpostaImmagine(imm.getPathImmagine());
 
-                            Log.getInstance().ScriveLog("Immagine Impostata: " + imm.getPathImmagine());
-                            Notifica.getInstance().setImmagine(imm.getPathImmagine());
-                            Notifica.getInstance().AggiornaNotifica();
+                        Log.getInstance().ScriveLog("Immagine Impostata: " + imm.getPathImmagine());
+                        Notifica.getInstance().setImmagine(imm.getPathImmagine());
+                        Notifica.getInstance().AggiornaNotifica();
+                    } else {
+                        VariabiliGlobali.getInstance().setImmagineAttuale(imm.getUrlImmagine());
+                        if (VariabiliGlobali.getInstance().getImmagineAttuale().isEmpty()) {
+                            Utility.getInstance().ImpostaSfondoLogo();
+                        } else {
+                            new DownloadImage(OggettiAVideo.getInstance().getImgSfondo(), imm.getUrlImmagine()).execute(VariabiliGlobali.getInstance().getImmagineAttuale());
                         }
                     }
                 }
@@ -970,7 +995,7 @@ public class Utility {
         VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
             public void run() {
                 AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
-                alertDialog.setTitle("Errore nella chiamata");
+                alertDialog.setTitle("Messaggio");
                 alertDialog.setMessage(Errore);
                 alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                         new DialogInterface.OnClickListener() {
