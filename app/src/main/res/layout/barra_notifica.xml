@@ -97,12 +97,12 @@
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical" >
 
-            <ImageView
+            <!-- <ImageView
                 android:id="@+id/imgIndietro"
                 android:layout_width="match_parent"
                 android:scaleType="fitCenter"
                 android:layout_height="40dp"
-                android:src="@drawable/indietro" />
+                android:src="@drawable/indietro" /> -->
         </LinearLayout>
 
         <LinearLayout
@@ -112,12 +112,12 @@
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical" >
 
-            <ImageView
+            <!-- <ImageView
                 android:id="@+id/ImgPlay"
                 android:layout_width="match_parent"
                 android:scaleType="fitCenter"
                 android:layout_height="40dp"
-                android:src="@drawable/icona_suona" />
+                android:src="@drawable/icona_suona" /> -->
         </LinearLayout>
 
         <LinearLayout
@@ -127,12 +127,12 @@
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical" >
 
-            <ImageView
+            <!-- <ImageView
                 android:id="@+id/imgAvanti"
                 android:layout_width="match_parent"
                 android:scaleType="fitCenter"
                 android:layout_height="40dp"
-                android:src="@drawable/avanti" />
+                android:src="@drawable/avanti" /> -->
         </LinearLayout>
 
         <!-- <LinearLayout
@@ -152,10 +152,10 @@
 
     </LinearLayout>
 
-    <ImageView
+    <!-- <ImageView
         android:id="@+id/imgDownload"
         android:layout_width="40dp"
         android:layout_alignParentRight="true"
         android:layout_height="40dp"
-        android:src="@drawable/download" />
+        android:src="@drawable/download" /> -->
 </RelativeLayout>
