@@ -2,12 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="#000000">
+    android:background="@drawable/bordo_arrotondato_bianco_sfumato_trasp">
 
     <ImageView
         android:id="@+id/imgCopertina"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         android:src="@drawable/logo" />
 
@@ -15,11 +15,10 @@
         android:id="@+id/layBarraNotifica"
         android:layout_width="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/bordo_arrotondato_bianco_sfumato_trasp"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/txtTitoloBrano"
+            android:id="@+id/txtTitoloImmagine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
@@ -39,52 +38,11 @@
             android:shadowDx="2"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/txtArtista"
-            android:layout_width="match_parent"
-            android:padding="2dp"
-            android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:tag="tabCaption"
-            android:text="Artista"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimary"
-            android:shadowColor="#ff000000"
-            android:shadowDy="2"
-            android:shadowDx="2"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/txtAlbum"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="2dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:gravity="center"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:tag="tabCaption"
-            android:text="Album"
-            android:textColor="@color/colorPrimary"
-            android:shadowColor="#ff000000"
-            android:textStyle="bold"
-            android:shadowDy="2"
-            android:shadowDx="2"
-            android:textSize="12sp" />
     </LinearLayout>
 
     <LinearLayout
         android:baselineAligned="false"
-        android:layout_marginTop="62dp"
+        android:layout_marginTop="32dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
@@ -112,12 +70,12 @@
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical" >
 
-            <!-- <ImageView
-                android:id="@+id/ImgPlay"
+            <ImageView
+                android:id="@+id/imgProssima"
                 android:layout_width="match_parent"
                 android:scaleType="fitCenter"
                 android:layout_height="40dp"
-                android:src="@drawable/icona_suona" /> -->
+                android:src="@drawable/icona_refresh" />
         </LinearLayout>
 
         <LinearLayout
@@ -127,12 +85,12 @@
             android:gravity="center_horizontal|center_vertical"
             android:orientation="vertical" >
 
-            <!-- <ImageView
-                android:id="@+id/imgAvanti"
+            <ImageView
+                android:id="@+id/imgApre"
                 android:layout_width="match_parent"
                 android:scaleType="fitCenter"
                 android:layout_height="40dp"
-                android:src="@drawable/avanti" /> -->
+                android:src="@drawable/icona_equalizz" />
         </LinearLayout>
 
         <!-- <LinearLayout

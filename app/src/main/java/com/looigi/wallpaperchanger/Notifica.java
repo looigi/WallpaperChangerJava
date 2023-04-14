@@ -46,11 +46,38 @@ public class Notifica {
 
     public void setTitolo(String titolo) {
         Titolo = titolo;
+
+        if (contentView != null) {
+            if (Titolo != null && !Titolo.isEmpty()) {
+                contentView.setTextViewText(R.id.txtTitoloImmagine, Titolo);
+            } else {
+                contentView.setTextViewText(R.id.txtTitoloImmagine, "---");
+            }
+        }
     }
 
     public void setImmagine(String immagine) {
         // Log.getInstance().ScriveLog("Imposto Immagine su notifica: " + immagine);
         Immagine = immagine;
+
+        if (contentView != null) {
+            if (Immagine != null && !Immagine.isEmpty()) {
+                try {
+                    contentView.setImageViewBitmap(R.id.imgCopertina, BitmapFactory.decodeFile(Immagine));
+                } catch (Exception ignored) {
+                    // Log.getInstance().ScriveLog("Immagine notifica: Errore 1");
+                    contentView.setImageViewResource(R.id.imgCopertina, R.drawable.logo);
+                }
+            } else {
+                // Log.getInstance().ScriveLog("Immagine notifica non presente");
+                contentView.setImageViewResource(R.id.imgCopertina, R.drawable.logo);
+            }
+
+            if (notificationManager!=null && notificationBuilder != null) {
+                Log.getInstance().ScriveLog("Aggiorna notifica. Build");
+                notificationManager.notify(NOTIF_ID, notificationBuilder.build());
+            }
+        }
     }
 
 
@@ -133,23 +160,12 @@ public class Notifica {
         if (view != null) {
             Log.getInstance().ScriveLog("Set Listeners. View corretta");
 
-            String Traccia = "";
+            // String Traccia = "";
 
             if (Titolo != null && !Titolo.isEmpty()) {
-                String sTitolo = Titolo;
-                if (sTitolo.contains("-")) {
-                    String A[] = sTitolo.split("-");
-                    if (!A[0].isEmpty() && !A[0].equals("00")) {
-                        Traccia = "        Traccia " + A[0];
-                    }
-                    sTitolo = A[1].trim();
-                }
-                if (sTitolo.contains(".")) {
-                    sTitolo = sTitolo.substring(0, sTitolo.indexOf("."));
-                }
-                view.setTextViewText(R.id.txtTitoloBrano, sTitolo);
+                view.setTextViewText(R.id.txtTitoloImmagine, Titolo);
             } else {
-                view.setTextViewText(R.id.txtTitoloBrano, "---");
+                view.setTextViewText(R.id.txtTitoloImmagine, "---");
             }
 
             // Log.getInstance().ScriveLog("Immagine notifica: " + Immagine);
@@ -179,29 +195,23 @@ public class Notifica {
         if (view != null) {
             Log.getInstance().ScriveLog("Set Listeners tasti. View corretta" );
 
-            Intent play=new Intent(context, PassaggioNotifica.class);
-            play.putExtra("DO", "play");
+            // Intent play=new Intent(context, PassaggioNotifica.class);
+            // play.putExtra("DO", "play");
             // play.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION);
-            PendingIntent pplay = PendingIntent.getActivity(context, 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
+            // PendingIntent pplay = PendingIntent.getActivity(context, 0, play, PendingIntent.FLAG_UPDATE_CURRENT);
             // view.setOnClickPendingIntent(R.id.imgPlay, pplay);
             // view.setImageViewResource(R.id.imgPlay, R.drawable.play);
 
-            Intent indietro=new Intent(context, PassaggioNotifica.class);
-            indietro.putExtra("DO", "indietro");
-            PendingIntent pCambia = PendingIntent.getActivity(context, 1, indietro, PendingIntent.FLAG_UPDATE_CURRENT);
-            // view.setOnClickPendingIntent(R.id.imgIndietro, pCambia);
-            // view.setImageViewResource(R.id.imgIndietro, R.drawable.indietro);
-
             Intent avanti=new Intent(context, PassaggioNotifica.class);
-            avanti.putExtra("DO", "avanti");
-            PendingIntent pAvanti = PendingIntent.getActivity(context, 2, avanti, PendingIntent.FLAG_UPDATE_CURRENT);
-            // view.setOnClickPendingIntent(R.id.imgAvanti, pAvanti);
+            avanti.putExtra("DO", "prossima");
+            PendingIntent pAvanti = PendingIntent.getActivity(context, 1, avanti, PendingIntent.FLAG_UPDATE_CURRENT);
+            view.setOnClickPendingIntent(R.id.imgProssima, pAvanti);
             // view.setImageViewResource(R.id.imgAvanti, R.drawable.avanti);
 
             Intent apre=new Intent(context, PassaggioNotifica.class);
             apre.putExtra("DO", "apre");
-            PendingIntent pApre = PendingIntent.getActivity(context, 3, apre, PendingIntent.FLAG_UPDATE_CURRENT);
-            view.setOnClickPendingIntent(R.id.layBarraNotifica, pApre);
+            PendingIntent pApre = PendingIntent.getActivity(context, 0, apre, PendingIntent.FLAG_UPDATE_CURRENT);
+            view.setOnClickPendingIntent(R.id.imgApre, pApre);
 
             /* Intent apre=new Intent(context, PassaggioNotifica.class);
             apre.putExtra("DO", "apre");

@@ -29,11 +29,12 @@ public class PassaggioNotifica extends Activity {
 			switch (action) {
 				case "apre":
 					break;
-				case "indietro":
-					break;
-				case "avanti":
-					break;
-				case "play":
+				case "prossima":
+					Log.getInstance().ScriveLog("---Cambio Immagine Manuale---");
+					int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
+					ChangeWallpaper c = new ChangeWallpaper();
+					boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
+					Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
 					break;
 			}
 

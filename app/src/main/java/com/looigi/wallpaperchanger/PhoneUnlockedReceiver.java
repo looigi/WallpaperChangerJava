@@ -9,11 +9,18 @@ public class PhoneUnlockedReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)){
             Log.getInstance().ScriveLog("Phone unlocked");
-            // NetThreadNuovo.getInstance().setScreenOn(true);
             VariabiliGlobali.getInstance().setScreenOn(true);
-        }else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)){
+
+            if (VariabiliGlobali.getInstance().isImmagineDaCambiare()) {
+                Log.getInstance().ScriveLog("---Cambio immagine dopo unlock schermo---");
+                int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
+                ChangeWallpaper c = new ChangeWallpaper();
+                boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
+                VariabiliGlobali.getInstance().setImmagineDaCambiare(false);
+                Log.getInstance().ScriveLog("---Immagine cambiata: " + fatto + "---");
+            }
+        } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)){
             Log.getInstance().ScriveLog("Phone locked");
-            // NetThreadNuovo.getInstance().setScreenOn(false);
             VariabiliGlobali.getInstance().setScreenOn(false);
         }
     }

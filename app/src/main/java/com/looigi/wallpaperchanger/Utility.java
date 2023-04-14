@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.channels.FileChannel;
 import java.util.Date;
+import java.util.Random;
 
 public class Utility {
     private static final Utility ourInstance = new Utility();
@@ -170,6 +171,16 @@ public class Utility {
                     newFolder.mkdir();
                 }
             }
+        }
+    }
+
+    public int GeneraNumeroRandom(int NumeroMassimo) {
+        if (NumeroMassimo > 0) {
+            final int random = new Random().nextInt(NumeroMassimo);
+
+            return random;
+        } else {
+            return -1;
         }
     }
 }
