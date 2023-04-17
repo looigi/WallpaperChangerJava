@@ -39,6 +39,10 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
         Log.getInstance().ScriveLog("Rinomina album. Artista: " + Artista + ", Album: " + Album + ", Anno: " + Anno +
                 ", Nuovo Anno: " + NuovoAnno + ", Nuovo Nome Album: " + NuovoNomeAlbum);
 
+        Artista = Utility.getInstance().ConverteNome(Artista);
+        Album = Utility.getInstance().ConverteNome(Album);
+        NuovoNomeAlbum = Utility.getInstance().ConverteNome(NuovoNomeAlbum);
+
         String Urletto="RinominaAlbum?" +
                 "idUtente=1" +
                 "&Artista=" + Artista +
@@ -60,6 +64,10 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
 
     public void AggiornaImmagineAlbum(String Artista, String Album, String Anno, String Immagine) {
         Log.getInstance().ScriveLog("Aggiorna immagine album. Artista: " + Artista + ", Album: " + Album + ", Anno: " + Anno + ", Immagine: " + Immagine);
+
+        Artista = Utility.getInstance().ConverteNome(Artista);
+        Album = Utility.getInstance().ConverteNome(Album);
+        Immagine = Utility.getInstance().ConverteNome(Immagine);
 
         String Urletto="AggiornaImmagineAlbum?" +
                 "Artista=" + Artista +
@@ -86,6 +94,9 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
         Log.getInstance().ScriveLog("Scarica immagine album. Artista: " + Artista + ", Album: " + Album + ", Anno: " + Anno +
                 ", Ricerca1: " + Ricerca1 + ", Ricerca2: " + Ricerca2 + ", Ricerca3: " + Ricerca3);
 
+        Artista = Utility.getInstance().ConverteNome(Artista);
+        Album = Utility.getInstance().ConverteNome(Album);
+
         ArtistaAppoggio = Artista;
         AlbumAppoggio = Album;
         AnnoAppoggio = Anno;
@@ -104,7 +115,7 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
                 TipoOperazione,
                 NS2,
                 SA2,
-                120000,
+                320000,
                 true);
     }
 

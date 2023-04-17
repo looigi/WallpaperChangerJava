@@ -134,6 +134,8 @@ public class ChiamateWs implements TaskDelegate {
     public void RitornaListaAlbum(String Artista) {
         Log.getInstance().ScriveLog("Ritorna lista Album");
 
+        Artista = Utility.getInstance().ConverteNome(Artista);
+
         String Urletto="RitornaListaAlbumArtista?Artista=" + Artista;
 
         TipoOperazione = "RitornaListaAlbumArtista";
@@ -155,6 +157,9 @@ public class ChiamateWs implements TaskDelegate {
             Album = a[1];
         } */
 
+        Artista = Utility.getInstance().ConverteNome(Artista);
+        Album = Utility.getInstance().ConverteNome(Album);
+
         Log.getInstance().ScriveLog("Ritorna Tags Album " + Album +
                 " Artista " + Artista + " Anno " + Anno);
 
@@ -174,6 +179,8 @@ public class ChiamateWs implements TaskDelegate {
 
     public void RitornaTagsArtista(String Artista) {
         Log.getInstance().ScriveLog("Ritorna Tags Artista " + Artista);
+
+        Artista = Utility.getInstance().ConverteNome(Artista);
 
         String Urletto="RitornaTagsAlbumArtista?Artista=" + Artista +
                 "&Album=" +
@@ -197,6 +204,8 @@ public class ChiamateWs implements TaskDelegate {
         String Tags = t;
         Log.getInstance().ScriveLog("Aggiorna Tags Artista " + Artista + ": " + Tags);
 
+        Artista = Utility.getInstance().ConverteNome(Artista);
+
         String Urletto="AggiornaTagsAlbumArtista?Artista=" + Artista +
                 "&Album=" +
                 "&Anno=" +
@@ -216,6 +225,9 @@ public class ChiamateWs implements TaskDelegate {
         String Album = VariabiliGlobali.getInstance().getNomeAlbumGA();
         String Artista = VariabiliGlobali.getInstance().getNomeArtistaGA();
         String Anno = VariabiliGlobali.getInstance().getAnnoAlbumGA();
+
+        Artista = Utility.getInstance().ConverteNome(Artista);
+        Album = Utility.getInstance().ConverteNome(Album);
 
         String t = "";
         for (int i = 0; i < VariabiliGlobali.getInstance().getListaTagsAlbum().size(); i++) {
@@ -260,6 +272,9 @@ public class ChiamateWs implements TaskDelegate {
     public void RitornaListaBrani(String Artista, String Album) {
         Log.getInstance().ScriveLog("Ritorna lista brani per Artista " + Artista + " e album " + Album);
 
+        Artista = Utility.getInstance().ConverteNome(Artista);
+        Album = Utility.getInstance().ConverteNome(Album);
+
         String Urletto="RitornaListaBraniAlbumArtista?Artista=" + Artista + "&Album=" + Album;
 
         TipoOperazione = "RitornaListaBraniAlbumArtista";
@@ -279,6 +294,10 @@ public class ChiamateWs implements TaskDelegate {
         String Brano = VariabiliGlobali.getInstance().getStrutturaDelBrano().getBrano();
         Log.getInstance().ScriveLog("Scarica testo per id canzone " + id + " per Artista " + Artista + ", album " + Album + " e brano " + Brano);
 
+        Artista = Utility.getInstance().ConverteNome(Artista);
+        Album = Utility.getInstance().ConverteNome(Album);
+        Brano = Utility.getInstance().ConverteNome(Brano);
+
         String Urletto="ScaricaTesto?idCanzone=" + id + "&Artista=" + Artista + "&Album=" + Album + "&Canzone=" + Brano;
 
         TipoOperazione = "ScaricaTesto";
@@ -293,6 +312,10 @@ public class ChiamateWs implements TaskDelegate {
 
     public void ScaricaNuovaImmagine(String Artista, String Album, String Brano) {
         Log.getInstance().ScriveLog("Scarica nuova immagine per Artista " + Artista + ", album " + Album + " e brano " + Brano);
+
+        Artista = Utility.getInstance().ConverteNome(Artista);
+        Album = Utility.getInstance().ConverteNome(Album);
+        Brano = Utility.getInstance().ConverteNome(Brano);
 
         String Urletto="ScaricaNuovaImmagine?Artista=" + Artista + "&Album=" + Album + "&Canzone=" + Brano;
 
@@ -392,8 +415,10 @@ public class ChiamateWs implements TaskDelegate {
         // String idUtente, String Random, String idBranoAttuale, String Stelle, String RicercaTesto, String Tags, String Preferiti
 
         String Stelle = Integer.toString(VariabiliGlobali.getInstance().getStelleDaRicercare());
+        String StelleSuperiori = VariabiliGlobali.getInstance().isStelleSuperiori() ? "S" : "N";
         if (!VariabiliGlobali.getInstance().isRicercaStelle()) {
             Stelle = "";
+            StelleSuperiori = "";
         }
 
         String Testo = VariabiliGlobali.getInstance().getTestoDaRicercare();
@@ -445,6 +470,7 @@ public class ChiamateWs implements TaskDelegate {
         Urletto += "&BranoEsatto=" + idBrano;
         Urletto += "&DataSuperiore=" + DataSuperiore;
         Urletto += "&DataInferiore=" + DataInferiore;
+        Urletto += "&StelleSuperiori=" + StelleSuperiori;
 
         ControllaTempoEsecuzione = true;
         TipoOperazione = "RitornaProssimoBranoMobile";
@@ -836,6 +862,7 @@ public class ChiamateWs implements TaskDelegate {
 
         String Album = VariabiliGlobali.getInstance().getStrutturaDelBrano().getAlbum();
         String Artista = VariabiliGlobali.getInstance().getStrutturaDelBrano().getArtista();
+
         StrutturaImmagini Imm = new StrutturaImmagini();
         Imm.setAlbum(Album);
         Imm.setNomeImmagine(immagine);

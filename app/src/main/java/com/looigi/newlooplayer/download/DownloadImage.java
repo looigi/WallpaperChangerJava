@@ -80,8 +80,14 @@ public class DownloadImage extends AsyncTask<String, Void, Bitmap> {
                 outStream.close();
 
                 Log.getInstance().ScriveLog("Immagine Scaricata: " + this.PathImmagine);
-                Notifica.getInstance().setImmagine(this.PathImmagine);
-                Notifica.getInstance().AggiornaNotifica();
+                // Notifica.getInstance().AggiornaNotifica();
+                Notifica.getInstance().RimuoviNotifica();
+                // Notifica.getInstance().setImmagine(this.PathImmagine);
+                Utility.getInstance().InstanziaNotifica(VariabiliGlobali.getInstance().getStrutturaDelBrano().getArtista(),
+                        VariabiliGlobali.getInstance().getStrutturaDelBrano().getAlbum(),
+                        VariabiliGlobali.getInstance().getStrutturaDelBrano().getBrano(),
+                        this.PathImmagine,
+                        VariabiliGlobali.getInstance().isStaSuonando());
             } catch (FileNotFoundException e) {
                 Log.getInstance().ScriveLog("Errore nel salvataggio su download Immagine: " + e.getMessage());
             } catch (IOException e) {

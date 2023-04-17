@@ -67,6 +67,7 @@ public class VariabiliGlobali {
     private int qualitaRete;
     private boolean testoAperto = false;
     private int stelleBrano;
+    private boolean stelleSuperiori = true;
     private int ascoltato;
     private boolean staLeggendoProssimoBrano = false;
     private boolean soloSelezionati = false;
@@ -165,6 +166,14 @@ public class VariabiliGlobali {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public boolean isStelleSuperiori() {
+        return stelleSuperiori;
+    }
+
+    public void setStelleSuperiori(boolean stelleSuperiori) {
+        this.stelleSuperiori = stelleSuperiori;
     }
 
     public String getUrlWS() {

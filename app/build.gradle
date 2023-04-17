@@ -11,7 +11,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 28
         versionCode 1
-        versionName "1.15"
+        versionName "1.20"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -26,6 +26,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    repositories {
+        maven { url 'https://oss.sonatype.org/content/repositories/ksoap2-android-releases/' }
+    }
 }
 
 dependencies {
@@ -35,10 +39,9 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     implementation 'ch.acra:acra:4.9.2'
     implementation 'com.sun.mail:android-mail:1.5.5'
-    implementation files('libs/ksoap2-android-assembly-3.2.0-jar-with-dependencies.jar')
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     // compile 'com.github.bmelnychuk:atv:1.2.+'
     // implementation 'io.github.amrdeveloper:treeview:1.1.1'
-    implementation 'me.texy.treeview:treeview_lib:1.0.6'
+    implementation 'com.google.code.ksoap2-android:ksoap2-android:3.6.2'
 }

@@ -83,7 +83,7 @@ public class db_dati {
                         "Random VARCHAR, CambioImmagine VARCHAR, VisuaInfo VARCHAR, SecondiCambioImmagine VARCHAR, " +
                         "branoSuDisco VARCHAR, RicercaPreferiti VARCHAR, Debug VARCHAR, Opacita VARCHAR, SecondiOpacita VARCHAR, " +
                         "MostraOrologio VARCHAR, EliminaBrani VARCHAR, LimiteInMb VARCHAR, DataSuperiore VARCHAR, EdtDataSuperiore VARCHAR, " +
-                        "DataInferiore VARCHAR, EdtDataInferiore VARCHAR, Date VARCHAR, ImmaginiDaScaricare VARCHAR);";
+                        "DataInferiore VARCHAR, EdtDataInferiore VARCHAR, Date VARCHAR, ImmaginiDaScaricare VARCHAR, StelleSuperiori VARCHAR);";
                 myDB.execSQL(sql);
             }
         } catch (Exception ignored) {
@@ -1006,7 +1006,7 @@ public class db_dati {
                         + "Random, CambioImmagine, VisuaInfo, SecondiCambioImmagine, "
                         + "branoSuDisco, RicercaPreferiti, Debug, Opacita, SecondiOpacita, "
                         + "MostraOrologio, EliminaBrani, LimiteInMb, DataSuperiore, EdtDataSuperiore, "
-                        + "DataInferiore, EdtDataInferiore, Date, ImmaginiDaScaricare)"
+                        + "DataInferiore, EdtDataInferiore, Date, ImmaginiDaScaricare, StelleSuperiori)"
                         + " VALUES ("
                         + "'" + (VariabiliGlobali.getInstance().isRicercaTesto() ? "S" : "N") + "', "
                         + "'" + (VariabiliGlobali.getInstance().isRicercaEsclusione() ? "S" : "N") + "', "
@@ -1034,7 +1034,8 @@ public class db_dati {
                         + "'" + (VariabiliGlobali.getInstance().isDataInferiore() ? "S" : "N") + "', "
                         + "'" + VariabiliGlobali.getInstance().getTxtDataInferiore() + "', "
                         + "'" + (VariabiliGlobali.getInstance().isDate() ? "S" : "N") + "', "
-                        + "'" + VariabiliGlobali.getInstance().getQuanteImmaginiDaScaricareGA().toString() + "' "
+                        + "'" + VariabiliGlobali.getInstance().getQuanteImmaginiDaScaricareGA().toString() + "', "
+                        + "'" + (VariabiliGlobali.getInstance().isStelleSuperiori() ? "S" : "N") + "' "
                         + ") ";
                 myDB.execSQL(sql);
             } catch (SQLException e) {
@@ -1085,6 +1086,7 @@ public class db_dati {
                     VariabiliGlobali.getInstance().setTxtDataInferiore(c.getString(24));
                     VariabiliGlobali.getInstance().setDate(c.getString(25).equals("S"));
                     VariabiliGlobali.getInstance().setQuanteImmaginiDaScaricareGA(Integer.parseInt(c.getString(26)));
+                    VariabiliGlobali.getInstance().setStelleSuperiori(c.getString(27).equals("S"));
 
                     VariabiliGlobali.getInstance().setBranosSuSDOriginale(VariabiliGlobali.getInstance().isBranoSuSD());
                 } else {

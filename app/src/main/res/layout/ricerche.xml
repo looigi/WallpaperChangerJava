@@ -142,6 +142,13 @@
                     android:layout_height="wrap_content"
                     android:text="Stelle" />
 
+                <Switch
+                    android:id="@+id/switchStelleSuperiori"
+                    android:layout_width="match_parent"
+                    android:textColor="#0000CC"
+                    android:layout_height="wrap_content"
+                    android:text="Anche superiore" />
+
                 <LinearLayout
                     android:id="@+id/layRicercaStelle"
                     android:layout_width="match_parent"

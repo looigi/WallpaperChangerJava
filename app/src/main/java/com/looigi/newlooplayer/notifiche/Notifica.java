@@ -45,7 +45,7 @@ public class Notifica {
     private String Artista;
     private String Album;
     private boolean inDownload=false;
-    private static final int NOTIF_ID = 272727;
+    private int NOTIF_ID = 272727;
     private boolean staSuonando = false;
 
     public void setStaSuonando(boolean staSuonando) {
@@ -118,7 +118,7 @@ public class Notifica {
                             .getFragmentActivityPrincipale().getApplicationContext().getSystemService(NOTIFICATION_SERVICE);
             notificationManager.notify(0, notification);
         }
-    } */
+    }
 
     public void AggiornaNotifica() {
         Log.getInstance().ScriveLog("Aggiorna notifica. Artista: " + Artista);
@@ -133,7 +133,7 @@ public class Notifica {
             Log.getInstance().ScriveLog("Aggiorna notifica. Build");
             notificationManager.notify(NOTIF_ID, notificationBuilder.build());
         }
-    }
+    } */
 
     public void CreaNotifica() {
         String id = "id_loowebplayer"; // default_channel_id
@@ -257,10 +257,10 @@ public class Notifica {
 
             if (staSuonando) {
                 Log.getInstance().ScriveLog("Set Listeners. Icona pausa");
-                view.setImageViewResource(R.id.imgPlay, R.drawable.icona_pausa);
+                view.setImageViewResource(R.id.ImgPlay, R.drawable.icona_pausa);
             } else {
                 Log.getInstance().ScriveLog("Set Listeners. Icona suona");
-                view.setImageViewResource(R.id.imgPlay, R.drawable.icona_suona);
+                view.setImageViewResource(R.id.ImgPlay, R.drawable.icona_suona);
             }
 
             if (inDownload) {
@@ -318,6 +318,7 @@ public class Notifica {
                 notificationManager.cancel(NOTIF_ID);
                 notificationManager=null;
                 notificationBuilder=null;
+                NOTIF_ID++;
             } catch (Exception e) {
                 Log.getInstance().ScriveLog(Utility.getInstance().PrendeErroreDaException(e));
             }

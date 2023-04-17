@@ -43,7 +43,9 @@ public class CustomAcraSender implements ReportSenderFactory {
 			Log.getInstance().ScriveLog(body);
 			String recipients = TextUtils.join(",", RECIPIENTS);
 
-			MailSender sender = new MailSender("looigi@gmail.com", "Piripacchio227!");
+			// PER GENERARE LA PASSWORD DELL'UTENZA
+			// https://security.google.com/settings/security/apppasswords
+			MailSender sender = new MailSender("looigi@gmail.com", "fxktsuahhfbdiwyq");
 			try {
 				sender.sendMail(subject, body, "looigi@gmail.com", recipients);
 			} catch(Exception e) {

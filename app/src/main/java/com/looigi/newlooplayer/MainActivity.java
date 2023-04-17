@@ -296,6 +296,7 @@ public class MainActivity extends AppCompatActivity {
         EditText edtOpacitaBottoni = (EditText) findViewById(R.id.edtOpacitaBottoni);
         LinearLayout layStelle = (LinearLayout) findViewById(R.id.layRicercaStelle);
         Switch switchStelle = (Switch) findViewById(R.id.switchStelle);
+        Switch switchStelleSuperiori = (Switch) findViewById(R.id.switchStelleSuperiori);
         EditText edtStelle = (EditText) findViewById(R.id.edtStelle);
         LinearLayout layRicercaTesto = (LinearLayout) findViewById(R.id.layRicercaTesto);
         Switch switchRicercaTesto = (Switch) findViewById(R.id.switchRicercaTesto);
@@ -570,6 +571,7 @@ public class MainActivity extends AppCompatActivity {
         OggettiAVideo.getInstance().setEdtOpacitaBottoni(edtOpacitaBottoni);
         OggettiAVideo.getInstance().setLayStelle(layStelle);
         OggettiAVideo.getInstance().setSwitchStelle(switchStelle);
+        OggettiAVideo.getInstance().setSwitchStelleSuperiori(switchStelleSuperiori);
         OggettiAVideo.getInstance().setEdtStelle(edtStelle);
         OggettiAVideo.getInstance().setLayRicercaTesto(layRicercaTesto);
         OggettiAVideo.getInstance().setSwitchRicercaTesto(switchRicercaTesto);

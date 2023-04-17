@@ -169,7 +169,7 @@ public class ServizioBackground extends Service {
         // GestioneCPU.getInstance().ImpostaValori(this);
         // GestioneCPU.getInstance().AttivaCPU();
 
-        InstanziaNotifica();
+        Utility.getInstance().InstanziaNotifica("", "", "", "", false);
 
         Log.getInstance().ScriveLog("Controllo presenza rete");
         int statoRete = Utility.getInstance().ControllaRete();
@@ -1036,6 +1036,18 @@ public class ServizioBackground extends Service {
             }
         });
 
+        boolean stelleSuperiori = VariabiliGlobali.getInstance().isStelleSuperiori();
+        OggettiAVideo.getInstance().getSwitchStelleSuperiori().setChecked(stelleSuperiori);
+        OggettiAVideo.getInstance().getSwitchStelleSuperiori().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                VariabiliGlobali.getInstance().setStelleSuperiori(isChecked);
+
+                db_dati db = new db_dati();
+                db.ScriveImpostazioni();
+            }
+        });
+
+
         OggettiAVideo.getInstance().getEdtStelle().setText(Integer.toString(VariabiliGlobali.getInstance().getStelleDaRicercare()));
         OggettiAVideo.getInstance().getEdtStelle().addTextChangedListener(new TextWatcher(){
             public void afterTextChanged(Editable s) {
@@ -1224,17 +1236,6 @@ public class ServizioBackground extends Service {
         VariabiliGlobali.getInstance().setePartito(true);
     }
 
-    private void InstanziaNotifica() {
-        Log.getInstance().ScriveLog("Instanzia notifica");
-
-        Notifica.getInstance().setContext(VariabiliGlobali.getInstance().getContext());
-        Notifica.getInstance().setIcona(R.drawable.logo);
-        Notifica.getInstance().setTitolo("");
-        Notifica.getInstance().setImmagine("");
-
-        Notifica.getInstance().CreaNotifica();
-    }
-
     private void AzionaControlloSchermo() {
         if (receiverAccesoSpento != null) {
             unregisterReceiver(receiverAccesoSpento);
@@ -1270,6 +1271,7 @@ public class ServizioBackground extends Service {
     public void onDestroy() {
         super.onDestroy();
 
+        unregisterReceiver(receiverAccesoSpento);
         unregisterReceiver(myReceiver);
 
         // Toast.makeText(this, "Servizio LooPlayer fermato.", Toast.LENGTH_LONG).show();

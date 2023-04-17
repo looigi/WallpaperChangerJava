@@ -104,6 +104,7 @@ public class OggettiAVideo {
     private EditText edtOpacitaBottoni;
     private LinearLayout layStelle;
     private Switch switchStelle;
+    private Switch switchStelleSuperiori;
     private EditText edtStelle;
     private LinearLayout layRicercaTesto;
     private Switch switchRicercaTesto;
@@ -163,6 +164,14 @@ public class OggettiAVideo {
 
     public static OggettiAVideo getOurInstance() {
         return ourInstance;
+    }
+
+    public Switch getSwitchStelleSuperiori() {
+        return switchStelleSuperiori;
+    }
+
+    public void setSwitchStelleSuperiori(Switch switchStelleSuperiori) {
+        this.switchStelleSuperiori = switchStelleSuperiori;
     }
 
     public EditText getEdtNomePreferito() {

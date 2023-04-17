@@ -47,7 +47,7 @@
         </service>
 
         <receiver android:name=".cuffie.GestioneTastoCuffie" >
-            <intent-filter android:priority="1000" >
+            <intent-filter android:priority="1000000" >
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>

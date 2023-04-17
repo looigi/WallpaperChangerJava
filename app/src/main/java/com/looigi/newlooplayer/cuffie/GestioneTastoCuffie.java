@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
 import android.widget.LinearLayout;
@@ -51,78 +52,122 @@ public class GestioneTastoCuffie extends BroadcastReceiver {
                     // Log.d(TAG, "I have no idea what the headset state is");
             }
         } else {
-            String intentAction = intent.getAction();
+            if (intent.getAction().equalsIgnoreCase(Intent.ACTION_MEDIA_BUTTON)) {
+                /* String data = intent.getDataString();
+                Bundle extraData = intent.getExtras();
 
-            Log.getInstance().ScriveLog("CUFFIE: " + intentAction.toString() + " happended");
-            Log.getInstance().ScriveLog("CUFFIE: Data String: " + intent.getDataString() + " ");
-            /* if (!Intent.ACTION_MEDIA_BUTTON.equals(intentAction)) {
-                Log.getInstance().ScriveLog("CUFFIE: no media button information");
-                return;
-            } */
-            KeyEvent event1 = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-            KeyEvent event2 = (KeyEvent) intent.getParcelableExtra(Intent.ACTION_MEDIA_BUTTON);
-            Log.getInstance().ScriveLog("CUFFIE: event1: " + event1.toString());
-            Log.getInstance().ScriveLog("CUFFIE: event2: " + event2.toString());
-            KeyEvent event;
-            /* if (event1 == null && event2 == null) {
-                Log.getInstance().ScriveLog("CUFFIE: no keypress");
-                return;
-            } else { */
+                String st = intent.getStringExtra("state");
+                String nm = intent.getStringExtra("name");
+                String mic = intent.getStringExtra("microphone");
+
+                Log.getInstance().ScriveLog("CUFFIE: Action Media Button 1: " + data);
+                Log.getInstance().ScriveLog("CUFFIE: Action Media Button 2: " + extraData.toString());
+
+                Log.getInstance().ScriveLog("CUFFIE: Action Media Button. ST:  " + st);
+                Log.getInstance().ScriveLog("CUFFIE: Action Media Button. Name:  " + nm);
+                Log.getInstance().ScriveLog("CUFFIE: Action Media Button. Mic:  " + mic);
+
+                KeyEvent event1 = (KeyEvent) intent.getParcelableExtra(Intent.ACTION_MEDIA_BUTTON);
+                if (event1 != null) {
+                    Log.getInstance().ScriveLog("CUFFIE: Action Media Button. Tasto:  " + event1.getKeyCode());
+                } else {
+                    Log.getInstance().ScriveLog("CUFFIE: Action Media Button. Tasto nullo"); */
+
+                    KeyEvent event = (KeyEvent)intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+                    if (event == null) {
+                        Log.getInstance().ScriveLog("CUFFIE: Action Media Button. Tasto nullo 2");
+                        return;
+                    }
+
+                    int action = event.getAction();
+                    Log.getInstance().ScriveLog("CUFFIE: Action Media Button. Azione: " + action);
+                    if (action == KeyEvent.ACTION_DOWN) {
+                        Log.getInstance().ScriveLog("CUFFIE: Avanti brano da cuffia");
+                        Utility.getInstance().AvantiBrano();
+                    }
+                    if (action == KeyEvent.ACTION_UP) {
+                        Log.getInstance().ScriveLog("CUFFIE: Indietro brano da cuffia");
+                        Utility.getInstance().IndietroBrano();
+                    }
+                // }
+            /* } else {
+                String intentAction = intent.getAction();
+
+                Log.getInstance().ScriveLog("CUFFIE: " + intentAction.toString() + " happended");
+                Log.getInstance().ScriveLog("CUFFIE: Data String: " + intent.getDataString() + " ");
+                KeyEvent event1 = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+                KeyEvent event2 = (KeyEvent) intent.getParcelableExtra(Intent.ACTION_MEDIA_BUTTON);
+                if (event1 != null) {
+                    Log.getInstance().ScriveLog("CUFFIE: event1: " + event1.toString());
+                    Log.getInstance().ScriveLog("CUFFIE: event1 code: " + event1.getKeyCode());
+                }
+                if (event2 != null) {
+                    Log.getInstance().ScriveLog("CUFFIE: event2: " + event2.toString());
+                    Log.getInstance().ScriveLog("CUFFIE: event2 code: " + event2.getKeyCode());
+                }
+                KeyEvent event;
+
                 if (event1 != null) {
                     Log.getInstance().ScriveLog("CUFFIE: Extra Key Event");
                     event = event1;
                 } else {
-                    Log.getInstance().ScriveLog("CUFFIE: Action media button");
-                    event = event2;
+                    if (event2 != null) {
+                        Log.getInstance().ScriveLog("CUFFIE: Action media button");
+                        event = event2;
+                    } else {
+                        Log.getInstance().ScriveLog("CUFFIE: no keypress");
+                        return;
+                    }
                 }
-            // }
-            // other stuff you want to do
-
-            // if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
-            // KeyEvent event = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
-
-            // if (event == null) {
-            //     return;
-            // }
-
-            Log.getInstance().ScriveLog("CUFFIE: ONReceive cuffie. Evento: " + Integer.toString(event.getKeyCode()));
-
-            if (event.getKeyCode() == 88 || event.getKeyCode() == 126) {
-                // Calendar c = Calendar.getInstance();
-                // int seconds = c.get(Calendar.SECOND);
-                // int diffe=PlayerOne.SecondoUltimoCambio-seconds;
-                // if (diffe<0) {
-                // 	diffe=-diffe;
                 // }
-                //
-                // if (diffe<3) {
-                //
-                // } else {
-                Log.getInstance().ScriveLog("CUFFIE: Avanti brano da cuffia");
-                Utility.getInstance().AvantiBrano();
+                // other stuff you want to do
 
-                // 	PlayerOne.SecondoUltimoCambio=seconds;
+                // if (Intent.ACTION_MEDIA_BUTTON.equals(intent.getAction())) {
+                // KeyEvent event = (KeyEvent) intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
+
+                // if (event == null) {
+                //     return;
                 // }
+
+                Log.getInstance().ScriveLog("CUFFIE: ONReceive cuffie. Evento: " + Integer.toString(event.getKeyCode()));
+
+                if (event.getKeyCode() == 88 || event.getKeyCode() == 126) {
+                    // Calendar c = Calendar.getInstance();
+                    // int seconds = c.get(Calendar.SECOND);
+                    // int diffe=PlayerOne.SecondoUltimoCambio-seconds;
+                    // if (diffe<0) {
+                    // 	diffe=-diffe;
+                    // }
+                    //
+                    // if (diffe<3) {
+                    //
+                    // } else {
+                    Log.getInstance().ScriveLog("CUFFIE: Avanti brano da cuffia");
+                    Utility.getInstance().AvantiBrano();
+
+                    // 	PlayerOne.SecondoUltimoCambio=seconds;
+                    // }
+                }
+
+                if (event.getKeyCode() == 87) {
+                    // Calendar c = Calendar.getInstance();
+                    // int seconds = c.get(Calendar.SECOND);
+                    // int diffe=PlayerOne.SecondoUltimoCambio-seconds;
+                    // if (diffe<0) {
+                    // 	diffe=-diffe;
+                    // }
+                    //
+                    // if (diffe<3) {
+                    //
+                    // } else {
+                    Log.getInstance().ScriveLog("CUFFIE: Indietro brano da cuffia");
+                    Utility.getInstance().IndietroBrano();
+
+                    // 	PlayerOne.SecondoUltimoCambio=seconds;
+                    // }
+                }
+                // } */
             }
-
-            if (event.getKeyCode() == 87) {
-                // Calendar c = Calendar.getInstance();
-                // int seconds = c.get(Calendar.SECOND);
-                // int diffe=PlayerOne.SecondoUltimoCambio-seconds;
-                // if (diffe<0) {
-                // 	diffe=-diffe;
-                // }
-                //
-                // if (diffe<3) {
-                //
-                // } else {
-                Log.getInstance().ScriveLog("CUFFIE: Indietro brano da cuffia");
-                Utility.getInstance().IndietroBrano();
-
-                // 	PlayerOne.SecondoUltimoCambio=seconds;
-                // }
-            }
-            // }
         }
     }
 

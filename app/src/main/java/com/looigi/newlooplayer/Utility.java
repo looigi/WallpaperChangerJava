@@ -693,7 +693,14 @@ public class Utility {
                 });
             }
 
-            Notifica.getInstance().AggiornaNotifica();
+            // Notifica.getInstance().AggiornaNotifica();
+            Notifica.getInstance().RimuoviNotifica();
+            // Utility.getInstance().InstanziaNotifica("","","", "",  VariabiliGlobali.getInstance().isStaSuonando());
+            Utility.getInstance().InstanziaNotifica(VariabiliGlobali.getInstance().getStrutturaDelBrano().getArtista(),
+                    VariabiliGlobali.getInstance().getStrutturaDelBrano().getAlbum(),
+                    VariabiliGlobali.getInstance().getStrutturaDelBrano().getBrano(),
+                    null,
+                    VariabiliGlobali.getInstance().isStaSuonando());
         } else {
             // Brano non caricato... Provvedere
         }
@@ -968,8 +975,14 @@ public class Utility {
                         ImpostaImmagine(imm.getPathImmagine());
 
                         Log.getInstance().ScriveLog("Immagine Impostata: " + imm.getPathImmagine());
-                        Notifica.getInstance().setImmagine(imm.getPathImmagine());
-                        Notifica.getInstance().AggiornaNotifica();
+                        // Notifica.getInstance().setImmagine(imm.getPathImmagine());
+                        // Notifica.getInstance().AggiornaNotifica();
+                        Notifica.getInstance().RimuoviNotifica();
+                        Utility.getInstance().InstanziaNotifica(VariabiliGlobali.getInstance().getStrutturaDelBrano().getArtista(),
+                                VariabiliGlobali.getInstance().getStrutturaDelBrano().getAlbum(),
+                                VariabiliGlobali.getInstance().getStrutturaDelBrano().getBrano(),
+                                imm.getPathImmagine(),
+                                VariabiliGlobali.getInstance().isStaSuonando());
                     } else {
                         VariabiliGlobali.getInstance().setImmagineAttuale(imm.getUrlImmagine());
                         if (VariabiliGlobali.getInstance().getImmagineAttuale().isEmpty()) {
@@ -992,20 +1005,25 @@ public class Utility {
     }
 
     public void VisualizzaErrore(String Errore) {
-        VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
-            public void run() {
-                AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
-                alertDialog.setTitle("Messaggio");
-                alertDialog.setMessage(Errore);
-                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                alertDialog.show();
-            }
-        });
+        Log.getInstance().ScriveLog("Visualizzo messaggio di errore. Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn());
+        if (VariabiliGlobali.getInstance().isScreenOn()) {
+            VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
+                public void run() {
+                    AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+                    alertDialog.setTitle("Messaggio");
+                    alertDialog.setMessage(Errore);
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+            });
+        } else {
+            Log.getInstance().ScriveLog("Schermo spento. Non visualizzo messaggio di errore: " + Errore);
+        }
     }
 
     public void SettaBellezza(int Stelle) {
@@ -1115,14 +1133,21 @@ public class Utility {
         OggettiAVideo.getInstance().getTxtBranoPregresso().setText("");
         OggettiAVideo.getInstance().getLayPregresso().setVisibility(LinearLayout.GONE);
 
-        Notifica.getInstance().setTitolo(s.getBrano());
+        /* Notifica.getInstance().setTitolo(s.getBrano());
         Notifica.getInstance().setArtista(s.getArtista());
         Notifica.getInstance().setAlbum(s.getAlbum());
         if (VariabiliGlobali.getInstance().getImmagineDaImpostarePregressa() != null) {
             Notifica.getInstance().setImmagine(VariabiliGlobali.getInstance().getImmagineDaImpostarePregressa().getPathImmagine());
         }
-        Notifica.getInstance().setStaSuonando(VariabiliGlobali.getInstance().isStaSuonando());
-        Notifica.getInstance().AggiornaNotifica();
+        Notifica.getInstance().setStaSuonando(VariabiliGlobali.getInstance().isStaSuonando()); */
+        // Notifica.getInstance().AggiornaNotifica();
+        Notifica.getInstance().RimuoviNotifica();
+        Utility.getInstance().InstanziaNotifica(
+                s.getArtista(),
+                s.getAlbum(),
+                s.getBrano(),
+                VariabiliGlobali.getInstance().getImmagineDaImpostarePregressa().getPathImmagine(),
+                VariabiliGlobali.getInstance().isStaSuonando());
     }
 
     public void CambiaBranoPregresso() {
@@ -1529,5 +1554,33 @@ public class Utility {
         VariabiliGlobali.getInstance().getFragmentActivityPrincipale().unregisterReceiver(VariabiliGlobali.getInstance().mNoisyReceiver);
 
         System.exit(0);
+    }
+
+    public String ConverteNome(String Stringa) {
+        String sStringa = Stringa;
+
+        sStringa = sStringa.replace("&", "***AND***");
+        sStringa = sStringa.replace("?", "***PI***");
+        sStringa = sStringa.replace("/", "***BS***");
+        sStringa = sStringa.replace("\\", "***BD***");
+        sStringa = sStringa.replace("%", "***PERC***");
+
+        return sStringa;
+    }
+
+    public void InstanziaNotifica(String Artista, String Album, String Titolo, String Immagine, Boolean staSuonando) {
+        Log.getInstance().ScriveLog("Instanzia notifica");
+
+        Notifica.getInstance().setContext(VariabiliGlobali.getInstance().getContext());
+        Notifica.getInstance().setIcona(R.drawable.logo);
+        Notifica.getInstance().setTitolo(Titolo);
+        Notifica.getInstance().setArtista(Artista);
+        Notifica.getInstance().setAlbum(Album);
+        if (Immagine != null) {
+            Notifica.getInstance().setImmagine(Immagine);
+        }
+        Notifica.getInstance().setStaSuonando(staSuonando);
+
+        Notifica.getInstance().CreaNotifica();
     }
 }
