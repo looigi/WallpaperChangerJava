@@ -30,11 +30,27 @@ public class PassaggioNotifica extends Activity {
 				case "apre":
 					break;
 				case "prossima":
-					Log.getInstance().ScriveLog("---Cambio Immagine Manuale---");
-					int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
 					ChangeWallpaper c = new ChangeWallpaper();
-					boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
-					Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
+					if (!VariabiliGlobali.getInstance().isOffline()) {
+						Log.getInstance().ScriveLog("---Cambio Immagine Manuale da notifica OnLine---");
+						boolean fatto = c.setWallpaper(null);
+						Log.getInstance().ScriveLog("---Immagine cambiata manualmente Online da notifica: " + fatto + "---");
+					} else {
+						if (VariabiliGlobali.getInstance().getListaImmagini() != null && VariabiliGlobali.getInstance().getListaImmagini().size() > 0) {
+							Log.getInstance().ScriveLog("---Cambio Immagine Manuale da notifica Offline---");
+							int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
+							if (numeroRandom > -1) {
+								Log.getInstance().ScriveLog("---Numero Random: " + numeroRandom + "/" + (VariabiliGlobali.getInstance().getListaImmagini().size() - 1) + "---");
+								boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
+								Log.getInstance().ScriveLog("---Immagine cambiata manualmente da notifica: " + fatto + "---");
+							} else {
+								Log.getInstance().ScriveLog("---Immagine NON cambiata manualmente da notifica: Caricamento immagini non terminato---");
+							}
+						} else {
+							Log.getInstance().ScriveLog("---Non riesco a cambiare l'immagine manuale da notifica in quanto l'array è vuoto---");
+						}
+					}
+					VariabiliGlobali.getInstance().getFragmentActivityPrincipale().moveTaskToBack(true);
 					break;
 			}
 

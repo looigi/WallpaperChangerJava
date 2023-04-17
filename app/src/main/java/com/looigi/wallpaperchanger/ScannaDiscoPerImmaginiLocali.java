@@ -11,6 +11,7 @@ import java.util.List;
 
 public class ScannaDiscoPerImmaginiLocali extends AsyncTask<String, Integer, String> {
     private List<StrutturaImmagine> imms = new ArrayList<>();
+    private db_dati db;
 
     public ScannaDiscoPerImmaginiLocali() {
     }
@@ -19,6 +20,10 @@ public class ScannaDiscoPerImmaginiLocali extends AsyncTask<String, Integer, Str
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+
+        VariabiliGlobali.getInstance().getImgCaricamento().setVisibility(LinearLayout.VISIBLE);
+        db = new db_dati();
+        db.EliminaImmaginiInLocale();
 
         Log.getInstance().ScriveLog("Lettura immagini presenti su disco su path: " +
                 VariabiliGlobali.getInstance().getPercorsoIMMAGINI());
@@ -29,10 +34,13 @@ public class ScannaDiscoPerImmaginiLocali extends AsyncTask<String, Integer, Str
         super.onPostExecute(p);
 
         VariabiliGlobali.getInstance().setListaImmagini(imms);
-        VariabiliGlobali.getInstance().getTxtQuanteImmagini().setText("Immagini rilevate: " + imms.size());
+        if(VariabiliGlobali.getInstance().isOffline()) {
+            VariabiliGlobali.getInstance().getTxtQuanteImmagini().setText("Immagini rilevate su disco: " + imms.size());
+        }
 
-        Log.getInstance().ScriveLog("Lettura immagini effettuata. Immagini rilevate: " +
-                imms.size());
+        VariabiliGlobali.getInstance().getImgCaricamento().setVisibility(LinearLayout.GONE);
+        Log.getInstance().ScriveLog("Lettura immagini effettuata. Immagini rilevate su disco: " +
+            imms.size());
     }
 
     @Override
@@ -62,6 +70,8 @@ public class ScannaDiscoPerImmaginiLocali extends AsyncTask<String, Integer, Str
                 si.setPathImmagine(Filetto);
 
                 imms.add(si);
+
+                db.ScriveImmagineInLocale(Nome, Filetto);
             }
         }
     }

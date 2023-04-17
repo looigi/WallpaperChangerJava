@@ -1,5 +1,11 @@
 package com.looigi.wallpaperchanger;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.widget.LinearLayout;
+
+import androidx.appcompat.app.AlertDialog;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,6 +22,8 @@ import java.util.Date;
 import java.util.Random;
 
 public class Utility {
+    private ProgressDialog progressDialog;
+
     private static final Utility ourInstance = new Utility();
 
     public static Utility getInstance() {
@@ -182,5 +190,66 @@ public class Utility {
         } else {
             return -1;
         }
+    }
+
+    public void ChiudeDialog() {
+        try {
+            progressDialog.dismiss();
+        } catch (Exception ignored) {
+        }
+    }
+
+    public void ApriDialog(boolean ApriDialog, String tOperazione) {
+        if (!ApriDialog) {
+            // OggettiAVideo.getInstance().getImgRest().setVisibility(LinearLayout.VISIBLE);
+        } else {
+            try {
+                progressDialog = new ProgressDialog(VariabiliGlobali.getInstance().getContext());
+                progressDialog.setMessage("Attendere Prego...\n\n" + tOperazione);
+                progressDialog.setCancelable(false);
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.show();
+            } catch (Exception ignored) {
+
+            }
+        }
+    }
+
+    public void VisualizzaErrore(String Errore) {
+        Log.getInstance().ScriveLog("Visualizzo messaggio di errore. Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn());
+        if (VariabiliGlobali.getInstance().isScreenOn()) {
+            VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
+                public void run() {
+                    AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+                    alertDialog.setTitle("Messaggio");
+                    alertDialog.setMessage(Errore);
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+                }
+            });
+        } else {
+            Log.getInstance().ScriveLog("Schermo spento. Non visualizzo messaggio di errore: " + Errore);
+        }
+    }
+
+    public void InstanziaNotifica() {
+        Log.getInstance().ScriveLog("Instanzia notifica");
+
+        Notifica.getInstance().setContext(VariabiliGlobali.getInstance().getContext());
+        if (VariabiliGlobali.getInstance().getUltimaImmagine() != null) {
+            Notifica.getInstance().setTitolo(VariabiliGlobali.getInstance().getUltimaImmagine().getImmagine());
+            Notifica.getInstance().setImmagine(VariabiliGlobali.getInstance().getUltimaImmagine().getPathImmagine());
+        } else {
+            Notifica.getInstance().setTitolo("");
+            Notifica.getInstance().setImmagine("");
+        }
+
+        Notifica.getInstance().CreaNotifica();
     }
 }

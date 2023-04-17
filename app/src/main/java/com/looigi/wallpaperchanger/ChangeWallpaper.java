@@ -12,7 +12,10 @@ import android.renderscript.ScriptIntrinsicBlur;
 import android.util.DisplayMetrics;
 import android.webkit.URLUtil;
 
+import com.looigi.wallpaperchanger.DB.ChiamateWS;
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ChangeWallpaper {
@@ -25,7 +28,7 @@ public class ChangeWallpaper {
 		DisplayMetrics metrics = new DisplayMetrics();
 		VariabiliGlobali.getInstance().getFragmentActivityPrincipale().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-		SchermoX = metrics.widthPixels;
+		SchermoX = metrics.widthPixels; //  * 70 / 100;
 		SchermoY = metrics.heightPixels;
 
 		Log.getInstance().ScriveLog("Cambio immagine instanziato. Dimensioni schermo: " +
@@ -34,7 +37,10 @@ public class ChangeWallpaper {
 
 	public Boolean setWallpaper(StrutturaImmagine src) {
 		if (!VariabiliGlobali.getInstance().isOffline()) {
+			Log.getInstance().ScriveLog("Cambio immagine online");
 
+			ChiamateWS c = new ChiamateWS();
+			c.TornaProssimaImmagine();
 		} else {
 			setWallpaperLocale(src);
 		}
@@ -42,7 +48,7 @@ public class ChangeWallpaper {
 		return true;
 	}
 
-	private Boolean setWallpaperLocale(StrutturaImmagine src) {
+	public Boolean setWallpaperLocale(StrutturaImmagine src) {
 		Context context = VariabiliGlobali.getInstance().getContext();
 		boolean Ritorno = true;
 
@@ -55,17 +61,16 @@ public class ChangeWallpaper {
 
 			WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
 			try {
-				Log.getInstance().ScriveLog("Cambio immagine: Impostazione dimensioni.");
+				Log.getInstance().ScriveLog("Cambio immagine: Impostazione dimensioni " + setWallToDevice.getWidth() + "x" + setWallToDevice.getHeight());
 
+				wallpaperManager.setBitmap(setWallToDevice);
+
+				// wallpaperManager.setWallpaperOffsetSteps(1, 1);
 				// if (VariabiliGlobali.getInstance().getStretch().equals("S")) {
-				// wallpaperManager.suggestDesiredDimensions(SchermoX, SchermoY);
+				// wallpaperManager.suggestDesiredDimensions(setWallToDevice.getWidth(), setWallToDevice.getHeight());
 				// } else {
 				// 	wallpaperManager.suggestDesiredDimensions(VariabiliGlobali.getInstance().getDimeWallWidthOriginale(), VariabiliGlobali.getInstance().getDimeWallHeightOriginale());
 				// }
-
-				Log.getInstance().ScriveLog("Cambio immagine: Settaggio bitmap.");
-
-				wallpaperManager.setBitmap(setWallToDevice);
 
 				Log.getInstance().ScriveLog("Cambio immagine: Settata bitmap.");
 			} catch (IOException e) {
@@ -97,7 +102,9 @@ public class ChangeWallpaper {
 
 			Bitmap myBitmap = null; // = BitmapFactory.decodeFile(si.getPathImmagine());
 			try {
-				myBitmap = getPreview(si.getPathImmagine());
+				// myBitmap = getPreview(si.getPathImmagine());
+
+				myBitmap = BitmapFactory.decodeFile(si.getPathImmagine());
 			} catch (Exception e) {
 				Log.getInstance().ScriveLog("Cambio immagine. Errore preview");
 			}
@@ -109,9 +116,12 @@ public class ChangeWallpaper {
 					// if (VariabiliGlobali.getInstance().getModalitaVisua().equals("N")) {
 			// 			Log.getInstance().ScriveLog("Cambio immagine. Converte dimensioni");
 
-			 		myBitmap = ConverteDimensioni(myBitmap);
+				/* if (VariabiliGlobali.getInstance().isResize()) {
+					myBitmap = ConverteDimensioni(myBitmap);
+				} */
 
-			 		if (myBitmap != null) {
+			 		// if (VariabiliGlobali.getInstance().isBlur()) {
+						if (myBitmap != null) {
 							try {
 								// Bitmap Immaginona = Bitmap.createBitmap(VariabiliGlobali.getInstance().getSchermoX(), VariabiliGlobali.getInstance().getSchermoY(), Bitmap.Config.ARGB_8888);
 								// Canvas comboImage = new Canvas(Immaginona);
@@ -125,11 +135,12 @@ public class ChangeWallpaper {
 								Log.getInstance().ScriveLog("Cambio immagine. Mette bordo a immagine. Errore: " + Utility.getInstance().PrendeErroreDaException(e));
 								myBitmap = null;
 							}
-			 		} else {
-			 			Log.getInstance().ScriveLog("Cambio immagine. Converte dimensioni ha ritornato null");
+						} else {
+							Log.getInstance().ScriveLog("Cambio immagine. Converte dimensioni ha ritornato null");
 
-			 			myBitmap = null;
-			 		}
+							myBitmap = null;
+						}
+					// }
 					/* } else {
 						Log.getInstance().ScriveLog("Cambio immagine. Create scaled bitmap");
 
@@ -145,8 +156,10 @@ public class ChangeWallpaper {
 			VariabiliGlobali.getInstance().setUltimaImmagine(si);
 			// Notifica.getInstance().setContext(VariabiliGlobali.getInstance().getContext());
 
-			Notifica.getInstance().setTitolo(si.getImmagine());
-			Notifica.getInstance().setImmagine(si.getPathImmagine());
+			// Notifica.getInstance().setTitolo(si.getImmagine());
+			// Notifica.getInstance().setImmagine(si.getPathImmagine());
+			Notifica.getInstance().RimuoviNotifica();
+			Utility.getInstance().InstanziaNotifica();
 
 			Bitmap ultima = BitmapFactory.decodeFile(si.getPathImmagine());
 			VariabiliGlobali.getInstance().getImgImpostata().setImageBitmap(ultima);
@@ -194,15 +207,15 @@ public class ChangeWallpaper {
 			try {
 				Log.getInstance().ScriveLog("Converte dimensioni 1");
 
-				Bitmap bb=b;
-				int width = bb.getWidth();
-				int height = bb.getHeight();
+				// Bitmap bb=b;
+				int width = b.getWidth();
+				int height = b.getHeight();
 
-				float p1;
-				float p2;
+				float p1 = width;
+				float p2 = height;
 				// if (width > SchermoX || height > SchermoY) {
-					p1 = (float) width / ((float) (SchermoX));
-					p2 = (float) height / ((float) (SchermoY));
+					p1 = (float) width / ((float) SchermoX);
+					p2 = (float) height / ((float) SchermoY);
 					float p;
 					if (p1 > p2) {
 						p = p1;
@@ -216,7 +229,7 @@ public class ChangeWallpaper {
 					p1 = width;
 					p2 = height;
 				} */
-				bb = Bitmap.createScaledBitmap(bb, (int) p1, (int) p2, true);
+				Bitmap bb = Bitmap.createScaledBitmap(b, (int) p1, (int) p2, true);
 
 				Log.getInstance().ScriveLog("Converte dimensioni 2");
 
@@ -233,14 +246,16 @@ public class ChangeWallpaper {
 		}
 	}
 
-	private Bitmap MetteBordoAImmagine(Bitmap myBitmap) {
+	private Bitmap MetteBordoAImmagine(Bitmap myBitmapPassata) {
 		Log.getInstance().ScriveLog("Mette bordo a immagine");
 
-		int dimeImmX = myBitmap.getWidth();
-		int dimeImmY = myBitmap.getHeight();
+		Bitmap myBitmap = ConverteDimensioni(myBitmapPassata);
 
-		int posX = (SchermoX / 2) - (dimeImmX / 2);
-		int posY = (SchermoY / 2) - (dimeImmY / 2);
+		float dimeImmX = myBitmap.getWidth();
+		float dimeImmY = myBitmap.getHeight();
+
+		float posX = ((float)SchermoX / 2) - (dimeImmX / 2);
+		float posY = ((float)SchermoY / 2) - (dimeImmY / 2);
 
 		Log.getInstance().ScriveLog("Mette bordo 1");
 
@@ -252,6 +267,7 @@ public class ChangeWallpaper {
 		// ImmagineY = 100;
 
 		Bitmap myOutputBitmap = myBitmap.copy(myBitmap.getConfig(), true);
+		Bitmap immagineDiSfondo = null;
 		try {
 			Log.getInstance().ScriveLog("Mette bordo 2");
 
@@ -265,13 +281,22 @@ public class ChangeWallpaper {
 			blur.forEach(blurOutput);
 			blurOutput.copyTo(myOutputBitmap);
 			renderScript.destroy();
+
+			immagineDiSfondo = Bitmap.createScaledBitmap(myOutputBitmap, SchermoX, SchermoY, true);
+
+			/* try (FileOutputStream out = new FileOutputStream(VariabiliGlobali.getInstance().getPercorsoDIR() + "/WFREGNA.png")) {
+				immagineDiSfondo.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+				// PNG is a lossless format, the compression factor (100) is ignored
+			} catch (IOException e) {
+				e.printStackTrace();
+			} */
 		} catch (Exception e) {
 			Log.getInstance().ScriveLog("Mette bordo: " + Utility.getInstance().PrendeErroreDaException(e));
 			int a = 0;
 		}
 
-		int offset = 50;
-		int divisore = 2;
+		// int offset = 50;
+		// int divisore = 2;
 
 		Log.getInstance().ScriveLog("Mette bordo 2");
 
@@ -282,10 +307,15 @@ public class ChangeWallpaper {
 		Log.getInstance().ScriveLog("Mette bordo 3");
 
 		Canvas canvas1 = new Canvas(Immaginona);
-		if (posY > 0) {
-			Bitmap croppedSuperiore = Bitmap.createBitmap(myOutputBitmap, 0, 0, SchermoX, (posY / divisore));
-			Bitmap resizedBitmap = Bitmap.createScaledBitmap(croppedSuperiore, SchermoX, posY, false);
-			canvas1.drawBitmap(resizedBitmap, 0, 0, null);
+		/* if (posY > 0) {
+			try {
+				int posizY = (posY / divisore);
+				Bitmap croppedSuperiore = Bitmap.createBitmap(myOutputBitmap, 0, 0, SchermoX, posizY);
+				Bitmap resizedBitmap = Bitmap.createScaledBitmap(croppedSuperiore, SchermoX, posY, false);
+				canvas1.drawBitmap(resizedBitmap, 0, 0, null);
+			} catch (Exception ignored) {
+				Log.getInstance().ScriveLog("Mette bordo 3: Errore " + Utility.getInstance().PrendeErroreDaException(ignored));
+			}
 		}
 
 		canvas1.drawBitmap(myBitmap, posX, posY, null);
@@ -293,12 +323,20 @@ public class ChangeWallpaper {
 		Log.getInstance().ScriveLog("Mette bordo 4");
 
 		if (posY > 0) {
-			Bitmap croppedInferiore = Bitmap.createBitmap(myOutputBitmap, 0, myBitmap.getHeight() - (posY / divisore), SchermoX, posY / divisore);
-			Bitmap resizedBitmap = Bitmap.createScaledBitmap(croppedInferiore, SchermoX, posY, false);
-			canvas1.drawBitmap(resizedBitmap, 0, myBitmap.getHeight() + posY + 1, null);
+			try {
+				Bitmap croppedInferiore = Bitmap.createBitmap(myOutputBitmap, 0, myBitmap.getHeight() - (posY / divisore), SchermoX, posY / divisore);
+				Bitmap resizedBitmap = Bitmap.createScaledBitmap(croppedInferiore, SchermoX, posY, false);
+				canvas1.drawBitmap(resizedBitmap, 0, myBitmap.getHeight() + posY + 1, null);
+			} catch (Exception ignored) {
+				Log.getInstance().ScriveLog("Mette bordo 4: Errore " + Utility.getInstance().PrendeErroreDaException(ignored));
+			}
 		}
 
-		Log.getInstance().ScriveLog("Mette bordo uscita");
+		Log.getInstance().ScriveLog("Mette bordo uscita"); */
+		if(VariabiliGlobali.getInstance().isBlur()) {
+			canvas1.drawBitmap(immagineDiSfondo, 0, 0, null);
+		}
+		canvas1.drawBitmap(myBitmap, posX, posY, null);
 
 		return Immaginona;
 	}

@@ -31,7 +31,8 @@ public class Permessi {
                 // Manifest.permission.READ_PHONE_STATE,
                 // android.Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.MODIFY_AUDIO_SETTINGS,
-                Manifest.permission.SET_WALLPAPER
+                Manifest.permission.SET_WALLPAPER,
+                Manifest.permission.SET_WALLPAPER_HINTS
         };
 
         if(!hasPermissions(VariabiliGlobali.getInstance().getContext(), PERMISSIONS)) {

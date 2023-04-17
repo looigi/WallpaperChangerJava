@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -72,12 +73,23 @@ public class MainActivity extends AppCompatActivity {
                 ServizioBackground.class));
 
         db_dati db = new db_dati();
+        db.CreazioneTabelle();
         db.LeggeImpostazioni();
 
         ImpostaOggetti();
 
-        ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
-        bckLeggeImmaginiLocali.execute();
+        boolean letteImmagini = db.CaricaImmaginiInLocale();
+        if (!letteImmagini) {
+            // if (VariabiliGlobali.getInstance().isOffline()) {
+                ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
+                bckLeggeImmaginiLocali.execute();
+            // }
+        } else {
+            if (VariabiliGlobali.getInstance().isOffline()) {
+                int q = VariabiliGlobali.getInstance().getListaImmagini().size();
+                VariabiliGlobali.getInstance().getTxtQuanteImmagini().setText("Immagini rilevate su disco: " + q);
+            }
+        }
         //         VariabiliGlobali.getInstance().getFragmentActivityPrincipale().stopService(new Intent(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
         //                ServizioBackground.class));
     }
@@ -85,6 +97,11 @@ public class MainActivity extends AppCompatActivity {
     private void ImpostaOggetti() {
         ImageView imgImpostata = (ImageView) findViewById(R.id.imgImpostata);
         VariabiliGlobali.getInstance().setImgImpostata(imgImpostata);
+
+        TextView txtTempoAlCambio = (TextView) findViewById(R.id.txtTempoAlCambio);
+        VariabiliGlobali.getInstance().setTxtTempoAlCambio(txtTempoAlCambio);
+        VariabiliGlobali.getInstance().getTxtTempoAlCambio().setText("Prossimo cambio: " +
+                VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri());
 
         Button btnMenoMinuti = (Button) findViewById(R.id.btnMenoMinuti);
         Button btnPiuMinuti = (Button) findViewById(R.id.btnPiuMinuti);
@@ -101,7 +118,10 @@ public class MainActivity extends AppCompatActivity {
                     minuti = 1;
                 }
                 VariabiliGlobali.getInstance().setSecondiAlCambio(minuti * 60000);
+                VariabiliGlobali.getInstance().setQuantiGiri(VariabiliGlobali.getInstance().getSecondiAlCambio() / VariabiliGlobali.getInstance().getTempoTimer());
                 edtMinuti.setText(Integer.toString(minuti));
+                VariabiliGlobali.getInstance().getTxtTempoAlCambio().setText("Prossimo cambio: " +
+                        VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri());
 
                 db_dati db = new db_dati();
                 db.ScriveImpostazioni();
@@ -112,7 +132,10 @@ public class MainActivity extends AppCompatActivity {
                 int minuti = VariabiliGlobali.getInstance().getSecondiAlCambio() / 60000;
                 minuti++;
                 VariabiliGlobali.getInstance().setSecondiAlCambio(minuti * 60000);
+                VariabiliGlobali.getInstance().setQuantiGiri(VariabiliGlobali.getInstance().getSecondiAlCambio() / VariabiliGlobali.getInstance().getTempoTimer());
                 edtMinuti.setText(Integer.toString(minuti));
+                VariabiliGlobali.getInstance().getTxtTempoAlCambio().setText("Prossimo cambio: " +
+                        VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri());
 
                 db_dati db = new db_dati();
                 db.ScriveImpostazioni();
@@ -148,10 +171,86 @@ public class MainActivity extends AppCompatActivity {
                     layOffline.setVisibility(LinearLayout.GONE);
                 } else {
                     layOffline.setVisibility(LinearLayout.VISIBLE);
+                    if(VariabiliGlobali.getInstance().isOffline()) {
+                        if (VariabiliGlobali.getInstance().getTxtQuanteImmagini() != null && VariabiliGlobali.getInstance().getTxtQuanteImmagini().length() > 0) {
+                            int q = VariabiliGlobali.getInstance().getTxtQuanteImmagini().length();
+                            VariabiliGlobali.getInstance().getTxtQuanteImmagini().setText("Immagini rilevate su disco: " + q);
+                        } else {
+                            ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
+                            bckLeggeImmaginiLocali.execute();
+                        }
+                    } else {
+                        VariabiliGlobali.getInstance().getTxtQuanteImmagini().setText("Immagini online: " + VariabiliGlobali.getInstance().getImmaginiOnline());
+                    }
                 }
 
                 db_dati db = new db_dati();
                 db.ScriveImpostazioni();
+            }
+        });
+
+        Switch swcBlur = (Switch) findViewById(R.id.switchBlur);
+        swcBlur.setChecked(VariabiliGlobali.getInstance().isBlur());
+        swcBlur.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                VariabiliGlobali.getInstance().setBlur(isChecked);
+
+                db_dati db = new db_dati();
+                db.ScriveImpostazioni();
+
+                ChangeWallpaper c = new ChangeWallpaper();
+                c.setWallpaperLocale(VariabiliGlobali.getInstance().getUltimaImmagine());
+            }
+        });
+
+        /* Switch swcResize = (Switch) findViewById(R.id.switchResize);
+        swcResize.setChecked(VariabiliGlobali.getInstance().isResize());
+        swcResize.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                VariabiliGlobali.getInstance().setResize(isChecked);
+
+                db_dati db = new db_dati();
+                db.ScriveImpostazioni();
+
+                ChangeWallpaper c = new ChangeWallpaper();
+                c.setWallpaper(VariabiliGlobali.getInstance().getUltimaImmagine());
+            }
+        }); */
+
+        ImageView imgCaricamento = (ImageView) findViewById(R.id.imgCaricamento);
+        imgCaricamento.setVisibility(LinearLayout.GONE);
+        VariabiliGlobali.getInstance().setImgCaricamento(imgCaricamento);
+
+        ImageView imgRefresh = (ImageView) findViewById(R.id.imgRefresh);
+        imgRefresh.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (VariabiliGlobali.getInstance().isScreenOn()) {
+                    Log.getInstance().ScriveLog("---Cambio Immagine Manuale---");
+                    ChangeWallpaper c = new ChangeWallpaper();
+                    if (!VariabiliGlobali.getInstance().isOffline()) {
+                        boolean fatto = c.setWallpaper(null);
+                        Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
+                    } else {
+                        int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
+                        if (numeroRandom > -1) {
+                            boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
+                            Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
+                        } else {
+                            Log.getInstance().ScriveLog("---Immagine NON cambiata manualmente: Caricamento immagini in corso---");
+                        }
+                    }
+                } else {
+                    Log.getInstance().ScriveLog("---Cambio Immagine posticipato per schermo spento---");
+                    VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
+                }
+            }
+        });
+
+        ImageView imgRefreshLocale = (ImageView) findViewById(R.id.imgRefreshLocale);
+        imgRefreshLocale.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
+                bckLeggeImmaginiLocali.execute();
             }
         });
 
@@ -179,7 +278,26 @@ public class MainActivity extends AppCompatActivity {
                 db_dati db = new db_dati();
                 db.ScriveImpostazioni();
 
+                ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
+                bckLeggeImmaginiLocali.execute();
+
                 break;
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        super.onKeyDown(keyCode, event);
+
+        Log.getInstance().ScriveLog("--->Tasto premuto: " + keyCode + "<---");
+
+        switch(keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                moveTaskToBack(true);
+
+                return false;
+        }
+
+        return false;
     }
 }

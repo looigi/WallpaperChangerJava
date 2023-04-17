@@ -34,7 +34,7 @@ public class Notifica {
     private String Titolo;
     private String Immagine;
     private boolean inDownload=false;
-    private static final int NOTIF_ID = 272727;
+    private int NOTIF_ID = 123456;
 
     public void setInDownload(boolean inDownload) {
         this.inDownload = inDownload;
@@ -73,10 +73,10 @@ public class Notifica {
                 contentView.setImageViewResource(R.id.imgCopertina, R.drawable.logo);
             }
 
-            if (notificationManager!=null && notificationBuilder != null) {
+            /* if (notificationManager!=null && notificationBuilder != null) {
                 Log.getInstance().ScriveLog("Aggiorna notifica. Build");
                 notificationManager.notify(NOTIF_ID, notificationBuilder.build());
-            }
+            } */
         }
     }
 
@@ -85,8 +85,8 @@ public class Notifica {
         Log.getInstance().ScriveLog("Aggiorna notifica. Titolo: " + Titolo);
         Log.getInstance().ScriveLog("Aggiorna notifica. Immagine: " + Immagine);
 
-        setListenersTasti(contentView);
-        setListeners(contentView);
+        /* setListenersTasti(contentView);
+        setListeners(contentView); */
         if (notificationManager!=null && notificationBuilder != null) {
             Log.getInstance().ScriveLog("Aggiorna notifica. Build");
             notificationManager.notify(NOTIF_ID, notificationBuilder.build());
@@ -208,10 +208,10 @@ public class Notifica {
             view.setOnClickPendingIntent(R.id.imgProssima, pAvanti);
             // view.setImageViewResource(R.id.imgAvanti, R.drawable.avanti);
 
-            Intent apre=new Intent(context, PassaggioNotifica.class);
+            /* Intent apre=new Intent(context, PassaggioNotifica.class);
             apre.putExtra("DO", "apre");
             PendingIntent pApre = PendingIntent.getActivity(context, 0, apre, PendingIntent.FLAG_UPDATE_CURRENT);
-            view.setOnClickPendingIntent(R.id.imgApre, pApre);
+            view.setOnClickPendingIntent(R.id.imgApre, pApre); */
 
             /* Intent apre=new Intent(context, PassaggioNotifica.class);
             apre.putExtra("DO", "apre");
@@ -230,6 +230,7 @@ public class Notifica {
                 notificationManager.cancel(NOTIF_ID);
                 notificationManager=null;
                 notificationBuilder=null;
+                NOTIF_ID++;
             } catch (Exception e) {
                 Log.getInstance().ScriveLog(Utility.getInstance().PrendeErroreDaException(e));
             }

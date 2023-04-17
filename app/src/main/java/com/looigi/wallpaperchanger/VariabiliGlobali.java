@@ -22,6 +22,8 @@ public class VariabiliGlobali {
     private final String NomeApplicazione = "WallpaperChanger";
     private final String PercorsoDIR = Environment.getExternalStorageDirectory().getPath()+"/LooigiSoft/WallpaperChanger";
     private String PercorsoIMMAGINI = Environment.getExternalStorageDirectory().getPath()+"/LooigiSoft/looWebPlayer/ImmaginiMusica";
+    private final String UrlWS = "http://looigi.ddns.net:1050";
+    private final String PercorsoImmagineSuURL = "http://looigi.ddns.net:1051";
     private boolean AzionaDebug = true;
     private boolean screenOn = true;
     private Activity FragmentActivityPrincipale;
@@ -30,12 +32,21 @@ public class VariabiliGlobali {
     private boolean immagineDaCambiare = false;
     private List<StrutturaImmagine> listaImmagini = new ArrayList<>();
     private StrutturaImmagine UltimaImmagine;
+    private int ImmaginiOnline;
     private boolean offline = true;
     private boolean ePartito = false;
+    private boolean retePresente = true;
 
     private ImageView imgImpostata;
     private TextView txtPath;
     private TextView txtQuanteImmagini;
+    private boolean blur = true;
+    private boolean resize = true;
+    private int quantiGiri;
+    private int tempoTimer = 10000;
+    private ImageView imgCaricamento;
+    private TextView txtTempoAlCambio;
+    private int SecondiPassati;
 
     public Context getContext() {
         return context;
@@ -43,6 +54,82 @@ public class VariabiliGlobali {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public int getSecondiPassati() {
+        return SecondiPassati;
+    }
+
+    public void setSecondiPassati(int secondiPassati) {
+        SecondiPassati = secondiPassati;
+    }
+
+    public TextView getTxtTempoAlCambio() {
+        return txtTempoAlCambio;
+    }
+
+    public void setTxtTempoAlCambio(TextView txtTempoAlCambio) {
+        this.txtTempoAlCambio = txtTempoAlCambio;
+    }
+
+    public ImageView getImgCaricamento() {
+        return imgCaricamento;
+    }
+
+    public void setImgCaricamento(ImageView imgCaricamento) {
+        this.imgCaricamento = imgCaricamento;
+    }
+
+    public int getTempoTimer() {
+        return tempoTimer;
+    }
+
+    public int getQuantiGiri() {
+        return quantiGiri;
+    }
+
+    public void setQuantiGiri(int quantiGiri) {
+        this.quantiGiri = quantiGiri;
+    }
+
+    public int getImmaginiOnline() {
+        return ImmaginiOnline;
+    }
+
+    public void setImmaginiOnline(int immaginiOnline) {
+        ImmaginiOnline = immaginiOnline;
+    }
+
+    public boolean isResize() {
+        return resize;
+    }
+
+    public void setResize(boolean resize) {
+        this.resize = resize;
+    }
+
+    public boolean isBlur() {
+        return blur;
+    }
+
+    public void setBlur(boolean blur) {
+        this.blur = blur;
+    }
+
+    public String getPercorsoImmagineSuURL() {
+        return PercorsoImmagineSuURL;
+    }
+
+    public String getUrlWS() {
+        return UrlWS;
+    }
+
+    public boolean isRetePresente() {
+        return retePresente;
+    }
+
+    public void setRetePresente(boolean retePresente) {
+        this.retePresente = retePresente;
     }
 
     public boolean isePartito() {
