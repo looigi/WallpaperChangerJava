@@ -43,7 +43,7 @@ public class VariabiliGlobali {
     private boolean blur = true;
     private boolean resize = true;
     private int quantiGiri;
-    private int tempoTimer = 10000;
+    private int tempoTimer = 30000;
     private ImageView imgCaricamento;
     private TextView txtTempoAlCambio;
     private int SecondiPassati;

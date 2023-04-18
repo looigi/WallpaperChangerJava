@@ -28,7 +28,7 @@ public class Permessi {
                 Manifest.permission.REQUEST_INSTALL_PACKAGES,
                 // Manifest.permission.WAKE_LOCK,
                 // Manifest.permission.DISABLE_KEYGUARD,
-                // Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.RECEIVE_BOOT_COMPLETED,
                 // android.Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.MODIFY_AUDIO_SETTINGS,
                 Manifest.permission.SET_WALLPAPER,
