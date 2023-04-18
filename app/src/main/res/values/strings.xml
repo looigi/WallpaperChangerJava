@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WallpaperChanger</string>
+    <string name="toast_crash_report">Errore in Wallpaper Changer</string>
 </resources>
