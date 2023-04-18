@@ -318,7 +318,7 @@ public class Notifica {
                 notificationManager.cancel(NOTIF_ID);
                 notificationManager=null;
                 notificationBuilder=null;
-                NOTIF_ID++;
+                // NOTIF_ID++;
             } catch (Exception e) {
                 Log.getInstance().ScriveLog(Utility.getInstance().PrendeErroreDaException(e));
             }

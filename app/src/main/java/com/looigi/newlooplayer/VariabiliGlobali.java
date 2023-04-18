@@ -159,6 +159,8 @@ public class VariabiliGlobali {
     private List<String> ListaTagsArtista = new ArrayList<>();
     private List<StrutturaListaPreferiti> ListaPreferiti = new ArrayList<>();
     private boolean SkippatoBrano = false;
+    private boolean giaAvviato = false;
+    public static int PercentualeDiEliminazioneBrani = 55;
 
     public Context getContext() {
         return context;
@@ -166,6 +168,14 @@ public class VariabiliGlobali {
 
     public void setContext(Context context) {
         this.context = context;
+    }
+
+    public boolean isGiaAvviato() {
+        return giaAvviato;
+    }
+
+    public void setGiaAvviato(boolean giaAvviato) {
+        this.giaAvviato = giaAvviato;
     }
 
     public boolean isStelleSuperiori() {

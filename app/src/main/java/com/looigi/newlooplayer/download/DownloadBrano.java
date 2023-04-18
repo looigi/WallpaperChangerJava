@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Handler;
 import android.widget.LinearLayout;
 
+import com.looigi.newlooplayer.EliminaBraniDaDisco;
 import com.looigi.newlooplayer.Log;
 import com.looigi.newlooplayer.OggettiAVideo;
 import com.looigi.newlooplayer.Utility;
@@ -45,21 +46,26 @@ public class DownloadBrano extends AsyncTask<String, String, String> {
      * */
     @Override
     protected String doInBackground(String... f_url) {
-        int Limite = VariabiliGlobali.getInstance().getLimiteInMb() * 1024;
-        int occupato = VariabiliGlobali.getInstance().getSpazioOccupatoSuDisco();
-        if (occupato > Limite) {
-            VariabiliGlobali.getInstance().setBloccaDownload(true);
+        if (VariabiliGlobali.getInstance().isEliminaBrani()) {
+            int Limite = VariabiliGlobali.getInstance().getLimiteInMb() * 1024;
+            int occupato = VariabiliGlobali.getInstance().getSpazioOccupatoSuDisco();
+            if (occupato > Limite) {
+                /* VariabiliGlobali.getInstance().setBloccaDownload(true);
 
-            VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    OggettiAVideo.getInstance().getImgDownloadBrano().setVisibility(LinearLayout.GONE);
-                    OggettiAVideo.getInstance().getLayDownload().setVisibility(LinearLayout.GONE);
-                }
-            });
+                VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        OggettiAVideo.getInstance().getImgDownloadBrano().setVisibility(LinearLayout.GONE);
+                        OggettiAVideo.getInstance().getLayDownload().setVisibility(LinearLayout.GONE);
+                    }
+                });
 
-            Log.getInstance().ScriveLog("Download brano annullato. Spazio occupato maggiore del limite impostato: " + occupato + "/" + Limite);
-            return null;
+                Log.getInstance().ScriveLog("Download brano annullato. Spazio occupato maggiore del limite impostato: " + occupato + "/" + Limite);
+                return null; */
+
+                EliminaBraniDaDisco bckElimina = new EliminaBraniDaDisco(false);
+                bckElimina.execute();
+            }
         }
 
         Utility.getInstance().CreaCartelle(sb.getCartellaBrano());

@@ -196,6 +196,16 @@ public class PuliziaGenerale {
         handlerAttesaPulizia.postDelayed(runTimerAttesaPulizia = new Runnable() {
             @Override
             public void run() {
+                if (VariabiliGlobali.getInstance().isEliminaBrani()) {
+                    int Limite = VariabiliGlobali.getInstance().getLimiteInMb() * 1024;
+                    int occupato = VariabiliGlobali.getInstance().getSpazioOccupatoSuDisco();
+                    if (occupato > Limite) {
+
+                        EliminaBraniDaDisco bckElimina = new EliminaBraniDaDisco(false);
+                        bckElimina.execute();
+                    }
+                }
+
                 ChiamateWs c = new ChiamateWs();
                 c.AttendePuliziaCompleta(PuliziaGenerale.this);
 

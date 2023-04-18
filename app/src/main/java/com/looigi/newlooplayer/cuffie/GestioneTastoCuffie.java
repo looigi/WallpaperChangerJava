@@ -53,7 +53,7 @@ public class GestioneTastoCuffie extends BroadcastReceiver {
             }
         } else {
             if (intent.getAction().equalsIgnoreCase(Intent.ACTION_MEDIA_BUTTON)) {
-                /* String data = intent.getDataString();
+                String data = intent.getDataString();
                 Bundle extraData = intent.getExtras();
 
                 String st = intent.getStringExtra("state");
@@ -71,7 +71,7 @@ public class GestioneTastoCuffie extends BroadcastReceiver {
                 if (event1 != null) {
                     Log.getInstance().ScriveLog("CUFFIE: Action Media Button. Tasto:  " + event1.getKeyCode());
                 } else {
-                    Log.getInstance().ScriveLog("CUFFIE: Action Media Button. Tasto nullo"); */
+                    Log.getInstance().ScriveLog("CUFFIE: Action Media Button. Tasto nullo");
 
                     KeyEvent event = (KeyEvent)intent.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
                     if (event == null) {
@@ -165,8 +165,8 @@ public class GestioneTastoCuffie extends BroadcastReceiver {
 
                     // 	PlayerOne.SecondoUltimoCambio=seconds;
                     // }
+                } */
                 }
-                // } */
             }
         }
     }

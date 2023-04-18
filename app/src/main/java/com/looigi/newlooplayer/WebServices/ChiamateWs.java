@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import androidx.appcompat.app.AlertDialog;
 
 import com.looigi.newlooplayer.BuildConfig;
+import com.looigi.newlooplayer.EliminaBraniDaDisco;
 import com.looigi.newlooplayer.PuliziaGenerale;
 import com.looigi.newlooplayer.ServizioBackground;
 import com.looigi.newlooplayer.adapters.AdapterListenerArtisti;
@@ -616,6 +617,7 @@ public class ChiamateWs implements TaskDelegate {
                         }
                     });
             alertDialog.show(); */
+
             PuliziaGenerale p = new PuliziaGenerale();
             p.AttesaFinePulizia(false);
         }

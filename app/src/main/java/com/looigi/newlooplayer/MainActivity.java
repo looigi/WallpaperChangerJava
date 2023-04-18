@@ -504,6 +504,14 @@ public class MainActivity extends AppCompatActivity {
         OggettiAVideo.getInstance().setImgAlbumGA(imgAlbumGA);
         OggettiAVideo.getInstance().setEdtQuanteImmaginiGA(edtQuanteImmaginiGA);
 
+        Button btnPulisce = (Button) findViewById(R.id.btnPulisceBrani);
+        btnPulisce.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                EliminaBraniDaDisco bckElimina = new EliminaBraniDaDisco(true);
+                bckElimina.execute();
+            }
+        });
+
         ImageView imgShare = (ImageView) findViewById(R.id.imgCondividi);
         imgShare.setOnClickListener(new View.OnClickListener() {
            public void onClick(View v) {
@@ -528,7 +536,8 @@ public class MainActivity extends AppCompatActivity {
                        share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                        VariabiliGlobali.getInstance().getFragmentActivityPrincipale().startActivity(Intent.createChooser(share, "Share audio File"));
                    } catch (IOException e) {
-                       e.printStackTrace();
+                       Log.getInstance().ScriveLog("Share brano " + BranoDest + "\n\n" + Utility.getInstance().PrendeErroreDaException(e));
+                       Utility.getInstance().VisualizzaErrore("Share brano " + BranoDest + "\n\n" + Utility.getInstance().PrendeErroreDaException(e));
                    }
                } else {
                    Toast.makeText(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),

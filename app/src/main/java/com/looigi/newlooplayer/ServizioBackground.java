@@ -220,7 +220,7 @@ public class ServizioBackground extends Service {
         NomeFile = VariabiliGlobali.getInstance().getPercorsoDIR() + "/Liste/BraniInLocale.txt";
         if (Utility.getInstance().EsisteFile(NomeFile)) {
             if (VariabiliGlobali.getInstance().isEliminaBrani()) {
-                EliminaBraniDaDisco bckElimina = new EliminaBraniDaDisco();
+                EliminaBraniDaDisco bckElimina = new EliminaBraniDaDisco(false);
                 bckElimina.execute();
             } else {
                 Utility.getInstance().ProsegueAvvio();

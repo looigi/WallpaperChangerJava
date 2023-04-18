@@ -418,8 +418,8 @@ public class Utility {
             VariabiliGlobali.getInstance().getMediaPlayer().setDataSource(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(), myUri);
             VariabiliGlobali.getInstance().getMediaPlayer().prepare();
         } catch (IOException e) {
-            Log.getInstance().ScriveLog("Errore nella preparazione del brano da url: " + e.getMessage());
-            Utility.getInstance().VisualizzaErrore("Errore nella preparazione del brano:\n\n" + e.getMessage());
+            Log.getInstance().ScriveLog("Errore nella preparazione del brano da url (" + urlString + "): " + e.getMessage());
+            // Utility.getInstance().VisualizzaErrore("Errore nella preparazione del brano da url:\n\n" + urlString + "\n\n" + e.getMessage());
         }
 /* } catch (Exception e) {
     Log.getInstance().ScriveLog("Errore nel caricamento del brano da url: " + e.getMessage());
@@ -1486,8 +1486,12 @@ public class Utility {
                 250,
                 true));
         OggettiAVideo.getInstance().getImgSfondo().setImageDrawable(d); */
-        OggettiAVideo.getInstance().getImgSfondo().setVisibility(LinearLayout.GONE);
-        OggettiAVideo.getInstance().getImgSfondoLogo().setVisibility(LinearLayout.VISIBLE);
+        if (OggettiAVideo.getInstance().getImgSfondo() != null) {
+            OggettiAVideo.getInstance().getImgSfondo().setVisibility(LinearLayout.GONE);
+        }
+        if (OggettiAVideo.getInstance().getImgSfondoLogo() != null) {
+            OggettiAVideo.getInstance().getImgSfondoLogo().setVisibility(LinearLayout.VISIBLE);
+        }
 
         // LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(VariabiliGlobali.getInstance().getDimeSchermoX(), VariabiliGlobali.getInstance().getDimeSchermoY());
         // OggettiAVideo.getInstance().getImgSfondo().setLayoutParams(layoutParams);

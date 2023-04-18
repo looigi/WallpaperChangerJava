@@ -18,18 +18,19 @@ import java.util.List;
 public class EliminaBraniDaDisco extends AsyncTask<String, Integer, String> {
     private db_dati db;
     int Dimensioni;
+    private boolean popup;
     List<StrutturaBranoPerEliminazione> ListaBrani = new ArrayList<>();
 
-    public EliminaBraniDaDisco() {
+    public EliminaBraniDaDisco(boolean Popup) {
         Dimensioni = 0;
         db = new db_dati();
         ListaBrani = new ArrayList<>();
+        popup = Popup;
 
         OggettiAVideo.getInstance().getLayCaricamento().setVisibility(LinearLayout.VISIBLE);
         OggettiAVideo.getInstance().getTxtCaricamento().setVisibility(LinearLayout.VISIBLE);
         OggettiAVideo.getInstance().getTxtCaricamento().setText("Eliminazione brani in corso");
     }
-
 
     @Override
     protected void onPreExecute() {
@@ -97,7 +98,7 @@ public class EliminaBraniDaDisco extends AsyncTask<String, Integer, String> {
         }
 
         int Progressivo = 0;
-        int Limite = VariabiliGlobali.getInstance().getLimiteInMb() * 1024;
+        int Limite = ((VariabiliGlobali.getInstance().getLimiteInMb() * 1024) * VariabiliGlobali.getInstance().PercentualeDiEliminazioneBrani) /100 ;
         while (Dimensioni > Limite) {
             String NomeFile = ListaBrani.get(Progressivo).getNomeFile();
             Dimensioni -= ListaBrani.get(Progressivo).getDimensione();
@@ -130,7 +131,14 @@ public class EliminaBraniDaDisco extends AsyncTask<String, Integer, String> {
         OggettiAVideo.getInstance().getTxtCaricamento().setVisibility(LinearLayout.GONE);
         OggettiAVideo.getInstance().getTxtCaricamento().setText("");
 
-        Utility.getInstance().ProsegueAvvio();
+        if (!popup) {
+            if (!VariabiliGlobali.getInstance().isGiaAvviato()) {
+                Utility.getInstance().ProsegueAvvio();
+            }
+            VariabiliGlobali.getInstance().setGiaAvviato(true);
+        } else {
+            Utility.getInstance().VisualizzaErrore("Pulizia eseguita.\n\nFiles eliminati: " + QuantiFiles + "\nDimensioni attuali: " + Dimensioni);
+        }
     }
 
     @Override
