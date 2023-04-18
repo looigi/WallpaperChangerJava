@@ -13,11 +13,21 @@ public class PhoneUnlockedReceiver extends BroadcastReceiver {
 
             if (VariabiliGlobali.getInstance().isImmagineDaCambiare()) {
                 Log.getInstance().ScriveLog("---Cambio immagine dopo unlock schermo---");
-                int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
                 ChangeWallpaper c = new ChangeWallpaper();
-                boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
+                if (!VariabiliGlobali.getInstance().isOffline()) {
+                    boolean fatto = c.setWallpaper(null);
+                    Log.getInstance().ScriveLog("---Immagine cambiata online dopo unlock schermo: " + fatto + "---");
+                } else {
+                    int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
+                    if (numeroRandom > -1) {
+                        boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
+                        Log.getInstance().ScriveLog("---Immagine cambiata dopo un unlock schermo: " + fatto + "---");
+                    } else {
+                        Log.getInstance().ScriveLog("---Immagine NON cambiata dopo un unlock schermo: Caricamento immagini in corso---");
+                    }
+                }
+
                 VariabiliGlobali.getInstance().setImmagineDaCambiare(false);
-                Log.getInstance().ScriveLog("---Immagine cambiata: " + fatto + "---");
             }
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)){
             Log.getInstance().ScriveLog("Phone locked");

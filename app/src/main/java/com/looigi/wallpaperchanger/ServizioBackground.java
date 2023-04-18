@@ -12,7 +12,8 @@ public class ServizioBackground extends android.app.Service {
     private Handler handlerTimer;
     // private int secondiPassati = 0;
     // private int tempoTimer = 10000;
-    private PhoneUnlockedReceiver receiverAccesoSpento;
+
+    // private PhoneUnlockedReceiver receiverAccesoSpento;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -23,7 +24,7 @@ public class ServizioBackground extends android.app.Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.getInstance().ScriveLog("Partenza servizio");
 
-        AzionaControlloSchermo();
+        // AzionaControlloSchermo();
         Utility.getInstance().InstanziaNotifica();
 
         VariabiliGlobali.getInstance().setImmagineDaCambiare(false);
@@ -40,7 +41,7 @@ public class ServizioBackground extends android.app.Service {
                 if (VariabiliGlobali.getInstance().getSecondiPassati() >= VariabiliGlobali.getInstance().getQuantiGiri()) {
                     VariabiliGlobali.getInstance().setSecondiPassati(0);
 
-                    if (VariabiliGlobali.getInstance().isScreenOn()) {
+                    // if (VariabiliGlobali.getInstance().isScreenOn()) {
                         ChangeWallpaper c = new ChangeWallpaper();
                         if (!VariabiliGlobali.getInstance().isOffline()) {
                             boolean fatto = c.setWallpaper(null);
@@ -55,14 +56,14 @@ public class ServizioBackground extends android.app.Service {
                                 Log.getInstance().ScriveLog("---Immagine NON cambiata: Caricamento immagini in corso---");
                             }
                         }
-                    } else {
+                    /* } else {
                         Log.getInstance().ScriveLog("---Cambio Immagine posticipato per schermo spento---");
                         VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
-                    }
+                    } */
                 }
 
-                Log.getInstance().ScriveLog("Secondi passati dall'avvio: " + Integer.toString(VariabiliGlobali.getInstance().getSecondiPassati()) + "/" + Integer.toString(VariabiliGlobali.getInstance().getQuantiGiri()) +
-                        ". Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn());
+                // Log.getInstance().ScriveLog("Secondi passati dall'avvio: " + Integer.toString(VariabiliGlobali.getInstance().getSecondiPassati()) + "/" + Integer.toString(VariabiliGlobali.getInstance().getQuantiGiri()) +
+                //         ". Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn());
 
                 handlerTimer.postDelayed(this, VariabiliGlobali.getInstance().getTempoTimer());
             }
@@ -73,7 +74,7 @@ public class ServizioBackground extends android.app.Service {
         return START_STICKY;
     }
 
-    private void AzionaControlloSchermo() {
+    /* private void AzionaControlloSchermo() {
         if (receiverAccesoSpento != null) {
             unregisterReceiver(receiverAccesoSpento);
             receiverAccesoSpento = null;
@@ -84,7 +85,7 @@ public class ServizioBackground extends android.app.Service {
         fRecv.addAction(Intent.ACTION_USER_PRESENT);
         fRecv.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(receiverAccesoSpento, fRecv);
-    }
+    } */
 
     @Override
     public void onDestroy() {

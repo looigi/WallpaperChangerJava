@@ -12,13 +12,15 @@ public class PassaggioNotifica extends Activity {
 		super.onCreate(savedInstanceState);
 	
 		context = VariabiliGlobali.getInstance().getContext();
-		String action="";
+		String action=null;
 
 		Log.getInstance().ScriveLog("Notifica: onCreate PassaggioNotifica");
 
 		try {
-			action = (String) getIntent().getExtras().get("DO");
-			Log.getInstance().ScriveLog("Notifica: Action: " + action);
+			if (getIntent().getExtras() != null) {
+				action = (String) getIntent().getExtras().get("DO");
+				Log.getInstance().ScriveLog("Notifica: Action: " + action);
+			}
 		} catch (Exception e) {
 			Log.getInstance().ScriveLog(Utility.getInstance().PrendeErroreDaException(e));
 		}

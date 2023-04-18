@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         VariabiliGlobali.getInstance().setFragmentActivityPrincipale(this);
 
         if (!VariabiliGlobali.getInstance().isePartito()) {
-            Log.getInstance().EliminaFileLog();
+            // Log.getInstance().EliminaFileLog();
             Log.getInstance().ScriveLog(">>>>>>>>>>>>>>>>>>>>>>>>NUOVA SESSIONE<<<<<<<<<<<<<<<<<<<<<<<<");
 
             Permessi p = new Permessi();
@@ -225,6 +225,7 @@ public class MainActivity extends AppCompatActivity {
         imgRefresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (VariabiliGlobali.getInstance().isScreenOn()) {
+                    VariabiliGlobali.getInstance().getImgCaricamento().setVisibility(LinearLayout.VISIBLE);
                     Log.getInstance().ScriveLog("---Cambio Immagine Manuale---");
                     ChangeWallpaper c = new ChangeWallpaper();
                     if (!VariabiliGlobali.getInstance().isOffline()) {
@@ -251,6 +252,18 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
                 bckLeggeImmaginiLocali.execute();
+            }
+        });
+
+        ImageView imgUscita = (ImageView) findViewById(R.id.imgUscita);
+        imgUscita.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Log.getInstance().ScriveLog("Applicazione terminata");
+                Notifica.getInstance().RimuoviNotifica();
+                VariabiliGlobali.getInstance().getFragmentActivityPrincipale().stopService(new Intent(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        ServizioBackground.class));
+
+                System.exit(0);
             }
         });
 

@@ -217,6 +217,7 @@ public class Utility {
     }
 
     public void VisualizzaErrore(String Errore) {
+        VariabiliGlobali.getInstance().getImgCaricamento().setVisibility(LinearLayout.GONE);
         Log.getInstance().ScriveLog("Visualizzo messaggio di errore. Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn());
         if (VariabiliGlobali.getInstance().isScreenOn()) {
             VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
@@ -230,7 +231,7 @@ public class Utility {
                                     dialog.dismiss();
                                 }
                             });
-                    alertDialog.show();
+                    // alertDialog.show();
                 }
             });
         } else {

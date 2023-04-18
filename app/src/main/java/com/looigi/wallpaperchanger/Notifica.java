@@ -208,10 +208,10 @@ public class Notifica {
             view.setOnClickPendingIntent(R.id.imgProssima, pAvanti);
             // view.setImageViewResource(R.id.imgAvanti, R.drawable.avanti);
 
-            /* Intent apre=new Intent(context, PassaggioNotifica.class);
+            Intent apre=new Intent(context, PassaggioNotifica.class);
             apre.putExtra("DO", "apre");
             PendingIntent pApre = PendingIntent.getActivity(context, 0, apre, PendingIntent.FLAG_UPDATE_CURRENT);
-            view.setOnClickPendingIntent(R.id.imgApre, pApre); */
+            view.setOnClickPendingIntent(R.id.imgCopertina, pApre);
 
             /* Intent apre=new Intent(context, PassaggioNotifica.class);
             apre.putExtra("DO", "apre");
@@ -230,7 +230,7 @@ public class Notifica {
                 notificationManager.cancel(NOTIF_ID);
                 notificationManager=null;
                 notificationBuilder=null;
-                NOTIF_ID++;
+                // NOTIF_ID++;
             } catch (Exception e) {
                 Log.getInstance().ScriveLog(Utility.getInstance().PrendeErroreDaException(e));
             }

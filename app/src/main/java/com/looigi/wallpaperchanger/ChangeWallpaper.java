@@ -11,6 +11,7 @@ import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.util.DisplayMetrics;
 import android.webkit.URLUtil;
+import android.widget.LinearLayout;
 
 import com.looigi.wallpaperchanger.DB.ChiamateWS;
 
@@ -121,7 +122,7 @@ public class ChangeWallpaper {
 				} */
 
 			 		// if (VariabiliGlobali.getInstance().isBlur()) {
-						if (myBitmap != null) {
+						// if (myBitmap != null) {
 							try {
 								// Bitmap Immaginona = Bitmap.createBitmap(VariabiliGlobali.getInstance().getSchermoX(), VariabiliGlobali.getInstance().getSchermoY(), Bitmap.Config.ARGB_8888);
 								// Canvas comboImage = new Canvas(Immaginona);
@@ -135,11 +136,11 @@ public class ChangeWallpaper {
 								Log.getInstance().ScriveLog("Cambio immagine. Mette bordo a immagine. Errore: " + Utility.getInstance().PrendeErroreDaException(e));
 								myBitmap = null;
 							}
-						} else {
-							Log.getInstance().ScriveLog("Cambio immagine. Converte dimensioni ha ritornato null");
+						// } else {
+						// 	Log.getInstance().ScriveLog("Cambio immagine. Converte dimensioni ha ritornato null");
 
-							myBitmap = null;
-						}
+						// 	myBitmap = null;
+						// }
 					// }
 					/* } else {
 						Log.getInstance().ScriveLog("Cambio immagine. Create scaled bitmap");
@@ -149,6 +150,8 @@ public class ChangeWallpaper {
 					} */
 				// }
 				// SalvaImmagine(myBitmap);
+			} else {
+				Log.getInstance().ScriveLog("Bitmap nulla");
 			}
 
 			Log.getInstance().ScriveLog("Aggiorno notifica");
@@ -164,9 +167,15 @@ public class ChangeWallpaper {
 			Bitmap ultima = BitmapFactory.decodeFile(si.getPathImmagine());
 			VariabiliGlobali.getInstance().getImgImpostata().setImageBitmap(ultima);
 
+			VariabiliGlobali.getInstance().setSecondiPassati(0);
+			VariabiliGlobali.getInstance().getTxtTempoAlCambio().setText("Prossimo cambio: " +
+					VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri());
+
 			// Notifica.getInstance().AggiornaNotifica();
 			db_dati db = new db_dati();
 			db.ScriveImpostazioni();
+
+			VariabiliGlobali.getInstance().getImgCaricamento().setVisibility(LinearLayout.GONE);
 
 			return myBitmap;
 		} else {
