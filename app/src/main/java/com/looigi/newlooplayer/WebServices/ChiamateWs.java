@@ -33,6 +33,8 @@ import com.looigi.newlooplayer.strutture.StrutturaListaBrani;
 import com.looigi.newlooplayer.strutture.StrutturaTags;
 import com.looigi.newlooplayer.treeview.AlberoBrani;
 
+import org.kobjects.util.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -406,6 +408,22 @@ public class ChiamateWs implements TaskDelegate {
                 false);
     }
 
+    public void ScatenaAggiornamento() {
+        Log.getInstance().ScriveLog("Scatena Aggiornamento");
+
+        String Urletto="ScatenaAggiornamento";
+
+        ControllaTempoEsecuzione = true;
+        TipoOperazione = "ScatenaAggiornamento";
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                5000,
+                false);
+    }
+
     public void RitornaBranoDaID(String idBrano, boolean Pregresso) {
         branoPregresso = Pregresso;
         Log.getInstance().ScriveLog("Caricamento prossimo brano. Pregresso: " + Pregresso);
@@ -537,6 +555,9 @@ public class ChiamateWs implements TaskDelegate {
         switch (TipoOperazione) {
             case "ControllaAggiornamento":
                 fControllaAggiornamento(result);
+                break;
+            case "ScatenaAggiornamento":
+                fScatenaAggiornamento(result);
                 break;
             case "RitornaArtisti":
                 RitornaArtisti(result);
@@ -712,6 +733,14 @@ public class ChiamateWs implements TaskDelegate {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         VariabiliGlobali.getInstance().getFragmentActivityPrincipale().startActivity(intent);
     } */
+
+    private void fScatenaAggiornamento(String result) {
+        if (result.contains("ERROR:")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            Utility.getInstance().VisualizzaErrore("Aggiornamento propagato...");
+        }
+    }
 
     private void fControllaAggiornamento(String result) {
         Log.getInstance().ScriveLog("Ultimo aggiornato ritornato: " + result);

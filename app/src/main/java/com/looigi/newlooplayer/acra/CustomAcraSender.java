@@ -37,7 +37,7 @@ public class CustomAcraSender implements ReportSenderFactory {
 	private class CustomReportSender implements ReportSender {
 		@Override
 		public void send(@NonNull Context context, @NonNull CrashReportData errorContent) throws ReportSenderException {
-			String subject = "Crash Detector Android " + convertTimestampInDate(System.currentTimeMillis());
+			String subject = "Crash looWebPlayer Android " + convertTimestampInDate(System.currentTimeMillis());
 			String body = parseLog(errorContent);
 			VariabiliGlobali.getInstance().setAzionaDebug(true);
 			Log.getInstance().ScriveLog(body);

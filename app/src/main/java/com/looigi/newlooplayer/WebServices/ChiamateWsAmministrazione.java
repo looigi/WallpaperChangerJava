@@ -15,12 +15,16 @@ import com.looigi.newlooplayer.OggettiAVideo;
 import com.looigi.newlooplayer.R;
 import com.looigi.newlooplayer.Utility;
 import com.looigi.newlooplayer.VariabiliGlobali;
+import com.looigi.newlooplayer.adapters.AdapterListenerGestioneTags;
 import com.looigi.newlooplayer.db_locale.db_dati;
 import com.looigi.newlooplayer.download.DownloadImage;
 import com.looigi.newlooplayer.strutture.StrutturaImmaginiDaCambiare;
+import com.looigi.newlooplayer.strutture.StrutturaTags;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ChiamateWsAmministrazione implements TaskDelegate {
@@ -135,6 +139,54 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
                 true);
     }
 
+    public void AggiungeTag(String Tag) {
+        Log.getInstance().ScriveLog("Aggiunge Tag: " + Tag);
+
+        String Urletto="AggiungeTag?Tag=" + Tag;
+
+        TipoOperazione = "AggiungeTag";
+
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                5000,
+                true);
+    }
+
+    public void ModificaTag(String idTag, String Tag) {
+        Log.getInstance().ScriveLog("Modifica Tag " + idTag + ": " + Tag);
+
+        String Urletto="ModificaTag?idTag=" + idTag + "&Tag=" + Tag;
+
+        TipoOperazione = "ModificaTag";
+
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                5000,
+                true);
+    }
+
+    public void EliminaTag(String idTag) {
+        Log.getInstance().ScriveLog("Elimina Tag: " + idTag);
+
+        String Urletto="EliminaTag?idTag=" + idTag;
+
+        TipoOperazione = "EliminaTag";
+
+        Esegue(
+                RadiceWS + ws + Urletto,
+                TipoOperazione,
+                NS,
+                SA,
+                5000,
+                true);
+    }
+
     public void Esegue(String Urletto, String tOperazione,
                        String NS, String SOAP_ACTION, int Timeout,
                        boolean ApriDialog) {
@@ -175,6 +227,112 @@ public class ChiamateWsAmministrazione implements TaskDelegate {
             case "RinominaAlbum":
                 fRinominaAlbum(result);
                 break;
+            case "AggiungeTag":
+                fAggiungeTag(result);
+                break;
+            case "ModificaTag":
+                fModificaTag(result);
+                break;
+            case "EliminaTag":
+                fEliminaTag(result);
+                break;
+        }
+    }
+
+    private void fAggiungeTag(String result) {
+        if (result.contains("ERROR:")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            String[] rit = result.split(";");
+            List<StrutturaTags> l = VariabiliGlobali.getInstance().getListaTags();
+            StrutturaTags s = new StrutturaTags();
+            s.setId(rit[0]);
+            s.setTag(rit[1]);
+            l.add(s);
+
+            Collections.sort(l, new Comparator<StrutturaTags>() {
+                public int compare(StrutturaTags obj1, StrutturaTags obj2) {
+                    // ## Ascending order
+                    return obj1.getTag().compareToIgnoreCase(obj2.getTag()); // To compare string values
+                    // return Integer.valueOf(obj1.empId).compareTo(Integer.valueOf(obj2.empId)); // To compare integer values
+
+                    // ## Descending order
+                    // return obj2.firstName.compareToIgnoreCase(obj1.firstName); // To compare string values
+                    // return Integer.valueOf(obj2.empId).compareTo(Integer.valueOf(obj1.empId)); // To compare integer values
+                }
+            });
+
+            VariabiliGlobali.getInstance().setListaTags(l);
+
+            AdapterListenerGestioneTags customAdapterT = new AdapterListenerGestioneTags(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                    VariabiliGlobali.getInstance().getListaTags());
+            OggettiAVideo.getInstance().getLstGestioneTags().setAdapter(customAdapterT);
+        }
+    }
+
+    private void fModificaTag(String result) {
+        if (result.contains("ERROR:")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            String[] rit = result.split(";");
+            List<StrutturaTags> l = new ArrayList<>();
+            for (int i = 0; i < VariabiliGlobali.getInstance().getListaTags().size(); i++) {
+                if (rit[0].equals(VariabiliGlobali.getInstance().getListaTags().get(i).getId())) {
+                    StrutturaTags s = new StrutturaTags();
+                    s.setId(VariabiliGlobali.getInstance().getListaTags().get(i).getId());
+                    s.setTag(rit[1]);
+                    l.add(s);
+                } else {
+                    l.add(VariabiliGlobali.getInstance().getListaTags().get(i));
+                }
+            }
+
+            Collections.sort(l, new Comparator<StrutturaTags>() {
+                public int compare(StrutturaTags obj1, StrutturaTags obj2) {
+                    // ## Ascending order
+                    return obj1.getTag().compareToIgnoreCase(obj2.getTag()); // To compare string values
+                    // return Integer.valueOf(obj1.empId).compareTo(Integer.valueOf(obj2.empId)); // To compare integer values
+
+                    // ## Descending order
+                    // return obj2.firstName.compareToIgnoreCase(obj1.firstName); // To compare string values
+                    // return Integer.valueOf(obj2.empId).compareTo(Integer.valueOf(obj1.empId)); // To compare integer values
+                }
+            });
+            VariabiliGlobali.getInstance().setListaTags(l);
+
+            AdapterListenerGestioneTags customAdapterT = new AdapterListenerGestioneTags(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                    VariabiliGlobali.getInstance().getListaTags());
+            OggettiAVideo.getInstance().getLstGestioneTags().setAdapter(customAdapterT);
+        }
+    }
+
+    private void fEliminaTag(String result) {
+        if (result.contains("ERROR:")) {
+            Utility.getInstance().VisualizzaErrore(result);
+        } else {
+            List<StrutturaTags> l = new ArrayList<>();
+            for (int i = 0; i < VariabiliGlobali.getInstance().getListaTags().size(); i++) {
+                if (!result.equals(VariabiliGlobali.getInstance().getListaTags().get(i).getId())) {
+                    l.add(VariabiliGlobali.getInstance().getListaTags().get(i));
+                }
+            }
+            VariabiliGlobali.getInstance().setListaTags(l);
+
+            Collections.sort(l, new Comparator<StrutturaTags>() {
+                public int compare(StrutturaTags obj1, StrutturaTags obj2) {
+                    // ## Ascending order
+                    return obj1.getTag().compareToIgnoreCase(obj2.getTag()); // To compare string values
+                    // return Integer.valueOf(obj1.empId).compareTo(Integer.valueOf(obj2.empId)); // To compare integer values
+
+                    // ## Descending order
+                    // return obj2.firstName.compareToIgnoreCase(obj1.firstName); // To compare string values
+                    // return Integer.valueOf(obj2.empId).compareTo(Integer.valueOf(obj1.empId)); // To compare integer values
+                }
+            });
+
+            AdapterListenerGestioneTags customAdapterT = new AdapterListenerGestioneTags(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                    VariabiliGlobali.getInstance().getListaTags());
+            OggettiAVideo.getInstance().getLstGestioneTags().setAdapter(customAdapterT);
         }
     }
 

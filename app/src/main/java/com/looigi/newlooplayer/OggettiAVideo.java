@@ -162,8 +162,18 @@ public class OggettiAVideo {
     private LinearLayout layGestionePreferiti;
     private EditText edtNomePreferito;
 
+    private ListView lstGestioneTags;
+
     public static OggettiAVideo getOurInstance() {
         return ourInstance;
+    }
+
+    public ListView getLstGestioneTags() {
+        return lstGestioneTags;
+    }
+
+    public void setLstGestioneTags(ListView lstGestioneTags) {
+        this.lstGestioneTags = lstGestioneTags;
     }
 
     public Switch getSwitchStelleSuperiori() {

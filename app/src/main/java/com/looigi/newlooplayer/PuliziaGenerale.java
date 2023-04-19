@@ -200,7 +200,6 @@ public class PuliziaGenerale {
                     int Limite = VariabiliGlobali.getInstance().getLimiteInMb() * 1024;
                     int occupato = VariabiliGlobali.getInstance().getSpazioOccupatoSuDisco();
                     if (occupato > Limite) {
-
                         EliminaBraniDaDisco bckElimina = new EliminaBraniDaDisco(false);
                         bckElimina.execute();
                     }

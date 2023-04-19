@@ -409,6 +409,8 @@
 
     <include layout="@layout/gestione_artista" />
 
+    <include layout="@layout/gestione_tags" />
+
     <LinearLayout
         android:id="@+id/laySplash"
         android:visibility="visible"

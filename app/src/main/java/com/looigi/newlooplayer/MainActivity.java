@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.looigi.newlooplayer.WebServices.ChiamateWs;
 import com.looigi.newlooplayer.WebServices.ChiamateWsAmministrazione;
+import com.looigi.newlooplayer.adapters.AdapterListenerGestioneTags;
 import com.looigi.newlooplayer.adapters.AdapterListenerListaPreferiti;
 import com.looigi.newlooplayer.adapters.AdapterListenerTags;
 import com.looigi.newlooplayer.adapters.AdapterListenerTagsBrano;
@@ -44,12 +45,14 @@ import com.looigi.newlooplayer.adapters.AdapterListenerTagsTutti;
 import com.looigi.newlooplayer.cuffie.GestioneTastoCuffie;
 import com.looigi.newlooplayer.db_locale.db_dati;
 import com.looigi.newlooplayer.download.DownloadFileTesto;
+import com.looigi.newlooplayer.strutture.StrutturaTags;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -889,6 +892,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button btnScatenaAggiornamento = (Button) findViewById(R.id.btnScatenaAggiornamento);
+        btnScatenaAggiornamento.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ChiamateWs c = new ChiamateWs();
+                c.ScatenaAggiornamento();
+            }
+        });
+
         ImageView imgPulisceTags = (ImageView) findViewById(R.id.imgPulisceTags);
         imgPulisceTags.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -923,6 +934,56 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // GESTIONE PREFERITI
+
+        // GESTIONE TAGS
+        LinearLayout layGestioneTags = (LinearLayout) findViewById(R.id.layGestioneTags);
+        layGestioneTags.setVisibility(LinearLayout.GONE);
+        ListView lstGestioneTags = (ListView) findViewById(R.id.lstGestioneTags);
+        OggettiAVideo.getInstance().setLstGestioneTags(lstGestioneTags);
+        Button btnGestioneTags = (Button) findViewById(R.id.btnGestioneTags);
+        btnGestioneTags.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                AdapterListenerGestioneTags customAdapterT = new AdapterListenerGestioneTags(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                        VariabiliGlobali.getInstance().getListaTags());
+                lstGestioneTags.setAdapter(customAdapterT);
+
+                layGestioneTags.setVisibility(LinearLayout.VISIBLE);
+            }
+        });
+        ImageView imgChiudeGestioneTags = (ImageView) findViewById(R.id.imgChiudeGestioneTags);
+        imgChiudeGestioneTags.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                layGestioneTags.setVisibility(LinearLayout.GONE);
+            }
+        });
+        ImageView imgAggiungeTag = (ImageView) findViewById(R.id.imgAggiungeTag);
+        imgAggiungeTag.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale());
+                builder.setTitle("Aggiunge Tag");
+
+                final EditText input = new EditText(VariabiliGlobali.getInstance().getFragmentActivityPrincipale());
+                builder.setView(input);
+                input.setText("");
+
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ChiamateWsAmministrazione c = new ChiamateWsAmministrazione();
+                        c.AggiungeTag(input.getText().toString());
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+        });
+        // GESTIONE TAGS
 
         mAudioManagerInterno = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
         mReceiverComponentInterno = new ComponentName(this, GestioneTastoCuffie.class);
