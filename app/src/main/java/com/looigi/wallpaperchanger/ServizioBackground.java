@@ -7,13 +7,15 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 
+import org.kobjects.util.Util;
+
 public class ServizioBackground extends android.app.Service {
     private Runnable runTimer;
     private Handler handlerTimer;
     // private int secondiPassati = 0;
     // private int tempoTimer = 10000;
 
-    // private PhoneUnlockedReceiver receiverAccesoSpento;
+    private PhoneUnlockedReceiver receiverAccesoSpento;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -24,7 +26,7 @@ public class ServizioBackground extends android.app.Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.getInstance().ScriveLog("Partenza servizio");
 
-        // AzionaControlloSchermo();
+        AzionaControlloSchermo();
         Utility.getInstance().InstanziaNotifica();
 
         VariabiliGlobali.getInstance().setImmagineDaCambiare(false);
@@ -35,46 +37,60 @@ public class ServizioBackground extends android.app.Service {
         handlerTimer.postDelayed(runTimer = new Runnable() {
             @Override
             public void run() {
-                VariabiliGlobali.getInstance().setSecondiPassati(VariabiliGlobali.getInstance().getSecondiPassati()+1);
-                VariabiliGlobali.getInstance().getTxtTempoAlCambio().setText("Prossimo cambio: " + VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri());
+                if (MainActivity.getAppContext() != null) {
+                    VariabiliGlobali.getInstance().setSecondiPassati(VariabiliGlobali.getInstance().getSecondiPassati() + 1);
+                    VariabiliGlobali.getInstance().getTxtTempoAlCambio().setText("Prossimo cambio: " +
+                            VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri());
 
-                if (VariabiliGlobali.getInstance().getSecondiPassati() >= VariabiliGlobali.getInstance().getQuantiGiri()) {
-                    VariabiliGlobali.getInstance().setSecondiPassati(0);
-
-                    // if (VariabiliGlobali.getInstance().isScreenOn()) {
-                        ChangeWallpaper c = new ChangeWallpaper();
-                        if (!VariabiliGlobali.getInstance().isOffline()) {
-                            boolean fatto = c.setWallpaper(null);
-                            Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
-                        } else {
-                            Log.getInstance().ScriveLog("---Cambio Immagine---");
-                            int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
-                            if (numeroRandom > -1) {
-                                boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
-                                Log.getInstance().ScriveLog("---Immagine cambiata: " + fatto + "---");
+                    Log.getInstance().ScriveLog("Prossimo cambio: " +
+                            VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri() +
+                            ". Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn());
+                    if (VariabiliGlobali.getInstance().getSecondiPassati() >= VariabiliGlobali.getInstance().getQuantiGiri()) {
+                        VariabiliGlobali.getInstance().setSecondiPassati(0);
+                        if (VariabiliGlobali.getInstance().isScreenOn()) {
+                            ChangeWallpaper c = new ChangeWallpaper();
+                            if (!VariabiliGlobali.getInstance().isOffline()) {
+                                boolean fatto = c.setWallpaper(null);
+                                Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
                             } else {
-                                Log.getInstance().ScriveLog("---Immagine NON cambiata: Caricamento immagini in corso---");
+                                Log.getInstance().ScriveLog("---Cambio Immagine---");
+                                int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
+                                if (numeroRandom > -1) {
+                                    boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
+                                    Log.getInstance().ScriveLog("---Immagine cambiata: " + fatto + "---");
+                                } else {
+                                    Log.getInstance().ScriveLog("---Immagine NON cambiata: Caricamento immagini in corso---");
+                                }
                             }
+                        } else {
+                            Log.getInstance().ScriveLog("---Cambio Immagine posticipato per schermo spento---");
+                            VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
                         }
-                    /* } else {
-                        Log.getInstance().ScriveLog("---Cambio Immagine posticipato per schermo spento---");
-                        VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
-                    } */
+                    }
+
+                    // Log.getInstance().ScriveLog("Secondi passati dall'avvio: " + Integer.toString(VariabiliGlobali.getInstance().getSecondiPassati()) + "/" + Integer.toString(VariabiliGlobali.getInstance().getQuantiGiri()) +
+                    //         ". Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn());
+
+                    handlerTimer.postDelayed(this, VariabiliGlobali.getInstance().getTempoTimer());
+                } else {
+                    Log.getInstance().ScriveLog(">>>Blocco timer ed esco in quanto context non esistente<<<");
+                    Notifica.getInstance().RimuoviNotifica();
+
+                    System.exit(0);
                 }
-
-                // Log.getInstance().ScriveLog("Secondi passati dall'avvio: " + Integer.toString(VariabiliGlobali.getInstance().getSecondiPassati()) + "/" + Integer.toString(VariabiliGlobali.getInstance().getQuantiGiri()) +
-                //         ". Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn());
-
-                handlerTimer.postDelayed(this, VariabiliGlobali.getInstance().getTempoTimer());
             }
         }, VariabiliGlobali.getInstance().getTempoTimer());
-        VariabiliGlobali.getInstance().getFragmentActivityPrincipale().moveTaskToBack(true);
+
+        if (MainActivity.getAppActivity() != null) {
+            VariabiliGlobali.getInstance().setMascheraAperta(false);
+            MainActivity.getAppActivity().moveTaskToBack(true);
+        }
         VariabiliGlobali.getInstance().setePartito(true);
 
         return START_STICKY;
     }
 
-    /* private void AzionaControlloSchermo() {
+    private void AzionaControlloSchermo() {
         if (receiverAccesoSpento != null) {
             unregisterReceiver(receiverAccesoSpento);
             receiverAccesoSpento = null;
@@ -85,10 +101,13 @@ public class ServizioBackground extends android.app.Service {
         fRecv.addAction(Intent.ACTION_USER_PRESENT);
         fRecv.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(receiverAccesoSpento, fRecv);
-    } */
+    }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        unregisterReceiver(receiverAccesoSpento);
+        Log.getInstance().ScriveLog(">>>DESTROY SERVIZIO<<<");
     }
 }

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
 import android.widget.ImageView;
+import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -26,8 +27,8 @@ public class VariabiliGlobali {
     private final String PercorsoImmagineSuURL = "http://looigi.ddns.net:1051";
     private boolean AzionaDebug = true;
     private boolean screenOn = true;
-    private Activity FragmentActivityPrincipale;
-    private Context context;
+    // private Activity FragmentActivityPrincipale;
+    // private Context context;
     private int SecondiAlCambio = 60000;
     private boolean immagineDaCambiare = false;
     private List<StrutturaImmagine> listaImmagini = new ArrayList<>();
@@ -47,13 +48,31 @@ public class VariabiliGlobali {
     private ImageView imgCaricamento;
     private TextView txtTempoAlCambio;
     private int SecondiPassati;
+    private boolean MascheraAperta = true;
+    private RemoteViews viewNotifica;
 
-    public Context getContext() {
+    /* public Context getContext() {
         return context;
     }
 
     public void setContext(Context context) {
         this.context = context;
+    } */
+
+    public RemoteViews getViewNotifica() {
+        return viewNotifica;
+    }
+
+    public void setViewNotifica(RemoteViews viewNotifica) {
+        this.viewNotifica = viewNotifica;
+    }
+
+    public boolean isMascheraAperta() {
+        return MascheraAperta;
+    }
+
+    public void setMascheraAperta(boolean mascheraAperta) {
+        MascheraAperta = mascheraAperta;
     }
 
     public int getSecondiPassati() {
@@ -204,13 +223,13 @@ public class VariabiliGlobali {
         this.immagineDaCambiare = immagineDaCambiare;
     }
 
-    public Activity getFragmentActivityPrincipale() {
+    /* public Activity getFragmentActivityPrincipale() {
         return FragmentActivityPrincipale;
     }
 
     public void setFragmentActivityPrincipale(Activity fragmentActivityPrincipale) {
         FragmentActivityPrincipale = fragmentActivityPrincipale;
-    }
+    } */
 
     public String getNomeApplicazione() {
         return NomeApplicazione;

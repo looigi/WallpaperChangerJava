@@ -27,67 +27,83 @@ public class ChangeWallpaper {
 
 	public ChangeWallpaper() {
 		DisplayMetrics metrics = new DisplayMetrics();
-		VariabiliGlobali.getInstance().getFragmentActivityPrincipale().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		if (MainActivity.getAppActivity() != null) {
+			MainActivity.getAppActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
-		SchermoX = metrics.widthPixels; //  * 70 / 100;
-		SchermoY = metrics.heightPixels;
+			SchermoX = metrics.widthPixels; //  * 70 / 100;
+			SchermoY = metrics.heightPixels;
 
-		Log.getInstance().ScriveLog("Cambio immagine instanziato. Dimensioni schermo: " +
-				SchermoX + "x" + SchermoY);
+			Log.getInstance().ScriveLog("Cambio immagine instanziato. Dimensioni schermo: " +
+					SchermoX + "x" + SchermoY);
+		} else {
+			SchermoX = -1;
+			SchermoY = -1;
+			Log.getInstance().ScriveLog("ERRORE su Cambio immagine: Context nullo");
+		}
 	}
 
 	public Boolean setWallpaper(StrutturaImmagine src) {
-		if (!VariabiliGlobali.getInstance().isOffline()) {
-			Log.getInstance().ScriveLog("Cambio immagine online");
-
-			ChiamateWS c = new ChiamateWS();
-			c.TornaProssimaImmagine();
+		if (SchermoX == -1) {
+			Log.getInstance().ScriveLog("ERRORE su set wallpaper: dimensioni schermo non impostate");
+			return false;
 		} else {
-			setWallpaperLocale(src);
-		}
+			if (!VariabiliGlobali.getInstance().isOffline()) {
+				Log.getInstance().ScriveLog("Cambio immagine online");
 
+				ChiamateWS c = new ChiamateWS();
+				c.TornaProssimaImmagine();
+			} else {
+				setWallpaperLocale(src);
+			}
+		}
 		return true;
 	}
 
 	public Boolean setWallpaperLocale(StrutturaImmagine src) {
-		Context context = VariabiliGlobali.getInstance().getContext();
 		boolean Ritorno = true;
 
-		Log.getInstance().ScriveLog("Cambio immagine: Caricamento bitmap.");
+		if (SchermoX == -1) {
+			Log.getInstance().ScriveLog("ERRORE su set wallpaper locale: dimensioni schermo non impostate");
+			Ritorno = false;
+		} else {
+			Context context = MainActivity.getAppContext();
 
-		Bitmap setWallToDevice = PrendeImmagineReale(src);
+			Log.getInstance().ScriveLog("Cambio immagine: Caricamento bitmap.");
 
-		if (setWallToDevice != null) {
-			Log.getInstance().ScriveLog("Cambio immagine: Applicazione wallpaper.");
+			Bitmap setWallToDevice = PrendeImmagineReale(src);
 
-			WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
-			try {
-				Log.getInstance().ScriveLog("Cambio immagine: Impostazione dimensioni " + setWallToDevice.getWidth() + "x" + setWallToDevice.getHeight());
+			if (setWallToDevice != null) {
+				Log.getInstance().ScriveLog("Cambio immagine: Applicazione wallpaper.");
 
-				wallpaperManager.setBitmap(setWallToDevice);
+				WallpaperManager wallpaperManager = WallpaperManager.getInstance(context);
+				try {
+					Log.getInstance().ScriveLog("Cambio immagine: Impostazione dimensioni " + setWallToDevice.getWidth() + "x" + setWallToDevice.getHeight());
 
-				// wallpaperManager.setWallpaperOffsetSteps(1, 1);
-				// if (VariabiliGlobali.getInstance().getStretch().equals("S")) {
-				// wallpaperManager.suggestDesiredDimensions(setWallToDevice.getWidth(), setWallToDevice.getHeight());
-				// } else {
-				// 	wallpaperManager.suggestDesiredDimensions(VariabiliGlobali.getInstance().getDimeWallWidthOriginale(), VariabiliGlobali.getInstance().getDimeWallHeightOriginale());
-				// }
+					wallpaperManager.setBitmap(setWallToDevice);
 
-				Log.getInstance().ScriveLog("Cambio immagine: Settata bitmap.");
-			} catch (IOException e) {
-				// Log.getInstance().ScriveLog("Errore: " + u.PrendeErroreDaException(e));
-				// e.printStackTrace();
+					// wallpaperManager.setWallpaperOffsetSteps(1, 1);
+					// if (VariabiliGlobali.getInstance().getStretch().equals("S")) {
+					// wallpaperManager.suggestDesiredDimensions(setWallToDevice.getWidth(), setWallToDevice.getHeight());
+					// } else {
+					// 	wallpaperManager.suggestDesiredDimensions(VariabiliGlobali.getInstance().getDimeWallWidthOriginale(), VariabiliGlobali.getInstance().getDimeWallHeightOriginale());
+					// }
 
-				Log.getInstance().ScriveLog("Cambio immagine: Errore " + Utility.getInstance().PrendeErroreDaException(e));
+					Log.getInstance().ScriveLog("Cambio immagine: Settata bitmap.");
+				} catch (IOException e) {
+					// Log.getInstance().ScriveLog("Errore: " + u.PrendeErroreDaException(e));
+					// e.printStackTrace();
 
-				// Toast.makeText(VariabiliGlobali.getInstance().getContext(),
-				// 		u.PrendeErroreDaException(e),
-				// 		Toast.LENGTH_LONG).show();
+					Log.getInstance().ScriveLog("Cambio immagine: Errore " + Utility.getInstance().PrendeErroreDaException(e));
 
+					// Toast.makeText(VariabiliGlobali.getInstance().getContext(),
+					// 		u.PrendeErroreDaException(e),
+					// 		Toast.LENGTH_LONG).show();
+
+					Ritorno = false;
+				}
+			} else {
 				Ritorno = false;
 			}
-		} else {
-			Ritorno = false;
 		}
 
 		return Ritorno;
@@ -161,8 +177,8 @@ public class ChangeWallpaper {
 
 			// Notifica.getInstance().setTitolo(si.getImmagine());
 			// Notifica.getInstance().setImmagine(si.getPathImmagine());
-			Notifica.getInstance().RimuoviNotifica();
-			Utility.getInstance().InstanziaNotifica();
+			// Notifica.getInstance().RimuoviNotifica();
+			Utility.getInstance().AggiornaNotifica();
 
 			Bitmap ultima = BitmapFactory.decodeFile(si.getPathImmagine());
 			VariabiliGlobali.getInstance().getImgImpostata().setImageBitmap(ultima);
@@ -280,7 +296,7 @@ public class ChangeWallpaper {
 		try {
 			Log.getInstance().ScriveLog("Mette bordo 2");
 
-			RenderScript renderScript = RenderScript.create(VariabiliGlobali.getInstance().getContext());
+			RenderScript renderScript = RenderScript.create(MainActivity.getAppContext());
 			Allocation blurInput = Allocation.createFromBitmap(renderScript, myBitmap, Allocation.MipmapControl.MIPMAP_NONE, Allocation.USAGE_SCRIPT);
 			Allocation blurOutput = Allocation.createFromBitmap(renderScript, myOutputBitmap);
 			ScriptIntrinsicBlur blur = ScriptIntrinsicBlur.create(renderScript,

@@ -11,7 +11,7 @@ public class PassaggioNotifica extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	
-		context = VariabiliGlobali.getInstance().getContext();
+		context = MainActivity.getAppContext();
 		String action=null;
 
 		Log.getInstance().ScriveLog("Notifica: onCreate PassaggioNotifica");
@@ -52,7 +52,13 @@ public class PassaggioNotifica extends Activity {
 							Log.getInstance().ScriveLog("---Non riesco a cambiare l'immagine manuale da notifica in quanto l'array è vuoto---");
 						}
 					}
-					VariabiliGlobali.getInstance().getFragmentActivityPrincipale().moveTaskToBack(true);
+					VariabiliGlobali.getInstance().setMascheraAperta(false);
+					Activity a = MainActivity.getAppActivity();
+					if (a != null) {
+						a.moveTaskToBack(true);
+					} else {
+						Log.getInstance().ScriveLog("Chiusura maschera non possibile in quanto l'activity è nulla");
+					}
 					break;
 			}
 

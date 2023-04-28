@@ -80,17 +80,27 @@ public class Notifica {
         }
     }
 
-
     public void AggiornaNotifica() {
         Log.getInstance().ScriveLog("Aggiorna notifica. Titolo: " + Titolo);
         Log.getInstance().ScriveLog("Aggiorna notifica. Immagine: " + Immagine);
 
-        /* setListenersTasti(contentView);
-        setListeners(contentView); */
+        setListeners(VariabiliGlobali.getInstance().getViewNotifica());
+        setListenersTasti(VariabiliGlobali.getInstance().getViewNotifica());
+        if (notificationManager!=null && notificationBuilder != null) {
+            // Log.getInstance().ScriveLog("Aggiorna notifica");
+            try {
+                notificationManager.notify(NOTIF_ID, notificationBuilder.build());
+            } catch (Exception e) {
+                Log.getInstance().ScriveLog("Aggiorna notifica errore: " + Utility.getInstance().PrendeErroreDaException(e));
+            }
+        }
+
+       /* setListenersTasti(contentView);
+        setListeners(contentView);
         if (notificationManager!=null && notificationBuilder != null) {
             Log.getInstance().ScriveLog("Aggiorna notifica. Build");
             notificationManager.notify(NOTIF_ID, notificationBuilder.build());
-        }
+        }*/
     }
 
     public void CreaNotifica() {
@@ -101,9 +111,9 @@ public class Notifica {
         // NotificationCompat.Builder builder;
 
         if (context == null) {
-            context = VariabiliGlobali.getInstance().getContext();
+            context = MainActivity.getAppContext();
             if (context == null) {
-                context = VariabiliGlobali.getInstance().getFragmentActivityPrincipale();
+                context = MainActivity.getAppActivity();
             }
         }
 
@@ -124,15 +134,16 @@ public class Notifica {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
-                contentView = new RemoteViews(VariabiliGlobali.getInstance()
-                        .getContext().getPackageName(),
+                contentView = new RemoteViews(MainActivity.getAppContext().getPackageName(),
                         R.layout.barra_notifica);
                 setListenersTasti(contentView);
                 setListeners(contentView);
 
+                VariabiliGlobali.getInstance().setViewNotifica(contentView);
+
                 notificationBuilder
                         .setContentTitle(Titolo)                            // required
-                        .setSmallIcon(android.R.drawable.ic_media_play)   // required
+                        .setSmallIcon(R.drawable.logo)   // required android.R.drawable.ic_menu_slideshow
                         .setContentText(context.getString(R.string.app_name)) // required
                         // .setDefaults(Notification.DEFAULT_ALL)
                         .setAutoCancel(false)

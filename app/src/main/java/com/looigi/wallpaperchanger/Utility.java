@@ -204,7 +204,7 @@ public class Utility {
             // OggettiAVideo.getInstance().getImgRest().setVisibility(LinearLayout.VISIBLE);
         } else {
             try {
-                progressDialog = new ProgressDialog(VariabiliGlobali.getInstance().getContext());
+                progressDialog = new ProgressDialog(MainActivity.getAppContext());
                 progressDialog.setMessage("Attendere Prego...\n\n" + tOperazione);
                 progressDialog.setCancelable(false);
                 progressDialog.setCanceledOnTouchOutside(false);
@@ -220,9 +220,9 @@ public class Utility {
         VariabiliGlobali.getInstance().getImgCaricamento().setVisibility(LinearLayout.GONE);
         Log.getInstance().ScriveLog("Visualizzo messaggio di errore. Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn());
         if (VariabiliGlobali.getInstance().isScreenOn()) {
-            VariabiliGlobali.getInstance().getFragmentActivityPrincipale().runOnUiThread(new Runnable() {
+            MainActivity.getAppActivity().runOnUiThread(new Runnable() {
                 public void run() {
-                    AlertDialog alertDialog = new AlertDialog.Builder(VariabiliGlobali.getInstance().getFragmentActivityPrincipale()).create();
+                    AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.getAppActivity()).create();
                     alertDialog.setTitle("Messaggio");
                     alertDialog.setMessage(Errore);
                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
@@ -242,7 +242,7 @@ public class Utility {
     public void InstanziaNotifica() {
         Log.getInstance().ScriveLog("Instanzia notifica");
 
-        Notifica.getInstance().setContext(VariabiliGlobali.getInstance().getContext());
+        Notifica.getInstance().setContext(MainActivity.getAppContext());
         if (VariabiliGlobali.getInstance().getUltimaImmagine() != null) {
             Notifica.getInstance().setTitolo(VariabiliGlobali.getInstance().getUltimaImmagine().getImmagine());
             Notifica.getInstance().setImmagine(VariabiliGlobali.getInstance().getUltimaImmagine().getPathImmagine());
@@ -252,5 +252,23 @@ public class Utility {
         }
 
         Notifica.getInstance().CreaNotifica();
+    }
+
+    public void AggiornaNotifica() {
+        Log.getInstance().ScriveLog("Aggiorna notifica");
+
+        Notifica.getInstance().setContext(MainActivity.getAppContext());
+        Notifica.getInstance().setImmagine(VariabiliGlobali.getInstance().getUltimaImmagine().getPathImmagine());
+        Notifica.getInstance().setTitolo(VariabiliGlobali.getInstance().getUltimaImmagine().getImmagine());
+        /*
+        if (VariabiliGlobali.getInstance().getUltimaImmagine() != null) {
+            Notifica.getInstance().setTitolo(VariabiliGlobali.getInstance().getUltimaImmagine().getImmagine());
+            Notifica.getInstance().setImmagine(VariabiliGlobali.getInstance().getUltimaImmagine().getPathImmagine());
+        } else {
+            Notifica.getInstance().setTitolo("");
+            Notifica.getInstance().setImmagine("");
+        } */
+
+        Notifica.getInstance().AggiornaNotifica();
     }
 }

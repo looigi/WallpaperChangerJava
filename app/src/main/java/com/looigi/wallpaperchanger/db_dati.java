@@ -15,9 +15,8 @@ import java.util.List;
 import static android.content.Context.MODE_PRIVATE;
 
 public class db_dati {
-    private String PathDB = VariabiliGlobali.getInstance().getPercorsoDIR()+"/DB/";
-    private String NomeDB = "dati.db";
-    private SQLiteDatabase myDB;
+    private final String PathDB = VariabiliGlobali.getInstance().getPercorsoDIR()+"/DB/";
+    private final SQLiteDatabase myDB;
 
     public db_dati() {
         File f = new File(PathDB);
@@ -32,8 +31,9 @@ public class db_dati {
     private SQLiteDatabase ApreDB() {
         SQLiteDatabase db = null;
         try {
-            db = VariabiliGlobali.getInstance().getContext().openOrCreateDatabase(
-                    PathDB + NomeDB, MODE_PRIVATE, null);
+            String nomeDB = "dati.db";
+            db = MainActivity.getAppContext().openOrCreateDatabase(
+                    PathDB + nomeDB, MODE_PRIVATE, null);
         } catch (Exception e) {
             Log.getInstance().ScriveLog("ERRORE Nell'apertura del db: " + Utility.getInstance().PrendeErroreDaException(e));
         }

@@ -3,6 +3,8 @@ package com.looigi.wallpaperchanger;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -25,14 +27,19 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private boolean ciSonoPermessi;
+    private static Context context;
+    private static Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        VariabiliGlobali.getInstance().setContext(this);
-        VariabiliGlobali.getInstance().setFragmentActivityPrincipale(this);
+        MainActivity.context = getApplicationContext();
+        MainActivity.activity = this;
+
+        // VariabiliGlobali.getInstance().setContext(this);
+        // VariabiliGlobali.getInstance().setFragmentActivityPrincipale(this);
 
         if (!VariabiliGlobali.getInstance().isePartito()) {
             // Log.getInstance().EliminaFileLog();
@@ -45,8 +52,26 @@ public class MainActivity extends AppCompatActivity {
                 EsegueEntrata();
             }
         } else {
-
+            EsegueEntrata();
         }
+    }
+
+    public static Context getAppContext() {
+        return MainActivity.context;
+    }
+
+    public static Activity getAppActivity() {
+        return MainActivity.activity;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        MainActivity.context = getApplicationContext();
+        MainActivity.activity = this;
+
+        VariabiliGlobali.getInstance().setMascheraAperta(true);
     }
 
     @Override
@@ -68,9 +93,11 @@ public class MainActivity extends AppCompatActivity {
         TextView txtQuante = (TextView) findViewById(R.id.txtQuanteImmagini);
         VariabiliGlobali.getInstance().setTxtQuanteImmagini(txtQuante);
 
-        VariabiliGlobali.getInstance().getFragmentActivityPrincipale().startService(new Intent(
-                VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
-                ServizioBackground.class));
+        if (!VariabiliGlobali.getInstance().isePartito()) {
+            MainActivity.getAppActivity().startService(new Intent(
+                    MainActivity.getAppActivity(),
+                    ServizioBackground.class));
+        }
 
         db_dati db = new db_dati();
         db.CreazioneTabelle();
@@ -78,16 +105,19 @@ public class MainActivity extends AppCompatActivity {
 
         ImpostaOggetti();
 
-        boolean letteImmagini = db.CaricaImmaginiInLocale();
-        if (!letteImmagini) {
-            // if (VariabiliGlobali.getInstance().isOffline()) {
+        if (!VariabiliGlobali.getInstance().isePartito()) {
+            boolean letteImmagini = db.CaricaImmaginiInLocale();
+
+            if (!letteImmagini) {
+                // if (VariabiliGlobali.getInstance().isOffline()) {
                 ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
                 bckLeggeImmaginiLocali.execute();
-            // }
-        } else {
-            if (VariabiliGlobali.getInstance().isOffline()) {
-                int q = VariabiliGlobali.getInstance().getListaImmagini().size();
-                VariabiliGlobali.getInstance().getTxtQuanteImmagini().setText("Immagini rilevate su disco: " + q);
+                // }
+            } else {
+                if (VariabiliGlobali.getInstance().isOffline()) {
+                    int q = VariabiliGlobali.getInstance().getListaImmagini().size();
+                    VariabiliGlobali.getInstance().getTxtQuanteImmagini().setText("Immagini rilevate su disco: " + q);
+                }
             }
         }
         //         VariabiliGlobali.getInstance().getFragmentActivityPrincipale().stopService(new Intent(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
@@ -260,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.getInstance().ScriveLog("Applicazione terminata");
                 Notifica.getInstance().RimuoviNotifica();
-                VariabiliGlobali.getInstance().getFragmentActivityPrincipale().stopService(new Intent(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+                MainActivity.getAppActivity().stopService(new Intent(MainActivity.getAppActivity(),
                         ServizioBackground.class));
 
                 System.exit(0);
@@ -299,6 +329,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        Notifica.getInstance().RimuoviNotifica();
+        Log.getInstance().ScriveLog("--->Attività distrutta<---");
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         super.onKeyDown(keyCode, event);
 
@@ -306,6 +344,7 @@ public class MainActivity extends AppCompatActivity {
 
         switch(keyCode) {
             case KeyEvent.KEYCODE_BACK:
+                VariabiliGlobali.getInstance().setMascheraAperta(false);
                 moveTaskToBack(true);
 
                 return false;

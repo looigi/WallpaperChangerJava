@@ -35,8 +35,8 @@ public class Permessi {
                 Manifest.permission.SET_WALLPAPER_HINTS
         };
 
-        if(!hasPermissions(VariabiliGlobali.getInstance().getContext(), PERMISSIONS)) {
-            ActivityCompat.requestPermissions(VariabiliGlobali.getInstance().getFragmentActivityPrincipale(),
+        if(!hasPermissions(MainActivity.getAppContext(), PERMISSIONS)) {
+            ActivityCompat.requestPermissions(MainActivity.getAppActivity(),
                     PERMISSIONS, permissionRequestCode1);
             return false;
         } else {
