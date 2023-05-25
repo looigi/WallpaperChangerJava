@@ -3,6 +3,8 @@ package com.looigi.wallpaperchanger;
 import android.os.AsyncTask;
 import android.widget.LinearLayout;
 
+import androidx.annotation.DimenRes;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -65,13 +67,18 @@ public class ScannaDiscoPerImmaginiLocali extends AsyncTask<String, Integer, Str
 
                 String Filetto = f.getAbsoluteFile().getPath(); // Questo contiene tutto, sia il path che il nome del file
                 String Nome = f.getAbsoluteFile().getName(); // Questo contiene solo il nome del file
+                Date lastModDate = new Date(f.lastModified());
+                String Datella = lastModDate.toString();
+                String Dimensione = Long.toString(f.length());
 
                 si.setImmagine(Nome);
                 si.setPathImmagine(Filetto);
+                si.setDataImmagine(Datella);
+                si.setDimensione(Dimensione);
 
                 imms.add(si);
 
-                db.ScriveImmagineInLocale(Nome, Filetto);
+                db.ScriveImmagineInLocale(Nome, Filetto, Datella, Dimensione);
             }
         }
     }

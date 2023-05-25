@@ -49,7 +49,10 @@ public class VariabiliGlobali {
     private TextView txtTempoAlCambio;
     private int SecondiPassati;
     private boolean MascheraAperta = true;
-    private RemoteViews viewNotifica;
+    private boolean scriveTestoSuImmagine = true;
+    private String DataAppoggio;
+    private String DimeAppoggio;
+    // private RemoteViews viewNotifica;
 
     /* public Context getContext() {
         return context;
@@ -57,7 +60,7 @@ public class VariabiliGlobali {
 
     public void setContext(Context context) {
         this.context = context;
-    } */
+    }
 
     public RemoteViews getViewNotifica() {
         return viewNotifica;
@@ -65,6 +68,30 @@ public class VariabiliGlobali {
 
     public void setViewNotifica(RemoteViews viewNotifica) {
         this.viewNotifica = viewNotifica;
+    } */
+
+    public String getDataAppoggio() {
+        return DataAppoggio;
+    }
+
+    public void setDataAppoggio(String dataAppoggio) {
+        DataAppoggio = dataAppoggio;
+    }
+
+    public String getDimeAppoggio() {
+        return DimeAppoggio;
+    }
+
+    public void setDimeAppoggio(String dimeAppoggio) {
+        DimeAppoggio = dimeAppoggio;
+    }
+
+    public boolean isScriveTestoSuImmagine() {
+        return scriveTestoSuImmagine;
+    }
+
+    public void setScriveTestoSuImmagine(boolean scriveTestoSuImmagine) {
+        this.scriveTestoSuImmagine = scriveTestoSuImmagine;
     }
 
     public boolean isMascheraAperta() {

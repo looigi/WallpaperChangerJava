@@ -4,23 +4,31 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.provider.DocumentsContract;
+import android.provider.Settings;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.looigi.wallpaperchanger.AutoStart.RunServiceOnBoot;
+import com.looigi.wallpaperchanger.AutoStart.yourActivityRunOnStartup;
+import com.looigi.wallpaperchanger.Notifiche.GestioneNotifiche;
+import com.looigi.wallpaperchanger.Notifiche.PartenzaServizio;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,26 +43,53 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.getInstance().ScriveLog(">>>>>>>>>>>>>>>>>>>>>>>>NUOVA SESSIONE<<<<<<<<<<<<<<<<<<<<<<<<");
+        Log.getInstance().ScriveLog("Partito: " + VariabiliGlobali.getInstance().isePartito());
+
         MainActivity.context = getApplicationContext();
         MainActivity.activity = this;
 
         // VariabiliGlobali.getInstance().setContext(this);
         // VariabiliGlobali.getInstance().setFragmentActivityPrincipale(this);
 
-        if (!VariabiliGlobali.getInstance().isePartito()) {
-            // Log.getInstance().EliminaFileLog();
-            Log.getInstance().ScriveLog(">>>>>>>>>>>>>>>>>>>>>>>>NUOVA SESSIONE<<<<<<<<<<<<<<<<<<<<<<<<");
+        Log.getInstance().ScriveLog("Controllo permessi");
 
+        Intent intent1 = new Intent(MainActivity.this, RunServiceOnBoot.class);
+        startService(intent1);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !Settings.canDrawOverlays(this)) {
+            Intent intent = new Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:$packageName")
+            );
+            startActivityForResult(intent, 123);
+        }
+
+        Permessi p = new Permessi();
+        ciSonoPermessi = p.ControllaPermessi();
+
+        /* if (!VariabiliGlobali.getInstance().isePartito()) {
+            // Log.getInstance().EliminaFileLog();
+
+            Log.getInstance().ScriveLog("Controllo permessi");
             Permessi p = new Permessi();
             ciSonoPermessi = p.ControllaPermessi();
 
             if (ciSonoPermessi) {
+                Log.getInstance().ScriveLog("Eseguo entrata dopo controllo permessi");
                 EsegueEntrata();
             }
         } else {
+            Log.getInstance().ScriveLog("Eseguo entrata per controllo permessi valido");
             EsegueEntrata();
-        }
+        } */
+
+        EsegueEntrata();
     }
+
+    public static void setAppContext(Context c) { MainActivity.context = c; }
+
+    public static void setAppActivity(Activity a) { MainActivity.activity = a; }
 
     public static Context getAppContext() {
         return MainActivity.context;
@@ -85,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
                 index++;
             }
 
-            EsegueEntrata();
+            // Log.getInstance().ScriveLog("Eseguo entrata per esecuzione permessi");
+            // EsegueEntrata();
         }
     }
 
@@ -94,22 +130,32 @@ public class MainActivity extends AppCompatActivity {
         VariabiliGlobali.getInstance().setTxtQuanteImmagini(txtQuante);
 
         if (!VariabiliGlobali.getInstance().isePartito()) {
-            MainActivity.getAppActivity().startService(new Intent(
+            Log.getInstance().ScriveLog("Chiamo servizio");
+           /*  MainActivity.getAppActivity().startService(new Intent(
                     MainActivity.getAppActivity(),
-                    ServizioBackground.class));
+                    ServizioBackground.class)); */
+
+            // // RICHIAMO SERVIZIO PartenzaServizio.getInstance()StartApplicazione(this);
+            Intent intent = new Intent(this, PartenzaServizio.class);
+            startService(intent);
         }
 
+        Log.getInstance().ScriveLog("Apro db");
         db_dati db = new db_dati();
+        Log.getInstance().ScriveLog("Creo tabelle");
         db.CreazioneTabelle();
+        Log.getInstance().ScriveLog("Leggo impostazioni");
         db.LeggeImpostazioni();
 
         ImpostaOggetti();
 
         if (!VariabiliGlobali.getInstance().isePartito()) {
+            Log.getInstance().ScriveLog("Carico immagini in locale");
             boolean letteImmagini = db.CaricaImmaginiInLocale();
 
             if (!letteImmagini) {
                 // if (VariabiliGlobali.getInstance().isOffline()) {
+                Log.getInstance().ScriveLog("Immagini in locale non rilevate... Scanno...");
                 ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
                 bckLeggeImmaginiLocali.execute();
                 // }
@@ -117,6 +163,9 @@ public class MainActivity extends AppCompatActivity {
                 if (VariabiliGlobali.getInstance().isOffline()) {
                     int q = VariabiliGlobali.getInstance().getListaImmagini().size();
                     VariabiliGlobali.getInstance().getTxtQuanteImmagini().setText("Immagini rilevate su disco: " + q);
+                    Log.getInstance().ScriveLog("Immagini rilevate su disco: " + q);
+                } else {
+                    Log.getInstance().ScriveLog("Immagini rilevate su disco inutili: OnLine");
                 }
             }
         }
@@ -130,7 +179,13 @@ public class MainActivity extends AppCompatActivity {
 
         TextView txtTempoAlCambio = (TextView) findViewById(R.id.txtTempoAlCambio);
         VariabiliGlobali.getInstance().setTxtTempoAlCambio(txtTempoAlCambio);
+        VariabiliGlobali.getInstance().setSecondiPassati(0);
+        VariabiliGlobali.getInstance().setQuantiGiri(VariabiliGlobali.getInstance().getSecondiAlCambio() / VariabiliGlobali.getInstance().getTempoTimer());
+        Log.getInstance().ScriveLog("Secondi al cambio: " + VariabiliGlobali.getInstance().getSecondiAlCambio());
+        Log.getInstance().ScriveLog("Tempo timer: " + VariabiliGlobali.getInstance().getTempoTimer());
         VariabiliGlobali.getInstance().getTxtTempoAlCambio().setText("Prossimo cambio: " +
+                VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri());
+        Log.getInstance().ScriveLog("Prossimo cambio: " +
                 VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri());
 
         Button btnMenoMinuti = (Button) findViewById(R.id.btnMenoMinuti);
@@ -233,6 +288,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Switch switchScriveTesto = (Switch) findViewById(R.id.switchScriveTesto);
+        switchScriveTesto.setChecked(VariabiliGlobali.getInstance().isScriveTestoSuImmagine());
+        switchScriveTesto.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                VariabiliGlobali.getInstance().setScriveTestoSuImmagine(isChecked);
+
+                db_dati db = new db_dati();
+                db.ScriveImpostazioni();
+
+                ChangeWallpaper c = new ChangeWallpaper();
+                c.setWallpaperLocale(VariabiliGlobali.getInstance().getUltimaImmagine());
+            }
+        });
+
         /* Switch swcResize = (Switch) findViewById(R.id.switchResize);
         swcResize.setChecked(VariabiliGlobali.getInstance().isResize());
         swcResize.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -288,10 +357,18 @@ public class MainActivity extends AppCompatActivity {
         ImageView imgUscita = (ImageView) findViewById(R.id.imgUscita);
         imgUscita.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                /* Context context = getApplicationContext();
+                PackageManager packageManager = context.getPackageManager();
+                Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+                ComponentName componentName = intent.getComponent();
+                Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+                context.startActivity(mainIntent);
+                Runtime.getRuntime().exit(0); */
+
                 Log.getInstance().ScriveLog("Applicazione terminata");
-                Notifica.getInstance().RimuoviNotifica();
-                MainActivity.getAppActivity().stopService(new Intent(MainActivity.getAppActivity(),
-                        ServizioBackground.class));
+                GestioneNotifiche.getInstance().RimuoviNotifica();
+                // MainActivity.getAppActivity().stopService(new Intent(MainActivity.getAppActivity(),
+                //         ServizioBackground.class));
 
                 System.exit(0);
             }
@@ -332,7 +409,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
 
-        Notifica.getInstance().RimuoviNotifica();
+        GestioneNotifiche.getInstance().RimuoviNotifica();
+
         Log.getInstance().ScriveLog("--->Attività distrutta<---");
     }
 

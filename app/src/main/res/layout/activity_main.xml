@@ -140,6 +140,13 @@
                         android:text="Sfuma"
                         android:layout_height="wrap_content" />
 
+                    <Switch
+                        android:id="@+id/switchScriveTesto"
+                        android:layout_width="match_parent"
+                        android:textColor="#0000CC"
+                        android:text="Scrive info immagine"
+                        android:layout_height="wrap_content" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:orientation="horizontal"

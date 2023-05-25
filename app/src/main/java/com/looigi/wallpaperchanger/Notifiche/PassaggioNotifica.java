@@ -1,28 +1,34 @@
-package com.looigi.wallpaperchanger;
+package com.looigi.wallpaperchanger.Notifiche;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
-public class PassaggioNotifica extends Activity {
-    private Context context;
+import com.looigi.wallpaperchanger.ChangeWallpaper;
+import com.looigi.wallpaperchanger.Log;
+import com.looigi.wallpaperchanger.MainActivity;
+import com.looigi.wallpaperchanger.R;
+import com.looigi.wallpaperchanger.Utility;
+import com.looigi.wallpaperchanger.VariabiliGlobali;
 
+import java.util.Date;
+
+public class PassaggioNotifica extends Activity {
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	
-		context = MainActivity.getAppContext();
 		String action=null;
 
-		Log.getInstance().ScriveLog("Notifica: onCreate PassaggioNotifica");
+		// Log.getInstance().ScriveLog("Notifica: onCreate PassaggioNotifica");
 
 		try {
 			if (getIntent().getExtras() != null) {
 				action = (String) getIntent().getExtras().get("DO");
-				Log.getInstance().ScriveLog("Notifica: Action: " + action);
+				// Log.getInstance().ScriveLog("Notifica: Action: " + action);
 			}
 		} catch (Exception e) {
-			Log.getInstance().ScriveLog(Utility.getInstance().PrendeErroreDaException(e));
+			// Log.getInstance().ScriveLog(Utility.getInstance().PrendeErroreDaException(e));
 		}
 
 		if (action!=null) {
@@ -38,6 +44,11 @@ public class PassaggioNotifica extends Activity {
 						boolean fatto = c.setWallpaper(null);
 						Log.getInstance().ScriveLog("---Immagine cambiata manualmente Online da notifica: " + fatto + "---");
 					} else {
+						if (VariabiliGlobali.getInstance().getListaImmagini() == null) {
+							Log.getInstance().ScriveLog("---Immagini in array nulle---");
+						} else {
+							Log.getInstance().ScriveLog("---Immagini in array: " + VariabiliGlobali.getInstance().getListaImmagini().size() + "---");
+						}
 						if (VariabiliGlobali.getInstance().getListaImmagini() != null && VariabiliGlobali.getInstance().getListaImmagini().size() > 0) {
 							Log.getInstance().ScriveLog("---Cambio Immagine Manuale da notifica Offline---");
 							int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);

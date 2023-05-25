@@ -5,19 +5,23 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicBlur;
 import android.util.DisplayMetrics;
-import android.webkit.URLUtil;
 import android.widget.LinearLayout;
 
 import com.looigi.wallpaperchanger.DB.ChiamateWS;
+import com.looigi.wallpaperchanger.Notifiche.GestioneNotifiche;
+import com.looigi.wallpaperchanger.Notifiche.PartenzaServizio;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ChangeWallpaper {
 	private final int BordoX = 10;
@@ -108,7 +112,7 @@ public class ChangeWallpaper {
 
 		return Ritorno;
 	}
-	
+
 	private Bitmap PrendeImmagineReale(StrutturaImmagine si) {
 		Log.getInstance().ScriveLog("Prende immagine sistemata");
 
@@ -147,7 +151,7 @@ public class ChangeWallpaper {
 								// comboImage.drawBitmap(myBitmap, Larghezza, Altezza, null);
 								Log.getInstance().ScriveLog("Cambio immagine. Mette bordo a immagine");
 
-								myBitmap = MetteBordoAImmagine(myBitmap);
+								myBitmap = MetteBordoAImmagine(myBitmap, si);
 							} catch (Exception e) {
 								Log.getInstance().ScriveLog("Cambio immagine. Mette bordo a immagine. Errore: " + Utility.getInstance().PrendeErroreDaException(e));
 								myBitmap = null;
@@ -177,8 +181,8 @@ public class ChangeWallpaper {
 
 			// Notifica.getInstance().setTitolo(si.getImmagine());
 			// Notifica.getInstance().setImmagine(si.getPathImmagine());
-			// Notifica.getInstance().RimuoviNotifica();
-			Utility.getInstance().AggiornaNotifica();
+			GestioneNotifiche.getInstance().RimuoviNotifica();
+			GestioneNotifiche.getInstance().AggiornaNotifica(si.getImmagine(), si.getPathImmagine());
 
 			Bitmap ultima = BitmapFactory.decodeFile(si.getPathImmagine());
 			VariabiliGlobali.getInstance().getImgImpostata().setImageBitmap(ultima);
@@ -271,7 +275,7 @@ public class ChangeWallpaper {
 		}
 	}
 
-	private Bitmap MetteBordoAImmagine(Bitmap myBitmapPassata) {
+	private Bitmap MetteBordoAImmagine(Bitmap myBitmapPassata, StrutturaImmagine si) {
 		Log.getInstance().ScriveLog("Mette bordo a immagine");
 
 		Bitmap myBitmap = ConverteDimensioni(myBitmapPassata);
@@ -362,6 +366,39 @@ public class ChangeWallpaper {
 			canvas1.drawBitmap(immagineDiSfondo, 0, 0, null);
 		}
 		canvas1.drawBitmap(myBitmap, posX, posY, null);
+
+		if (VariabiliGlobali.getInstance().isScriveTestoSuImmagine()) {
+			String Nome = si.getImmagine();
+			String[] n = Nome.split("\\.");
+			if (n.length > 0) {
+				String estensione = n[n.length - 1];
+				Nome = Nome.replace("." + estensione, "");
+			}
+			SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+			Date date = new Date(si.getDataImmagine());
+			String dateTime = dateFormat.format(date);
+
+			int posizioneScrittaX = ((int) posX) + 85;
+			int posizioneScrittaY = ((int) posY) - 95;
+			if (posizioneScrittaY < 50) {
+				posizioneScrittaY = 50;
+			}
+			int spostamento = 3;
+
+			Paint paint = new Paint();
+			paint.setColor(Color.BLACK);
+			paint.setTextSize(35);
+			canvas1.drawText(Nome, posizioneScrittaX + spostamento, posizioneScrittaY + spostamento, paint);
+			canvas1.drawText("Data immagine: " + dateTime, posizioneScrittaX + spostamento, posizioneScrittaY + spostamento + 35, paint);
+			canvas1.drawText("Dimensione immagine: " + si.getDimensione(), posizioneScrittaX + spostamento, posizioneScrittaY + spostamento + 70, paint);
+
+			Paint paint2 = new Paint();
+			paint2.setColor(Color.YELLOW);
+			paint2.setTextSize(35);
+			canvas1.drawText(Nome, posizioneScrittaX,  posizioneScrittaY, paint2);
+			canvas1.drawText("Data immagine: " + dateTime, posizioneScrittaX,  posizioneScrittaY + 35, paint2);
+			canvas1.drawText("Dimensione immagine: " + si.getDimensione(), posizioneScrittaX, posizioneScrittaY + 70, paint2);
+		}
 
 		return Immaginona;
 	}

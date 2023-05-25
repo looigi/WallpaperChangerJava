@@ -69,6 +69,8 @@ public class DownloadImage extends AsyncTask<String, Void, Bitmap> {
             StrutturaImmagine si = new StrutturaImmagine();
             si.setPathImmagine(VariabiliGlobali.getInstance().getPercorsoDIR() + "/Download/Appoggio.jpg");
             si.setImmagine(NomeImmagine);
+            si.setDataImmagine(VariabiliGlobali.getInstance().getDataAppoggio());
+            si.setDimensione(VariabiliGlobali.getInstance().getDimeAppoggio());
 
             ChangeWallpaper c = new ChangeWallpaper();
             boolean fatto = c.setWallpaperLocale(si);

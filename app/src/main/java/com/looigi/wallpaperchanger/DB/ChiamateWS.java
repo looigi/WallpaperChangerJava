@@ -26,6 +26,7 @@ public class ChiamateWS implements TaskDelegate {
                 15000,
                 ApriDialog);
     }
+
     public void Esegue(String Urletto, String tOperazione,
                        String NS, String SOAP_ACTION, int Timeout,
                        boolean ApriDialog) {
@@ -68,6 +69,11 @@ public class ChiamateWS implements TaskDelegate {
             String[] c = result.split(";");
             String quanteImmagini = c[0];
             String Immagine = c[1].replace("/var/www/html/CartelleCondivise", "");
+            String Datella = c[2];
+            String Dimensioni = c[3];
+            VariabiliGlobali.getInstance().setDataAppoggio(Datella);
+            VariabiliGlobali.getInstance().setDimeAppoggio(Dimensioni);
+
             Immagine = VariabiliGlobali.getInstance().getPercorsoImmagineSuURL() + Immagine;
             String[] cc = Immagine.split("/");
             String NomeImmagine = cc[cc.length - 1];

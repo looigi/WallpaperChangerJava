@@ -239,7 +239,7 @@ public class Utility {
         }
     }
 
-    public void InstanziaNotifica() {
+    /* public void InstanziaNotifica() {
         Log.getInstance().ScriveLog("Instanzia notifica");
 
         Notifica.getInstance().setContext(MainActivity.getAppContext());
@@ -260,15 +260,7 @@ public class Utility {
         Notifica.getInstance().setContext(MainActivity.getAppContext());
         Notifica.getInstance().setImmagine(VariabiliGlobali.getInstance().getUltimaImmagine().getPathImmagine());
         Notifica.getInstance().setTitolo(VariabiliGlobali.getInstance().getUltimaImmagine().getImmagine());
-        /*
-        if (VariabiliGlobali.getInstance().getUltimaImmagine() != null) {
-            Notifica.getInstance().setTitolo(VariabiliGlobali.getInstance().getUltimaImmagine().getImmagine());
-            Notifica.getInstance().setImmagine(VariabiliGlobali.getInstance().getUltimaImmagine().getPathImmagine());
-        } else {
-            Notifica.getInstance().setTitolo("");
-            Notifica.getInstance().setImmagine("");
-        } */
 
         Notifica.getInstance().AggiornaNotifica();
-    }
+    } */
 }

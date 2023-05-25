@@ -6,7 +6,8 @@ import android.text.TextUtils;
 import androidx.annotation.NonNull;
 
 import com.looigi.wallpaperchanger.Log;
-import com.looigi.wallpaperchanger.Notifica;
+import com.looigi.wallpaperchanger.Notifiche.GestioneNotifiche;
+import com.looigi.wallpaperchanger.Notifiche.PartenzaServizio;
 
 import org.acra.ReportField;
 import org.acra.collector.CrashReportData;
@@ -48,7 +49,7 @@ public class CustomAcraSender implements ReportSenderFactory {
 			try {
 				sender.sendMail(subject, body, "looigi@gmail.com", recipients);
 
-				Notifica.getInstance().RimuoviNotifica();
+				GestioneNotifiche.getInstance().RimuoviNotifica();
 			} catch(Exception e) {
 				Log.getInstance().ScriveLog("-------------------------------------------------------");
 				Log.getInstance().ScriveLog("ERRORE Nell'Invio della mail");

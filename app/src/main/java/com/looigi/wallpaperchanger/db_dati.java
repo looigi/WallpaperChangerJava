@@ -47,12 +47,12 @@ public class db_dati {
                 String sql = "CREATE TABLE IF NOT EXISTS "
                         + "Impostazioni "
                         + " (UltimaImmagineNome VARCHAR, UltimaImmaginePath VARCHAR, SecondiAlcambio VARCHAR, PathImmagini VARCHAR, Offline VARCHAR, " +
-                        "Blur VARCHAR, Resize VARCHAR);";
+                        "Blur VARCHAR, Resize VARCHAR, ScriveTesto VARCHAR);";
                 myDB.execSQL(sql);
 
                 sql = "CREATE TABLE IF NOT EXISTS "
                         + "ListaImmaginiLocali "
-                        + " (ImmagineNome VARCHAR, ImmaginePath VARCHAR);";
+                        + " (ImmagineNome VARCHAR, ImmaginePath VARCHAR, Data VARCHAR, Dimensione VARCHAR);";
                 myDB.execSQL(sql);
             }
         } catch (Exception ignored) {
@@ -68,19 +68,26 @@ public class db_dati {
         return true;
     }
 
-    public boolean ScriveImmagineInLocale(String Nome, String Path) {
+    public boolean ScriveImmagineInLocale(String Nome, String Path, String Data, String Dimensione) {
         if (myDB != null) {
             try {
                 String sql = "INSERT INTO"
                         + " ListaImmaginiLocali"
-                        + " (ImmagineNome, ImmaginePath)"
+                        + " (ImmagineNome, ImmaginePath, Data, Dimensione)"
                         + " VALUES ("
                         + "'" + Nome.replace("'","''") + "', "
-                        + "'" + Path.replace("'","''") + "' "
+                        + "'" + Path.replace("'","''") + "', "
+                        + "'" + Data.replace("'","''") + "', "
+                        + "'" + Dimensione.replace("'","''") + "' "
                         + ")";
                 myDB.execSQL(sql);
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 Log.getInstance().ScriveLog("ERRORE Su scrittura immagini locali: " + Utility.getInstance().PrendeErroreDaException(e));
+                Log.getInstance().ScriveLog("Pulizia tabelle");
+                PulisceDatiIL();
+                Log.getInstance().ScriveLog("Creazione tabelle");
+                CreazioneTabelle();
+
                 return false;
             }
         } else {
@@ -101,6 +108,8 @@ public class db_dati {
                         StrutturaImmagine s = new StrutturaImmagine();
                         s.setImmagine(c.getString(0));
                         s.setPathImmagine(c.getString(1));
+                        s.setDataImmagine(c.getString(2));
+                        s.setDimensione(c.getString(3));
 
                         listaImmagini.add(s);
                     } while (c.moveToNext());
@@ -109,8 +118,14 @@ public class db_dati {
                 } else {
                     return false;
                 }
-            } catch (SQLException e) {
-                Log.getInstance().ScriveLog("ERRORE Su lettura immagini locali: " + Utility.getInstance().PrendeErroreDaException(e));
+            } catch (Exception e) {
+                Log.getInstance().ScriveLog("ERRORE Su scrittura immagini locali: " + Utility.getInstance().PrendeErroreDaException(e));
+                Log.getInstance().ScriveLog("Pulizia tabelle");
+                PulisceDatiIL();
+                Log.getInstance().ScriveLog("Creazione tabelle");
+                CreazioneTabelle();
+                CaricaImmaginiInLocale();
+
                 return false;
             }
         } else {
@@ -136,7 +151,7 @@ public class db_dati {
                 myDB.execSQL("Delete From Impostazioni");
                 String sql = "INSERT INTO"
                         + " Impostazioni"
-                        + " (UltimaImmagineNome, UltimaImmaginePath, SecondiAlCambio, PathImmagini, Offline, Blur, Resize)"
+                        + " (UltimaImmagineNome, UltimaImmaginePath, SecondiAlCambio, PathImmagini, Offline, Blur, Resize, ScriveTesto)"
                         + " VALUES ("
                         + "'" + (Imm) + "', "
                         + "'" + (PathImm) + "', "
@@ -144,7 +159,8 @@ public class db_dati {
                         + "'" + (VariabiliGlobali.getInstance().getPercorsoIMMAGINI()) + "', "
                         + "'" + (VariabiliGlobali.getInstance().isOffline() ? "S" : "N") + "', "
                         + "'" + (VariabiliGlobali.getInstance().isBlur() ? "S" : "N") + "', "
-                        + "'" + (VariabiliGlobali.getInstance().isResize() ? "S" : "N") + "' "
+                        + "'" + (VariabiliGlobali.getInstance().isResize() ? "S" : "N") + "', "
+                        + "'" + (VariabiliGlobali.getInstance().isScriveTestoSuImmagine()  ? "S" : "N") + "' "
                         + ") ";
                 myDB.execSQL(sql);
             } catch (SQLException e) {
@@ -178,6 +194,14 @@ public class db_dati {
                     VariabiliGlobali.getInstance().setOffline(c.getString(4).equals("S"));
                     VariabiliGlobali.getInstance().setBlur(c.getString(5).equals("S"));
                     VariabiliGlobali.getInstance().setResize(c.getString(6).equals("S"));
+                    VariabiliGlobali.getInstance().setScriveTestoSuImmagine(c.getString(7).equals("S"));
+
+                    Log.getInstance().ScriveLog("Secondi al cambio: " + VariabiliGlobali.getInstance().getSecondiAlCambio());
+                    Log.getInstance().ScriveLog("Percorso immagini: " + VariabiliGlobali.getInstance().getPercorsoIMMAGINI());
+                    Log.getInstance().ScriveLog("Offline: " + VariabiliGlobali.getInstance().isOffline());
+                    Log.getInstance().ScriveLog("Blur: " + VariabiliGlobali.getInstance().isBlur());
+                    Log.getInstance().ScriveLog("Resize: " + VariabiliGlobali.getInstance().isResize());
+                    Log.getInstance().ScriveLog("Scrive testo su immagine: " + VariabiliGlobali.getInstance().isScriveTestoSuImmagine());
                 } else {
                     return false;
                 }
@@ -210,6 +234,19 @@ public class db_dati {
             // myDB.execSQL("Delete From Ultima");
             try {
                 myDB.execSQL("Drop Table Impostazioni");
+            } catch (Exception ignored) {
+
+            }
+        }
+    }
+
+    public void PulisceDatiIL() {
+        // SQLiteDatabase myDB = ApreDB();
+        if (myDB != null) {
+            // myDB.execSQL("Delete From Utente");
+            // myDB.execSQL("Delete From Ultima");
+            try {
+                myDB.execSQL("Drop Table ListaImmaginiLocali");
             } catch (Exception ignored) {
 
             }
