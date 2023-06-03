@@ -83,17 +83,18 @@
                     android:background="@android:color/darker_gray"/>
 
                 <Switch
+                    android:visibility="gone"
                     android:id="@+id/switchPresenteSuDisco"
                     android:layout_width="match_parent"
                     android:textColor="#0000CC"
                     android:layout_height="wrap_content"
                     android:text="Brano su disco" />
 
-                <View
+                <!-- <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:layout_marginBottom="2dp"
-                    android:background="@android:color/darker_gray"/>
+                    android:background="@android:color/darker_gray"/> -->
 
                 <Switch
                     android:id="@+id/switchRicercaTesto"

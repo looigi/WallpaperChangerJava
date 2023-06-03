@@ -30,7 +30,7 @@ public class VariabiliGlobali {
     // private Activity FragmentActivityPrincipale;
     // private Context context;
     private int SecondiAlCambio = 60000;
-    private boolean immagineDaCambiare = false;
+    // private boolean immagineDaCambiare = false;
     private List<StrutturaImmagine> listaImmagini = new ArrayList<>();
     private StrutturaImmagine UltimaImmagine;
     private int ImmaginiOnline;
@@ -242,13 +242,13 @@ public class VariabiliGlobali {
         return PercorsoIMMAGINI;
     }
 
-    public boolean isImmagineDaCambiare() {
+    /* public boolean isImmagineDaCambiare() {
         return immagineDaCambiare;
     }
 
     public void setImmagineDaCambiare(boolean immagineDaCambiare) {
         this.immagineDaCambiare = immagineDaCambiare;
-    }
+    } */
 
     /* public Activity getFragmentActivityPrincipale() {
         return FragmentActivityPrincipale;

@@ -339,9 +339,9 @@ public class MainActivity extends AppCompatActivity {
                             Log.getInstance().ScriveLog("---Immagine NON cambiata manualmente: Caricamento immagini in corso---");
                         }
                     }
-                } else {
-                    Log.getInstance().ScriveLog("---Cambio Immagine posticipato per schermo spento---");
-                    VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
+                // } else {
+                //     Log.getInstance().ScriveLog("---Cambio Immagine posticipato per schermo spento---");
+                    // VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
                 }
             }
         });
@@ -386,22 +386,24 @@ public class MainActivity extends AppCompatActivity {
 
         switch(requestCode) {
             case 9999:
-                Uri uri = data.getData();
-                Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
-                        DocumentsContract.getTreeDocumentId(uri));
-                ConverteNomeUri c = new ConverteNomeUri();
-                String path = c.getPath(this, docUri);
+                if (data != null) {
+                    Uri uri = data.getData();
+                    Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
+                            DocumentsContract.getTreeDocumentId(uri));
+                    ConverteNomeUri c = new ConverteNomeUri();
+                    String path = c.getPath(this, docUri);
 
-                VariabiliGlobali.getInstance().getTxtPath().setText(path);
-                VariabiliGlobali.getInstance().setPercorsoIMMAGINI(path);
+                    VariabiliGlobali.getInstance().getTxtPath().setText(path);
+                    VariabiliGlobali.getInstance().setPercorsoIMMAGINI(path);
 
-                db_dati db = new db_dati();
-                db.ScriveImpostazioni();
+                    db_dati db = new db_dati();
+                    db.ScriveImpostazioni();
 
-                ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
-                bckLeggeImmaginiLocali.execute();
+                    ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
+                    bckLeggeImmaginiLocali.execute();
 
-                break;
+                    break;
+                }
         }
     }
 

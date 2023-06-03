@@ -11,7 +11,7 @@ public class PhoneUnlockedReceiver extends BroadcastReceiver {
             Log.getInstance().ScriveLog("Phone unlocked");
             VariabiliGlobali.getInstance().setScreenOn(true);
 
-            if (VariabiliGlobali.getInstance().isImmagineDaCambiare()) {
+            /* if (VariabiliGlobali.getInstance().isImmagineDaCambiare()) {
                 Log.getInstance().ScriveLog("---Cambio immagine dopo unlock schermo---");
                 ChangeWallpaper c = new ChangeWallpaper();
                 if (!VariabiliGlobali.getInstance().isOffline()) {
@@ -28,7 +28,7 @@ public class PhoneUnlockedReceiver extends BroadcastReceiver {
                 }
 
                 VariabiliGlobali.getInstance().setImmagineDaCambiare(false);
-            }
+            } */
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)){
             Log.getInstance().ScriveLog("Phone locked");
             VariabiliGlobali.getInstance().setScreenOn(false);

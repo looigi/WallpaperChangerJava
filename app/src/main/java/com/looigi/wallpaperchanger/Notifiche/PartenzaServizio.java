@@ -76,6 +76,8 @@ public class PartenzaServizio extends Service {
         startForeground(GestioneNotifiche.getInstance().getIdNotifica(), notification);
     }
 
+    private boolean ImmagineCambiataConSchermoSpento = false;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!VariabiliGlobali.getInstance().isePartito()) {
@@ -85,7 +87,7 @@ public class PartenzaServizio extends Service {
             AzionaControlloSchermo();
             // // RICHIAMO SERVIZIO PartenzaServizio.getInstance()InstanziaNotifica();
 
-            VariabiliGlobali.getInstance().setImmagineDaCambiare(false);
+            // VariabiliGlobali.getInstance().setImmagineDaCambiare(false);
             VariabiliGlobali.getInstance().setSecondiPassati(0);
             VariabiliGlobali.getInstance().setQuantiGiri(VariabiliGlobali.getInstance().getSecondiAlCambio() / VariabiliGlobali.getInstance().getTempoTimer());
 
@@ -110,23 +112,15 @@ public class PartenzaServizio extends Service {
                         if (VariabiliGlobali.getInstance().getSecondiPassati() >= VariabiliGlobali.getInstance().getQuantiGiri()) {
                             VariabiliGlobali.getInstance().setSecondiPassati(0);
                             if (VariabiliGlobali.getInstance().isScreenOn()) {
-                                ChangeWallpaper c = new ChangeWallpaper();
-                                if (!VariabiliGlobali.getInstance().isOffline()) {
-                                    boolean fatto = c.setWallpaper(null);
-                                    Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
-                                } else {
-                                    Log.getInstance().ScriveLog("---Cambio Immagine---");
-                                    int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
-                                    if (numeroRandom > -1) {
-                                        boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
-                                        Log.getInstance().ScriveLog("---Immagine cambiata: " + fatto + "---");
-                                    } else {
-                                        Log.getInstance().ScriveLog("---Immagine NON cambiata: Caricamento immagini in corso---");
-                                    }
-                                }
+                                ImmagineCambiataConSchermoSpento = false;
+                                CambiaImmagine();
                             } else {
-                                Log.getInstance().ScriveLog("---Cambio Immagine posticipato per schermo spento---");
-                                VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
+                                if (!ImmagineCambiataConSchermoSpento) {
+                                    Log.getInstance().ScriveLog("---Cambio Immagine per schermo spento---");
+                                    ImmagineCambiataConSchermoSpento = true;
+                                    CambiaImmagine();
+                                }
+                                // VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
                             }
                         }
 
@@ -164,6 +158,23 @@ public class PartenzaServizio extends Service {
         }
 
         return START_STICKY;
+    }
+
+    private void CambiaImmagine() {
+        ChangeWallpaper c = new ChangeWallpaper();
+        if (!VariabiliGlobali.getInstance().isOffline()) {
+            boolean fatto = c.setWallpaper(null);
+            Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
+        } else {
+            Log.getInstance().ScriveLog("---Cambio Immagine---");
+            int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
+            if (numeroRandom > -1) {
+                boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
+                Log.getInstance().ScriveLog("---Immagine cambiata: " + fatto + "---");
+            } else {
+                Log.getInstance().ScriveLog("---Immagine NON cambiata: Caricamento immagini in corso---");
+            }
+        }
     }
 
     private void AzionaControlloSchermo() {
