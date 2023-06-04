@@ -283,6 +283,7 @@ public class MainActivity extends AppCompatActivity {
                 db_dati db = new db_dati();
                 db.ScriveImpostazioni();
 
+                VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
                 ChangeWallpaper c = new ChangeWallpaper();
                 c.setWallpaperLocale(VariabiliGlobali.getInstance().getUltimaImmagine());
             }
@@ -297,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
                 db_dati db = new db_dati();
                 db.ScriveImpostazioni();
 
+                VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
                 ChangeWallpaper c = new ChangeWallpaper();
                 c.setWallpaperLocale(VariabiliGlobali.getInstance().getUltimaImmagine());
             }
@@ -323,6 +325,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView imgRefresh = (ImageView) findViewById(R.id.imgRefresh);
         imgRefresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
                 if (VariabiliGlobali.getInstance().isScreenOn()) {
                     VariabiliGlobali.getInstance().getImgCaricamento().setVisibility(LinearLayout.VISIBLE);
                     Log.getInstance().ScriveLog("---Cambio Immagine Manuale---");

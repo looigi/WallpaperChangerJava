@@ -29,6 +29,7 @@ public class PhoneUnlockedReceiver extends BroadcastReceiver {
 
                 VariabiliGlobali.getInstance().setImmagineDaCambiare(false);
             } */
+            VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)){
             Log.getInstance().ScriveLog("Phone locked");
             VariabiliGlobali.getInstance().setScreenOn(false);

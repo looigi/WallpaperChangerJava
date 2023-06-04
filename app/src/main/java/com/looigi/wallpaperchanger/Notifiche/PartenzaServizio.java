@@ -76,8 +76,6 @@ public class PartenzaServizio extends Service {
         startForeground(GestioneNotifiche.getInstance().getIdNotifica(), notification);
     }
 
-    private boolean ImmagineCambiataConSchermoSpento = false;
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (!VariabiliGlobali.getInstance().isePartito()) {
@@ -112,12 +110,12 @@ public class PartenzaServizio extends Service {
                         if (VariabiliGlobali.getInstance().getSecondiPassati() >= VariabiliGlobali.getInstance().getQuantiGiri()) {
                             VariabiliGlobali.getInstance().setSecondiPassati(0);
                             if (VariabiliGlobali.getInstance().isScreenOn()) {
-                                ImmagineCambiataConSchermoSpento = false;
+                                VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
                                 CambiaImmagine();
                             } else {
-                                if (!ImmagineCambiataConSchermoSpento) {
+                                if (!VariabiliGlobali.getInstance().isImmagineCambiataConSchermoSpento()) {
                                     Log.getInstance().ScriveLog("---Cambio Immagine per schermo spento---");
-                                    ImmagineCambiataConSchermoSpento = true;
+                                    VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(true);
                                     CambiaImmagine();
                                 }
                                 // VariabiliGlobali.getInstance().setImmagineDaCambiare(true);

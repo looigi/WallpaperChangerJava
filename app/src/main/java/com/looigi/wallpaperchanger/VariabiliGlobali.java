@@ -54,7 +54,16 @@ public class VariabiliGlobali {
     private String DimeAppoggio;
     // private RemoteViews viewNotifica;
 
-    /* public Context getContext() {
+    private boolean ImmagineCambiataConSchermoSpento = false;
+
+    public boolean isImmagineCambiataConSchermoSpento() {
+        return ImmagineCambiataConSchermoSpento;
+    }
+
+    public void setImmagineCambiataConSchermoSpento(boolean immagineCambiataConSchermoSpento) {
+        ImmagineCambiataConSchermoSpento = immagineCambiataConSchermoSpento;
+    }
+/* public Context getContext() {
         return context;
     }
 

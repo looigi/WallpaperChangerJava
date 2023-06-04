@@ -38,6 +38,7 @@ public class PassaggioNotifica extends Activity {
 				case "apre":
 					break;
 				case "prossima":
+					VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
 					ChangeWallpaper c = new ChangeWallpaper();
 					if (!VariabiliGlobali.getInstance().isOffline()) {
 						Log.getInstance().ScriveLog("---Cambio Immagine Manuale da notifica OnLine---");
