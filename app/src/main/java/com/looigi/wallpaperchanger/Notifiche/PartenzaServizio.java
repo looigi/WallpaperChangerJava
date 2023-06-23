@@ -104,9 +104,9 @@ public class PartenzaServizio extends Service {
                             VariabiliGlobali.getInstance().getTxtTempoAlCambio().setText("Prossimo cambio: " +
                                     VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri());
                         }
-                        Log.getInstance().ScriveLog("Prossimo cambio: " +
+                        /* Log.getInstance().ScriveLog("Prossimo cambio: " +
                                 VariabiliGlobali.getInstance().getSecondiPassati() + "/" + VariabiliGlobali.getInstance().getQuantiGiri() +
-                                ". Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn());
+                                ". Schermo acceso: " + VariabiliGlobali.getInstance().isScreenOn()); */
                         if (VariabiliGlobali.getInstance().getSecondiPassati() >= VariabiliGlobali.getInstance().getQuantiGiri()) {
                             VariabiliGlobali.getInstance().setSecondiPassati(0);
                             if (VariabiliGlobali.getInstance().isScreenOn()) {

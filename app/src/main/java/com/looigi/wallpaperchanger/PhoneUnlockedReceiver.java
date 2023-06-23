@@ -7,6 +7,8 @@ import android.content.Intent;
 public class PhoneUnlockedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
+
         if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)){
             Log.getInstance().ScriveLog("Phone unlocked");
             VariabiliGlobali.getInstance().setScreenOn(true);
@@ -29,7 +31,6 @@ public class PhoneUnlockedReceiver extends BroadcastReceiver {
 
                 VariabiliGlobali.getInstance().setImmagineDaCambiare(false);
             } */
-            VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
         } else if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)){
             Log.getInstance().ScriveLog("Phone locked");
             VariabiliGlobali.getInstance().setScreenOn(false);
