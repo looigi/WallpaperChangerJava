@@ -7,7 +7,7 @@ import android.widget.Toast;
 import com.looigi.wallpaperchanger.Log;
 
 public class RunServiceOnBoot extends android.app.Service {
-    private static String TAG = "WallpapaerChanger";
+    private static String TAG = "WallpaperChanger";
     private Handler handler;
     private Runnable runnable;
     private final int runTime = 5000;

@@ -38,6 +38,7 @@
         <!-- <activity android:name=".PassaggioNotifica" /> -->
 
         <activity android:name=".Notifiche.PassaggioNotifica" />
+        <service android:name=".Notifiche.GestioneNotifiche$NotificationActionService" />
 
         <service android:name=".Notifiche.PartenzaServizio"
             android:stopWithTask="true" />
