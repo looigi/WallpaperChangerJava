@@ -47,7 +47,7 @@ public class db_dati {
                 String sql = "CREATE TABLE IF NOT EXISTS "
                         + "Impostazioni "
                         + " (UltimaImmagineNome VARCHAR, UltimaImmaginePath VARCHAR, SecondiAlcambio VARCHAR, PathImmagini VARCHAR, Offline VARCHAR, " +
-                        "Blur VARCHAR, Resize VARCHAR, ScriveTesto VARCHAR);";
+                        "Blur VARCHAR, Resize VARCHAR, ScriveTesto VARCHAR, OnOff VARCHAR);";
                 myDB.execSQL(sql);
 
                 sql = "CREATE TABLE IF NOT EXISTS "
@@ -151,7 +151,7 @@ public class db_dati {
                 myDB.execSQL("Delete From Impostazioni");
                 String sql = "INSERT INTO"
                         + " Impostazioni"
-                        + " (UltimaImmagineNome, UltimaImmaginePath, SecondiAlCambio, PathImmagini, Offline, Blur, Resize, ScriveTesto)"
+                        + " (UltimaImmagineNome, UltimaImmaginePath, SecondiAlCambio, PathImmagini, Offline, Blur, Resize, ScriveTesto, OnOff)"
                         + " VALUES ("
                         + "'" + (Imm) + "', "
                         + "'" + (PathImm) + "', "
@@ -160,7 +160,8 @@ public class db_dati {
                         + "'" + (VariabiliGlobali.getInstance().isOffline() ? "S" : "N") + "', "
                         + "'" + (VariabiliGlobali.getInstance().isBlur() ? "S" : "N") + "', "
                         + "'" + (VariabiliGlobali.getInstance().isResize() ? "S" : "N") + "', "
-                        + "'" + (VariabiliGlobali.getInstance().isScriveTestoSuImmagine()  ? "S" : "N") + "' "
+                        + "'" + (VariabiliGlobali.getInstance().isScriveTestoSuImmagine()  ? "S" : "N") + "', "
+                        + "'" + (VariabiliGlobali.getInstance().isOnOff() ? "S" : "N") + "' "
                         + ") ";
                 myDB.execSQL(sql);
             } catch (SQLException e) {
@@ -195,7 +196,9 @@ public class db_dati {
                     VariabiliGlobali.getInstance().setBlur(c.getString(5).equals("S"));
                     VariabiliGlobali.getInstance().setResize(c.getString(6).equals("S"));
                     VariabiliGlobali.getInstance().setScriveTestoSuImmagine(c.getString(7).equals("S"));
+                    VariabiliGlobali.getInstance().setOnOff(c.getString(8).equals("S"));
 
+                    Log.getInstance().ScriveLog("ON/OFF: " + VariabiliGlobali.getInstance().isOnOff());
                     Log.getInstance().ScriveLog("Secondi al cambio: " + VariabiliGlobali.getInstance().getSecondiAlCambio());
                     Log.getInstance().ScriveLog("Percorso immagini: " + VariabiliGlobali.getInstance().getPercorsoIMMAGINI());
                     Log.getInstance().ScriveLog("Offline: " + VariabiliGlobali.getInstance().isOffline());

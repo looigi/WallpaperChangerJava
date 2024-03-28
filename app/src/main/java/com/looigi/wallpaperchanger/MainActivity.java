@@ -14,6 +14,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.provider.Settings;
 import android.view.KeyEvent;
@@ -304,6 +306,58 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        ImageView imgRefresh = (ImageView) findViewById(R.id.imgRefresh);
+        ImageView imgRefreshLocale = (ImageView) findViewById(R.id.imgRefreshLocale);
+        imgRefreshLocale.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
+                bckLeggeImmaginiLocali.execute();
+            }
+        });
+
+
+        Switch swcOnOff = (Switch) findViewById(R.id.switchOnOff);
+        swcOnOff.setChecked(VariabiliGlobali.getInstance().isOnOff());
+        if (VariabiliGlobali.getInstance().isOnOff()) {
+            btnMenoMinuti.setEnabled(true);
+            btnPiuMinuti.setEnabled(true);
+            // btnCambioPath.setEnabled(true);
+            swcBlur.setEnabled(true);
+            swcOffline.setEnabled(true);
+            switchScriveTesto.setEnabled(true);
+        } else {
+            btnMenoMinuti.setEnabled(false);
+            btnPiuMinuti.setEnabled(false);
+            // btnCambioPath.setEnabled(false);
+            swcBlur.setEnabled(false);
+            swcOffline.setEnabled(false);
+            switchScriveTesto.setEnabled(false);
+        }
+        swcOnOff.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                VariabiliGlobali.getInstance().setOnOff(isChecked);
+
+                if (VariabiliGlobali.getInstance().isOnOff()) {
+                    btnMenoMinuti.setEnabled(true);
+                    btnPiuMinuti.setEnabled(true);
+                    // btnCambioPath.setEnabled(true);
+                    swcBlur.setEnabled(true);
+                    swcOffline.setEnabled(true);
+                    switchScriveTesto.setEnabled(true);
+                } else {
+                    btnMenoMinuti.setEnabled(false);
+                    btnPiuMinuti.setEnabled(false);
+                    // btnCambioPath.setEnabled(false);
+                    swcBlur.setEnabled(false);
+                    swcOffline.setEnabled(false);
+                    switchScriveTesto.setEnabled(false);
+                }
+
+                db_dati db = new db_dati();
+                db.ScriveImpostazioni();
+            }
+        });
+
         /* Switch swcResize = (Switch) findViewById(R.id.switchResize);
         swcResize.setChecked(VariabiliGlobali.getInstance().isResize());
         swcResize.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -322,38 +376,60 @@ public class MainActivity extends AppCompatActivity {
         imgCaricamento.setVisibility(LinearLayout.GONE);
         VariabiliGlobali.getInstance().setImgCaricamento(imgCaricamento);
 
-        ImageView imgRefresh = (ImageView) findViewById(R.id.imgRefresh);
         imgRefresh.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
-                if (VariabiliGlobali.getInstance().isScreenOn()) {
-                    VariabiliGlobali.getInstance().getImgCaricamento().setVisibility(LinearLayout.VISIBLE);
-                    Log.getInstance().ScriveLog("---Cambio Immagine Manuale---");
-                    ChangeWallpaper c = new ChangeWallpaper();
-                    if (!VariabiliGlobali.getInstance().isOffline()) {
-                        boolean fatto = c.setWallpaper(null);
-                        Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
-                    } else {
-                        int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
-                        if (numeroRandom > -1) {
-                            boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
-                            Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
-                        } else {
-                            Log.getInstance().ScriveLog("---Immagine NON cambiata manualmente: Caricamento immagini in corso---");
-                        }
-                    }
-                // } else {
-                //     Log.getInstance().ScriveLog("---Cambio Immagine posticipato per schermo spento---");
-                    // VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
-                }
-            }
-        });
+                imgCaricamento.setVisibility(LinearLayout.VISIBLE);
+                btnMenoMinuti.setEnabled(false);
+                btnPiuMinuti.setEnabled(false);
+                // btnCambioPath.setEnabled(false);
+                swcBlur.setEnabled(false);
+                swcOffline.setEnabled(false);
+                switchScriveTesto.setEnabled(false);
+                imgRefresh.setVisibility(LinearLayout.GONE);
+                imgRefreshLocale.setVisibility(LinearLayout.GONE);
+                btnCambioPath.setEnabled(false);
 
-        ImageView imgRefreshLocale = (ImageView) findViewById(R.id.imgRefreshLocale);
-        imgRefreshLocale.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                ScannaDiscoPerImmaginiLocali bckLeggeImmaginiLocali = new ScannaDiscoPerImmaginiLocali();
-                bckLeggeImmaginiLocali.execute();
+                Runnable runTimer;
+                Handler handlerTimer;
+
+                handlerTimer = new Handler(Looper.getMainLooper());
+                handlerTimer.postDelayed(runTimer = new Runnable() {
+                    @Override
+                    public void run() {
+                        VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
+                        if (VariabiliGlobali.getInstance().isScreenOn()) {
+                            VariabiliGlobali.getInstance().getImgCaricamento().setVisibility(LinearLayout.VISIBLE);
+                            Log.getInstance().ScriveLog("---Cambio Immagine Manuale---");
+                            ChangeWallpaper c = new ChangeWallpaper();
+                            if (!VariabiliGlobali.getInstance().isOffline()) {
+                                boolean fatto = c.setWallpaper(null);
+                                Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
+                            } else {
+                                int numeroRandom = Utility.getInstance().GeneraNumeroRandom(VariabiliGlobali.getInstance().getListaImmagini().size() - 1);
+                                if (numeroRandom > -1) {
+                                    boolean fatto = c.setWallpaper(VariabiliGlobali.getInstance().getListaImmagini().get(numeroRandom));
+                                    Log.getInstance().ScriveLog("---Immagine cambiata manualmente: " + fatto + "---");
+                                } else {
+                                    Log.getInstance().ScriveLog("---Immagine NON cambiata manualmente: Caricamento immagini in corso---");
+                                }
+                            }
+                            // } else {
+                            //     Log.getInstance().ScriveLog("---Cambio Immagine posticipato per schermo spento---");
+                            // VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
+                        }
+
+                        btnMenoMinuti.setEnabled(true);
+                        btnPiuMinuti.setEnabled(true);
+                        // btnCambioPath.setEnabled(true);
+                        swcBlur.setEnabled(true);
+                        swcOffline.setEnabled(true);
+                        switchScriveTesto.setEnabled(true);
+                        imgRefresh.setVisibility(LinearLayout.VISIBLE);
+                        imgRefreshLocale.setVisibility(LinearLayout.VISIBLE);
+                        btnCambioPath.setEnabled(true);
+                        imgCaricamento.setVisibility(LinearLayout.GONE);
+                    }
+                }, 500);
             }
         });
 

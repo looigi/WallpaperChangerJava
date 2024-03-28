@@ -42,6 +42,7 @@ public class VariabiliGlobali {
     private TextView txtPath;
     private TextView txtQuanteImmagini;
     private boolean blur = true;
+    private boolean onOff = true;
     private boolean resize = true;
     private int quantiGiri;
     private int tempoTimer = 30000;
@@ -53,6 +54,14 @@ public class VariabiliGlobali {
     private String DataAppoggio;
     private String DimeAppoggio;
     // private RemoteViews viewNotifica;
+
+    public boolean isOnOff() {
+        return onOff;
+    }
+
+    public void setOnOff(boolean onOff) {
+        this.onOff = onOff;
+    }
 
     private boolean ImmagineCambiataConSchermoSpento = false;
 

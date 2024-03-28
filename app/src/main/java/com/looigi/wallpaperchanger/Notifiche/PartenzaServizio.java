@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RemoteViews;
 
 import androidx.annotation.Nullable;
@@ -110,13 +111,17 @@ public class PartenzaServizio extends Service {
                         if (VariabiliGlobali.getInstance().getSecondiPassati() >= VariabiliGlobali.getInstance().getQuantiGiri()) {
                             VariabiliGlobali.getInstance().setSecondiPassati(0);
                             if (VariabiliGlobali.getInstance().isScreenOn()) {
-                                VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
-                                CambiaImmagine();
+                                if (VariabiliGlobali.getInstance().isOnOff()) {
+                                    VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(false);
+                                    CambiaImmagine();
+                                }
                             } else {
                                 if (!VariabiliGlobali.getInstance().isImmagineCambiataConSchermoSpento()) {
-                                    Log.getInstance().ScriveLog("---Cambio Immagine per schermo spento---");
-                                    VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(true);
-                                    CambiaImmagine();
+                                    if (VariabiliGlobali.getInstance().isOnOff()) {
+                                        Log.getInstance().ScriveLog("---Cambio Immagine per schermo spento---");
+                                        VariabiliGlobali.getInstance().setImmagineCambiataConSchermoSpento(true);
+                                        CambiaImmagine();
+                                    }
                                 }
                                 // VariabiliGlobali.getInstance().setImmagineDaCambiare(true);
                             }
