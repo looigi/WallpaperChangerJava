@@ -68,7 +68,7 @@ public class ChiamateWS implements TaskDelegate {
             // 2433;/var/www/html/CartelleCondivise/SfondiDir/Donne/MetalWomen/df89106251200cc0021db5ae3e32.jpg
             String[] c = result.split(";");
             String quanteImmagini = c[0];
-            String Immagine = c[1].replace("/var/www/html/CartelleCondivise", "");
+            String Immagine = c[1].replace("/var/www/html/Sfondi", "");
             String Datella = c[2];
             String Dimensioni = c[3];
             VariabiliGlobali.getInstance().setDataAppoggio(Datella);

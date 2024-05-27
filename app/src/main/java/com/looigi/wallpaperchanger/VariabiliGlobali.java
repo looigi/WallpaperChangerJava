@@ -23,8 +23,8 @@ public class VariabiliGlobali {
     private final String NomeApplicazione = "WallpaperChanger";
     private final String PercorsoDIR = Environment.getExternalStorageDirectory().getPath()+"/LooigiSoft/WallpaperChanger";
     private String PercorsoIMMAGINI = Environment.getExternalStorageDirectory().getPath()+"/LooigiSoft/looWebPlayer/ImmaginiMusica";
-    private final String UrlWS = "http://looigi.ddns.net:1050";
-    private final String PercorsoImmagineSuURL = "http://looigi.ddns.net:1051";
+    private final String UrlWS = "http://www.wsloovf.looigi.it";
+    private final String PercorsoImmagineSuURL = "http://www.sfondi.looigi.it";
     private boolean AzionaDebug = true;
     private boolean screenOn = true;
     // private Activity FragmentActivityPrincipale;
